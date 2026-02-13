@@ -29,7 +29,9 @@ $challenges = $stmt->fetchAll();
     <meta charset="UTF-8">
     <title>Les Défis Shift'Up</title>
 <link rel="stylesheet" href="css/defis.css" />
+<script src="https://cdn.tailwindcss.com"></script>
 <script>
+
         tailwind.config = {
             theme: {
                 extend: {
@@ -52,6 +54,7 @@ $challenges = $stmt->fetchAll();
             }
         }
     </script>
+    
 </head>
 <body>
 
