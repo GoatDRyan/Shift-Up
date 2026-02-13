@@ -81,5 +81,103 @@ word-spacing:50px; z-index:910;
 background-color: #a3a3a3;
 border-radius: 25px;
 padding:15px 15px 15px 130px;
+position:relative;
+min-height: 110px;
+box-shadow: 0 4px 4px rgba(0,0,0,0.1);
 
+}
+.carte-defi > div:first-child::before{
+    content: "📷";
+    position:absolute;
+    left:15px; top:15px;
+    width: 100px; height: 100px;
+    background-color: #d9d9d9;
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; color: #667;
+}
+
+.carte-defi h3 {
+    margin: 0; font-size: 18px; color: black;
+}
+.carte-defi h3::after {
+    content: "Date";
+    display: block; font-size: 11px; font-weight: normal; color: #333;
+}
+
+.badge-diff {
+    position: absolute; top: 15px; right: 20px;
+    font-size: 0;
+}
+.badge-diff::before {
+    content: "🍃🍃🍃";
+    font-size: 16px; letter-spacing: -2px;
+}
+
+.carte-defi p { display: none; }
+
+.carte-defi small {
+    display: block;
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    color: black;
+}
+
+.carte-defi form {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+}
+
+.carte-defi button {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #888;
+    border: none;
+    cursor: pointer;
+    font-size: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.carte-defi button::after {
+    content: "";
+    width: 8px;
+    height: 16px;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    margin-bottom: 4px;
+}
+
+.carte-defi button:hover {
+    background-color: #777;
+    transform: scale(1.1);
+}
+
+.carte-defi button:disabled {
+    background-color: #555;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.carte-defi:nth-child(1)::before { content: "Mobilité :"; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 20px; font-weight: bold; }
+.carte-defi:nth-child(2)::before { content: "Recyclage :"; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 20px; font-weight: bold; }
+.carte-defi:nth-child(3)::before { content: "Social :"; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 20px; font-weight: bold; }
+
+.carte-defi:nth-child(1), .carte-defi:nth-child(2), .carte-defi:nth-child(3) {
+    margin-top: 30px;
+}
+
+body::after {
+    position: fixed;
+    bottom: 0; left: 0; width: 100%; height: 70px;
+    background-color: var(--dark-menu);
+    color: white;
+    display: flex; justify-content: space-around; align-items: center;
+    font-size: 28px; z-index: 1000;
 }
