@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 } 
 
 $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
-if (!in_array($lang, ['fr', 'en', 'es'])) {
+if (!in_array($lang, ['fr', 'en'])) {
     $lang = 'fr';
 }
 $textes = require_once "lang/$lang.php";
