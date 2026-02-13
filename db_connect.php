@@ -14,4 +14,7 @@ try {
 } catch (PDOException $e) {
     die("Erreur critique : Impossible de se connecter à la base de données.<br>" . $e->getMessage());
 }
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 ?>
