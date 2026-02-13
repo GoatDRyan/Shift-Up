@@ -90,40 +90,7 @@ $has_done_quiz = ((float)$user['initial_footprint_kg'] != 32.60);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shift'Up</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {                   
-                        brand: {
-                            primary: '#ffffff',    
-                            secondary: '#d1d5db',  
-                            tertiary: '#4b5563',   
-                            dark: '#000000',       
-                            card: '#111827',       
-                            border: '#374151',
-                            
-                            // primary: '#ff4800', 
-                            // secondary: '#1ee494',
-                            // tertiary: '#009378',
-                            // dark: '#1a1a1a',
-                            // card: '#2d2d2d',
-                            // border: '#404040',
-                        }
-                    },
-                    fontFamily: {
-                        display: ['ShiftTitle', 'sans-serif'],
-                        body: ['ShiftBody', 'sans-serif'],
-                        sans: ['ShiftBody', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
+    <?php include 'tailwindcss.html'; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/style.css">
