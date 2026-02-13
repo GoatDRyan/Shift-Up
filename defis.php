@@ -29,6 +29,29 @@ $challenges = $stmt->fetchAll();
     <meta charset="UTF-8">
     <title>Les Défis Shift'Up</title>
 <link rel="stylesheet" href="css/defis.css" />
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {                   
+                        brand: {
+                            primary: '#ffffff',    
+                            secondary: '#d1d5db',  
+                            tertiary: '#4b5563',   
+                            dark: '#000000',       
+                            card: '#111827',       
+                            border: '#374151',     
+                        }
+                    },
+                    fontFamily: {
+                        display: ['ShiftTitle', 'sans-serif'],
+                        body: ['ShiftBody', 'sans-serif'],
+                        sans: ['ShiftBody', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body>
 
