@@ -28,6 +28,7 @@ $challenges = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Les Défis Shift'Up</title>
+<link rel="stylesheet" href="defis.css" />
 </head>
 <body>
 
