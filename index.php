@@ -323,11 +323,40 @@ $has_done_quiz = ((float)$user['initial_footprint_kg'] != 32.60);
     </main>
 
     <nav class="fixed bottom-0 w-full bg-brand-dark border-t border-brand-border pb-safe pt-2 px-6 flex justify-between items-center z-40 pb-4 h-20">
-        <a href="#" class="flex flex-col items-center gap-1 text-brand-tertiary hover:text-brand-primary transition w-12"><i class="fa-solid fa-store text-xl"></i><span class="text-[10px]"><?= $t['nav_shop'] ?></span></a>
-        <a href="defis.php" class="flex flex-col items-center gap-1 text-brand-tertiary hover:text-brand-primary transition w-12"><i class="fa-solid fa-trophy text-xl"></i><span class="text-[10px]"><?= $t['nav_defs'] ?></span></a>
-        <a href="#" class="relative -top-5 flex flex-col items-center justify-center w-14 h-14 bg-brand-primary text-brand-dark rounded-full shadow-lg shadow-brand-primary/20 border-4 border-brand-dark"><i class="fa-solid fa-house text-xl"></i></a>
-        <a href="#" class="flex flex-col items-center gap-1 text-brand-tertiary hover:text-brand-primary transition w-12"><i class="fa-solid fa-users text-xl"></i><span class="text-[10px]"><?= $t['nav_social'] ?></span></a>
-        <a href="#" class="flex flex-col items-center gap-1 text-brand-tertiary hover:text-brand-primary transition w-12"><i class="fa-solid fa-user text-xl"></i><span class="text-[10px]"><?= $t['nav_prof'] ?></span></a>
+        
+        <a href="#" class="group flex flex-col items-center gap-1 w-12 transition">
+            <img class="h-[30px] group-hover:hidden" src="img/icone/icone-boutique.svg" alt="Boutique">
+            <img class="h-[30px] hidden group-hover:block" src="img/icone/icone-boutique-hover.svg" alt="Boutique Active">
+            
+            <span class="text-xs text-brand-tertiary group-hover:text-brand-primary transition-colors"><?= $t['nav_shop'] ?></span>
+        </a>
+
+        <a href="defis.php" class="group flex flex-col items-center gap-1 w-12 transition">
+            <img class="h-[35px] group-hover:hidden" src="img/icone/icone-defis.svg" alt="Défis">
+            <img class="h-[35px] hidden group-hover:block" src="img/icone/icone-defis-hover.svg" alt="Défis Actifs">
+            
+            <span class="text-[10px] text-brand-tertiary group-hover:text-brand-primary transition-colors"><?= $t['nav_defs'] ?></span>
+        </a>
+
+        <a href="index.php" class="group relative -top-5 flex flex-col items-center justify-center w-14 h-14 bg-brand-primary text-brand-dark rounded-full shadow-lg shadow-brand-primary/20 border-4 border-brand-dark transition-transform hover:scale-105">
+            <img class="h-[30px] group-hover:hidden" src="img/icone/icone-home.svg" alt="Accueil">
+            <img class="h-[30px] hidden group-hover:block" src="img/icone/icone-home-hover.svg" alt="Accueil Actif">
+        </a>
+
+        <a href="#" class="group flex flex-col items-center gap-1 w-12 transition">
+            <img class="h-[35px] group-hover:hidden" src="img/icone/icone-reseau.svg" alt="Réseau">
+            <img class="h-[35px] hidden group-hover:block" src="img/icone/icone-reseau-hover.svg" alt="Réseau Actif">
+            
+            <span class="text-[10px] text-brand-tertiary group-hover:text-brand-primary transition-colors"><?= $t['nav_social'] ?></span>
+        </a>
+
+        <a href="#" class="group flex flex-col items-center gap-1 w-12 transition">
+            <img class="h-[35px] group-hover:hidden" src="img/icone/icone-compte.svg" alt="Profil">
+            <img class="h-[35px] hidden group-hover:block" src="img/icone/icone-compte-hover.svg" alt="Profil Actif">
+            
+            <span class="text-[10px] text-brand-tertiary group-hover:text-brand-primary transition-colors"><?= $t['nav_prof'] ?></span>
+        </a>
+
     </nav>
 
     <script>
