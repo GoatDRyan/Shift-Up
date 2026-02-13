@@ -65,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <h1 class="text-2xl font-bold tracking-tight">Bienvenue sur Shift'Up</h1>
             <p class="text-gray-400 text-sm mt-2">Connectez-vous pour réduire votre empreinte.</p>
+            
         </div>
 
         <?php if ($error): ?>
@@ -81,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     placeholder="nom@entreprise.com">
             </div>
 
-            <div class="mb-8">
+            <div class="mb-10">
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Mot de passe</label>
                 <div class="relative">
                     <input type="password" name="password" required id="passwordInput"
@@ -90,18 +91,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-gray-500 hover:text-white">
                         <i class="fa-regular fa-eye" id="eyeIcon"></i>
                     </button>
+                    <div class="mt-6 text-center">
+                        <a href="#" class="text-[10px] text-gray-500 absolute right-1 top-12 hover:text-white underline">Mot de passe oublié ?</a>
+                    </div>
                 </div>
             </div>
 
             <button type="submit" 
-                class="w-full bg-white text-black font-bold py-3.5 rounded-lg hover:bg-gray-200 transition transform active:scale-95 shadow-lg shadow-white/10">
+                class="w-full mb-6 bg-white text-black text-sm font-bold py-2 rounded-full hover:bg-gray-200 transition transform active:scale-95 shadow-lg shadow-white/10">
                 Se connecter
             </button>
         </form>
-
-        <div class="mt-6 text-center">
-            <a href="#" class="text-xs text-gray-500 hover:text-white underline">Mot de passe oublié ?</a>
-        </div>
+            <a href="register.php">
+            <button class="w-full mb-6 bg-white text-black text-sm font-bold py-2 rounded-full hover:bg-gray-200 transition transform active:scale-95 shadow-lg shadow-white/10">S'inscrire</button>
+            </a>
+        
     </div>
 
     <script>
