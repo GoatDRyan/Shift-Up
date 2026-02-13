@@ -28,13 +28,22 @@ if (!$user) { header("Location: logout.php"); exit(); }
 $lang = $_SESSION['lang'] ?? ($user['language_pref'] ?? 'fr');
 $t = require_once "lang/$lang.php";
 
-// --- 3. LOGIQUE MÉTIER (Streak, Niveau, Classement, Graph) ---
-// Streak
-$last_activity = $user['last_activity'];
-$yesterday = date('Y-m-d', strtotime('-1 day'));
-if ($last_activity < $yesterday) {
-    $pdo->prepare("UPDATE users SET current_streak = 0 WHERE id = ?")->execute([$user_id]);
-    $user['current_streak'] = 0;
+// --- 3. LOGIQUE MÉTIER ---
+$week_streak = [];
+for ($i = 6; $i >= 0; $i--) {
+    $date_check = date('Y-m-d', strtotime("-$i days"));
+    $day_name = date('D', strtotime($date_check));
+    $jours_fr = ['Mon'=>'Lun', 'Tue'=>'Mar', 'Wed'=>'Mer', 'Thu'=>'Jeu', 'Fri'=>'Ven', 'Sat'=>'Sam', 'Sun'=>'Dim'];
+    $day_letter = $jours_fr[$day_name] ?? $day_name[0];
+    $stmt_check = $pdo->prepare("SELECT COUNT(*) FROM user_actions WHERE user_id = ? AND DATE(date_action) = ?");
+    $stmt_check->execute([$user_id, $date_check]);
+    $has_action = $stmt_check->fetchColumn() > 0;
+
+    $week_streak[] = [
+        'day' => $day_letter,
+        'active' => $has_action,
+        'is_today' => ($i === 0)
+    ];
 }
 
 // Niveau
@@ -95,7 +104,14 @@ $has_done_quiz = ((float)$user['initial_footprint_kg'] != 32.60);
                             tertiary: '#4b5563',   
                             dark: '#000000',       
                             card: '#111827',       
-                            border: '#374151',     
+                            border: '#374151',
+                            
+                            // primary: '#ff4800', 
+                            // secondary: '#1ee494',
+                            // tertiary: '#009378',
+                            // dark: '#1a1a1a',
+                            // card: '#2d2d2d',
+                            // border: '#404040',
                         }
                     },
                     fontFamily: {
@@ -178,14 +194,36 @@ $has_done_quiz = ((float)$user['initial_footprint_kg'] != 32.60);
         </div>
 
         <div id="view-dept" class="fade-in">
-            <div class="bg-gradient-to-r from-brand-card to-brand-border border border-brand-border rounded-2xl p-4 mb-6 flex items-center justify-between shadow-lg">
-                <div class="flex items-center gap-3">
-                    <div class="bg-brand-border p-2 rounded-full text-brand-primary"><i class="fa-solid fa-fire text-xl"></i></div>
-                    <div>
-                        <h3 class="font-bold text-sm text-brand-secondary"><?= $t['streak_title'] ?></h3>
-                        <p class="font-display text-xl font-bold text-brand-primary"><?= $user['current_streak'] ?> <?= $t['days'] ?></p>
-                    </div>
+            <div class="bg-brand-card border border-brand-border rounded-2xl p-4 mb-6 shadow-lg">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm text-brand-secondary flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-brand-primary"></i> 
+                        <?= $t['streak_title'] ?>
+                    </h3>
+                    <span class="text-xs font-mono text-brand-tertiary"><?= $user['current_streak'] ?> Jours</span>
                 </div>
+                
+                <div class="flex justify-between items-center">
+                    <?php foreach($week_streak as $day): ?>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center border 
+                                <?= $day['active'] ? 'bg-brand-primary text-brand-dark border-brand-primary' : 'bg-transparent border-brand-border text-brand-tertiary' ?> 
+                                <?= $day['is_today'] ? 'ring-2 ring-brand-secondary ring-offset-2 ring-offset-brand-card' : '' ?>">
+                                
+                                <?php if($day['active']): ?>
+                                    <i class="fa-solid fa-fire text-sm"></i>
+                                <?php else: ?>
+                                    <div class="w-2 h-2 rounded-full bg-brand-border"></div>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <span class="text-[10px] font-bold <?= $day['is_today'] ? 'text-brand-primary' : 'text-brand-tertiary' ?>">
+                                <?= $day['day'] ?>
+                            </span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-6">
