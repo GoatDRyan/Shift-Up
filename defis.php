@@ -2,7 +2,6 @@
 session_start();
 require_once 'db_connect.php';
 
-// --- Logique PHP (Connexion & Données) ---
 if (file_exists('includes/functions.php')) {
     require_once 'includes/functions.php';
 } elseif (file_exists('functions.php')) {
@@ -10,10 +9,9 @@ if (file_exists('includes/functions.php')) {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 4; // Fallback test
+    $_SESSION['user_id'] = 4; 
 }
 
-// Stats User
 $stmtUser = $pdo->prepare("SELECT points_rank, points_wallet FROM users WHERE id = :uid");
 $stmtUser->execute(['uid' => $_SESSION['user_id']]);
 $currentUser = $stmtUser->fetch();
@@ -26,12 +24,10 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 if (!in_array($lang, ['fr', 'en'])) $lang = 'fr';
 $textes = require_once "lang/$lang.php";
 
-// Récupération Défis
 $sql = "SELECT * FROM challenges ORDER BY domaine, titre_$lang";
 $stmt = $pdo->query($sql);
 $allChallenges = $stmt->fetchAll();
 
-// Groupement par catégories (Simulation basée sur mots-clés pour matcher le design)
 $groupedChallenges = [
     'Mobilité' => [],
     'Recyclage' => [],
@@ -67,9 +63,9 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                 extend: {
                     colors: {
                         'app-bg': '#ffffff',
-                        'header-grey': '#e5e5e5', /* Le gris clair des onglets */
-                        'group-bg': '#f3f4f6',    /* Le gris clair du conteneur de catégorie */
-                        'card-grey': '#c4c4c4',   /* Le gris foncé des cartes */
+                        'header-grey': '#e5e5e5', 
+                        'group-bg': '#8a8989',   
+                        'card-grey': '#c4c4c4',   
                         'tab-inactive': '#d1d5db',
                         'dark-nav': '#1e1e1e',
                     },
@@ -87,11 +83,9 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
 
-        /* Forme spéciale pour l'onglet "Rechercher" */
         .clip-tab-search {
             clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
         }
-        /* Forme spéciale pour "Mes défis" */
         .clip-tab-bg {
             clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
         }
@@ -159,7 +153,6 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
 
                 <?php foreach($challengesInCat as $defi): ?>
                     <?php 
-                        // Logique de statut
                         $sql_today = "SELECT COUNT(*) FROM user_actions WHERE user_id = :uid AND challenge_id = :cid AND DATE(date_action) = CURDATE()";
                         $stmt_td = $pdo->prepare($sql_today);
                         $stmt_td->execute(['uid' => $_SESSION['user_id'], 'cid' => $defi['id']]);
@@ -236,8 +229,8 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
     </div>
 
     <div class="fixed bottom-0 left-0 w-full bg-[#1e1e1e] h-20 flex items-center justify-around px-2 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-        <a href="#" class="text-white opacity-70 hover:opacity-100 flex flex-col items-center justify-center w-12">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+       <a href="#" class="text-white opacity-70 hover:opacity-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
         </a>
