@@ -18,13 +18,11 @@ $currentUser = $stmtUser->fetch();
 $userLevel = 1; 
 $userXp = $currentUser['points_rank'] ?? 0;
 $userMoney = $currentUser['points_wallet'] ?? 0;
-$nextLevelXp = 2500; // Exemple
-
+$nextLevelXp = 2500; 
 $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 if (!in_array($lang, ['fr', 'en'])) $lang = 'fr';
 $textes = require_once "lang/$lang.php";
 
-// Récupération des défis
 $sql = "SELECT * FROM challenges ORDER BY domaine, titre_$lang";
 $stmt = $pdo->query($sql);
 $allChallenges = $stmt->fetchAll();
@@ -242,8 +240,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
 
         <div class="h-10"></div>
     </div>
-
-    <div class="fixed bottom-0 left-0 w-full bg-dark-nav h-20 flex items-center justify-around px-2 z-50">
+<div class="fixed bottom-0 left-0 w-full bg-dark-nav h-20 flex items-center justify-around px-2 z-50">
         <a href="#" class="text-white opacity-80 hover:opacity-100">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -252,7 +249,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
         
         <a href="#" class="text-white opacity-80 hover:opacity-100">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> <path d="M5 3v4M19 3v4M8 21h8M12 17v4M6 9h12a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2a2 2 0 012-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 21h8m-4-4v4M5 5h14m-2 0v1a7 7 0 01-14 0V5h2zm0 0V3h10v2" />
             </svg>
         </a>
 
