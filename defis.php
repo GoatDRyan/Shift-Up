@@ -65,7 +65,8 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                         'app-bg': '#ffffff',
                         'header-grey': '#e5e5e5', 
                         'group-bg': '#8a8989',   
-                        'card-grey': '#c4c4c4',   
+                        'card-grey': '#c4c4c4',
+                        'inner-card': '#D9D9D9',
                         'tab-inactive': '#d1d5db',
                         'dark-nav': '#1e1e1e',
                     },
@@ -170,7 +171,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                         $disabled = ($today_count >= $defi['max_actions_day']);
                     ?>
 
-                    <div class="bg-card-grey rounded-[25px] p-3 flex relative h-28 mb-4 shadow-sm w-full mx-auto">
+                    <div class="bg-card-grey rounded-[25px] p-3 flex relative h-28 mb-4 shadow-sm w-full mx-auto items-center">
                         
                         <div class="w-20 h-full bg-gray-300 rounded-[20px] flex items-center justify-center shrink-0 relative">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -179,8 +180,9 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                             <div class="absolute top-[25%] left-[25%] text-gray-800 text-[10px] font-bold">+</div> 
                         </div>
 
-                        <div class="ml-3 flex flex-col justify-center flex-1 pr-6 relative">
-                            <div class="absolute -top-1 -right-2 flex space-x-0.5">
+                        <div class="ml-3 flex-1 h-full bg-inner-card rounded-[20px] p-2 relative flex flex-col justify-center">
+                            
+                            <div class="absolute top-2 right-2 flex space-x-0.5">
                                 <?php for($i=0; $i<$leafCount; $i++): ?>
                                     <svg class="w-3 h-3 text-black fill-transparent stroke-black stroke-2" viewBox="0 0 24 24">
                                         <path d="M20.2 17.6c-2.4-7.2-9.6-9.6-9.6-9.6s-2.4 7.2 9.6 9.6z" />
@@ -190,7 +192,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                                 <?php endfor; ?>
                             </div>
 
-                            <h3 class="font-semibold text-black text-sm leading-tight mb-0.5 w-[90%] truncate">
+                            <h3 class="font-semibold text-black text-sm leading-tight mb-0.5 w-[85%] truncate">
                                 <?= get_trad_bdd($defi, 'titre', $lang) ?>
                             </h3>
                             
@@ -202,7 +204,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                             </div>
                         </div>
 
-                        <div class="absolute bottom-0 right-0">
+                        <div class="absolute bottom-0 right-0 z-10">
                             <?php if (!$disabled): ?>
                                 <form action="validate_mission.php" method="POST">
                                     <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
@@ -229,9 +231,9 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
     </div>
 
     <div class="fixed bottom-0 left-0 w-full bg-[#1e1e1e] h-20 flex items-center justify-around px-2 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-       <a href="#" class="text-white opacity-70 hover:opacity-100">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+       <a href="#" class="text-white opacity-80 hover:opacity-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
         </a>
         
