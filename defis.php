@@ -63,11 +63,11 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                 extend: {
                     colors: {
                         'app-bg': '#ffffff',
-                        'header-grey': '#e5e5e5', 
-                        'group-bg': '#8a8989',   
-                        'card-grey': '#c4c4c4',
+                        'header-grey': '#D9D9D9', 
+                        'group-bg': '#8A8989',   
+                        'card-grey': '#A7A7A7',
                         'inner-card': '#D9D9D9',
-                        'tab-inactive': '#d1d5db',
+                        'tab-inactive': '#B0B0B0',
                         'dark-nav': '#1e1e1e',
                     },
                     fontFamily: {
@@ -85,56 +85,78 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
         body { font-family: 'Inter', sans-serif; }
 
         .clip-tab-search {
-            clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%);
+            clip-path: polygon(0 0, 75% 0, 100% 100%, 0% 100%);
         }
         .clip-tab-bg {
-            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+            clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        .clip-filter {
+             clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+        }
+        /* Nouvelle classe pour les parallélogrammes du header */
+        .clip-parallelogram {
+             clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+        }
+        /* Ajustements pour les onglets */
+        .clip-tab-left {
+            clip-path: polygon(0 0, 90% 0, 100% 100%, 0% 100%);
+        }
+        .clip-tab-right {
+            clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);
         }
     </style>
 </head>
 <body class="bg-app-bg pb-24 text-black min-w-[320px]">
 
     <div class="sticky top-0 z-50 bg-white pt-3 pb-2 px-3 flex items-center justify-between shadow-sm">
-        <div class="flex items-center space-x-2 bg-gray-200 rounded-full pr-3 pl-0 py-0">
-            <div class="w-8 h-8 rounded-full bg-gray-500 text-white flex items-center justify-center font-bold text-sm border-2 border-white shrink-0">
+        
+        <div class="relative flex items-center pr-3 pl-0 py-0 min-w-[110px]">
+            <div class="absolute inset-0 bg-gray-400 clip-parallelogram z-0"></div>
+            
+            <div class="relative z-20 w-8 h-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-bold text-sm border-2 border-white shrink-0 -ml-1">
                 <?= $userLevel ?>
             </div>
-            <span class="text-xs font-bold text-gray-700 whitespace-nowrap"><?= $userXp ?>/<?= $nextLevelXp ?></span>
+            
+            <span class="relative z-10 text-xs font-bold text-white whitespace-nowrap ml-2"><?= $userXp ?>/<?= $nextLevelXp ?></span>
         </div>
 
-        <div class="flex items-center space-x-1 bg-gray-200 rounded-full px-3 py-1 ml-1">
-            <div class="w-4 h-4 rounded-full border border-black flex items-center justify-center text-[10px] font-bold shrink-0">
-                $
+        <div class="relative flex items-center justify-center px-4 py-1 ml-1 min-w-[80px]">
+             <div class="absolute inset-0 bg-gray-400 clip-parallelogram z-0"></div>
+            
+            <div class="relative z-10 flex items-center space-x-1">
+                <div class="w-4 h-4 rounded-full border border-black flex items-center justify-center text-[10px] font-bold shrink-0 bg-transparent">
+                    $
+                </div>
+                <span class="text-xs font-bold text-white"><?= $userMoney ?></span>
             </div>
-            <span class="text-xs font-bold text-gray-700"><?= $userMoney ?></span>
         </div>
 
-        <div class="flex space-x-2 ml-auto">
-            <button class="p-1.5 bg-gray-200 rounded text-black hover:bg-gray-300 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        <div class="flex space-x-2 ml-auto z-20">
+            <button class="p-2 bg-gray-300 rounded text-black hover:bg-gray-400 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
             </button>
-            <button class="p-1.5 bg-gray-200 rounded text-black hover:bg-gray-300 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+            <button class="p-2 bg-gray-300 rounded text-black hover:bg-gray-400 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
         </div>
     </div>
 
-    <div class="relative w-full h-24 bg-white mt-2">
-        <div class="absolute right-0 top-0 w-[60%] h-full bg-tab-inactive clip-tab-bg flex items-center justify-end pr-6 pb-4">
-            <h2 class="text-lg font-bold text-black opacity-60 whitespace-nowrap">Mes défis</h2>
-        </div>
-        
-        <div class="absolute left-0 top-0 w-[65%] h-full bg-header-grey clip-tab-search flex flex-col justify-center pl-6 pb-4 z-10 shadow-md">
+    <div class="relative w-full h-24 bg-white mt-2 flex">
+        <div class="w-[55%] h-full bg-header-grey clip-tab-left flex flex-col justify-center pl-8 pb-2 z-10 shadow-md relative -mr-4">
             <h2 class="text-xl font-bold text-black leading-tight">Rechercher<br>des défis</h2>
         </div>
+        
+        <div class="flex-1 h-full bg-tab-inactive clip-tab-right flex items-center justify-center pr-4 pb-2 z-0 relative ml-[-10%] pl-[10%]">
+            <h2 class="text-xl font-bold text-black whitespace-nowrap">Mes défis</h2>
+        </div>
     </div>
 
-    <div class="bg-gray-300 py-1.5 px-6 mb-6 w-[45%] rounded-r-full mt-4">
-        <span class="text-xs font-bold text-black uppercase tracking-wide">Filtre</span>
+    <div class="bg-tab-inactive py-2 px-8 mb-6 w-[45%] clip-filter mt-4 ml-0">
+        <span class="text-sm font-bold text-black uppercase tracking-wide">Filtre</span>
     </div>
 
     <?php if (isset($_SESSION['flash_message'])): ?>
@@ -148,9 +170,9 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
         
         <?php foreach ($groupedChallenges as $categoryName => $challengesInCat): ?>
             
-            <div class="bg-group-bg rounded-[30px] p-4 pb-6 shadow-sm">
+            <div class="bg-card-grey rounded-[30px] p-4 pb-6 shadow-sm">
                 
-                <h2 class="text-center text-lg font-bold mb-5 text-black"><?= $categoryName ?></h2>
+                <h2 class="text-left text-xl font-bold mb-5 text-black pl-4"><?= $categoryName ?> :</h2>
 
                 <?php foreach($challengesInCat as $defi): ?>
                     <?php 
@@ -171,20 +193,20 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                         $disabled = ($today_count >= $defi['max_actions_day']);
                     ?>
 
-                    <div class="bg-card-grey rounded-[25px] p-3 flex relative h-28 mb-4 shadow-sm w-full mx-auto items-center">
+                    <div class="bg-inner-card rounded-[25px] p-3 flex relative h-28 mb-4 shadow-sm w-full mx-auto items-center">
                         
-                        <div class="w-20 h-full bg-gray-300 rounded-[20px] flex items-center justify-center shrink-0 relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div class="w-24 h-24 bg-gray-300 rounded-[20px] flex items-center justify-center shrink-0 relative ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <div class="absolute top-[25%] left-[25%] text-gray-800 text-[10px] font-bold">+</div> 
+                            <div class="absolute top-[25%] left-[25%] text-gray-800 text-xs font-bold">+</div> 
                         </div>
 
-                        <div class="ml-3 flex-1 h-full bg-inner-card rounded-[20px] p-2 relative flex flex-col justify-center">
+                        <div class="ml-4 flex-1 h-full relative flex flex-col justify-center pr-14">
                             
-                            <div class="absolute top-2 right-2 flex space-x-0.5">
+                            <div class="absolute top-2 right-0 flex space-x-1">
                                 <?php for($i=0; $i<$leafCount; $i++): ?>
-                                    <svg class="w-3 h-3 text-black fill-transparent stroke-black stroke-2" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-black fill-transparent stroke-black stroke-2" viewBox="0 0 24 24">
                                         <path d="M20.2 17.6c-2.4-7.2-9.6-9.6-9.6-9.6s-2.4 7.2 9.6 9.6z" />
                                         <path d="M2.8 17.6c2.4-7.2 9.6-9.6 9.6-9.6s2.4 7.2-9.6 9.6z" />
                                         <line x1="12" y1="21" x2="12" y2="8" />
@@ -192,13 +214,13 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                                 <?php endfor; ?>
                             </div>
 
-                            <h3 class="font-semibold text-black text-sm leading-tight mb-0.5 w-[85%] truncate">
+                            <h3 class="font-bold text-black text-base leading-tight mb-1 w-full truncate pr-4">
                                 <?= get_trad_bdd($defi, 'titre', $lang) ?>
                             </h3>
                             
-                            <p class="text-[10px] text-black mb-3 opacity-80">Date</p>
+                            <p class="text-xs text-black mb-2">Date</p>
 
-                            <div class="flex items-center text-[11px] font-bold text-black space-x-3">
+                            <div class="flex items-center text-sm font-bold text-black space-x-4 mb-1">
                                 <span>50 Point</span>
                                 <span><?= $defi['xp_gain'] ?> XP</span>
                             </div>
@@ -208,15 +230,15 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                             <?php if (!$disabled): ?>
                                 <form action="validate_mission.php" method="POST">
                                     <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                    <button type="submit" class="w-10 h-9 bg-gray-500 rounded-tl-[15px] rounded-br-[25px] flex items-center justify-center hover:bg-gray-600 transition shadow-md border-t border-l border-gray-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <button type="submit" class="w-12 h-12 bg-gray-500 rounded-tl-[20px] rounded-br-[25px] flex items-center justify-center hover:bg-gray-600 transition shadow-md border-t border-l border-gray-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
                                     </button>
                                 </form>
                             <?php else: ?>
-                                <div class="w-10 h-9 bg-gray-400 rounded-tl-[15px] rounded-br-[25px] flex items-center justify-center opacity-50 cursor-not-allowed">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="w-12 h-12 bg-gray-400 rounded-tl-[20px] rounded-br-[25px] flex items-center justify-center opacity-50 cursor-not-allowed">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
