@@ -1,39 +1,47 @@
-.fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+/* Fichier : css/style.css */
+
+/* =========================================
+   1. POLICES PERSONNALISÉES
+   ========================================= */
+@font-face { 
+    font-family: 'ShiftTitle'; 
+    src: url('../fonts/Stacked-Strong.woff2') format('woff2'); /* Remarque le ../ ici */
+    font-display: swap; 
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); }
+@font-face { 
+    font-family: 'ShiftBody'; 
+    src: url('../fonts/Bahnschrift.woff2') format('woff2'); /* Remarque le ../ ici */
+    font-display: swap; 
 }
 
-.skew-container {
-    transform: skewX(-20deg);
-    overflow: hidden;
-    border-radius: 12px;
+/* =========================================
+   2. UTILITAIRES DE DESIGN (Géométrie)
+   ========================================= */
+/* Incline le bloc vers la gauche */
+.skew-tile { 
+    transform: skewX(-20deg); 
 }
 
-.skew-child {
-    transform: skewX(20deg);
+/* Redresse le contenu à l'intérieur du bloc incliné */
+.unskew { 
+    transform: skewX(20deg); 
 }
 
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
+/* =========================================
+   3. ANIMATIONS
+   ========================================= */
+.fade-in { 
+    animation: fadeIn 0.3s ease-in-out; 
 }
 
-.no-scrollbar {
-    -ms-overflow-style: none; scrollbar-width: none;
-}
-
-@font-face {
-    font-family: 'ShiftTitle';
-    src: url('../fonts/Stacked-Strong.woff2') format('woff2');
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'ShiftBody';
-    src: url('../fonts/Bahnschrift.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
+@keyframes fadeIn { 
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    } 
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    } 
 }
