@@ -1,36 +1,23 @@
-/* Fichier : css/style.css */
-
-/* =========================================
-   1. POLICES PERSONNALISÉES
-   ========================================= */
 @font-face { 
     font-family: 'ShiftTitle'; 
-    src: url('../fonts/Stacked-Strong.woff2') format('woff2'); /* Remarque le ../ ici */
+    src: url('../fonts/Stacked-Strong.woff2') format('woff2');
     font-display: swap; 
 }
 
 @font-face { 
     font-family: 'ShiftBody'; 
-    src: url('../fonts/Bahnschrift.woff2') format('woff2'); /* Remarque le ../ ici */
+    src: url('../fonts/Bahnschrift.woff2') format('woff2');
     font-display: swap; 
 }
 
-/* =========================================
-   2. UTILITAIRES DE DESIGN (Géométrie)
-   ========================================= */
-/* Incline le bloc vers la gauche */
 .skew-tile { 
     transform: skewX(-20deg); 
 }
 
-/* Redresse le contenu à l'intérieur du bloc incliné */
 .unskew { 
     transform: skewX(20deg); 
 }
 
-/* =========================================
-   3. ANIMATIONS
-   ========================================= */
 .fade-in { 
     animation: fadeIn 0.3s ease-in-out; 
 }
