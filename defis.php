@@ -8,11 +8,12 @@ if (file_exists('includes/functions.php')) {
     require_once 'functions.php';
 }
 
+// Sécurité basique si non connecté
 if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 4; 
+    $_SESSION['user_id'] = 4; // Par défaut Julie Green (ID 4) selon votre BDD
 }
 
-// Récupération des infos utilisateur
+// 1. Récupération des infos utilisateur (BDD)
 $stmtUser = $pdo->prepare("SELECT points_rank, points_wallet FROM users WHERE id = :uid");
 $stmtUser->execute(['uid' => $_SESSION['user_id']]);
 $currentUser = $stmtUser->fetch();
@@ -20,7 +21,7 @@ $currentUser = $stmtUser->fetch();
 $userXp = $currentUser['points_rank'] ?? 0;
 $userMoney = $currentUser['points_wallet'] ?? 0;
 
-// Calcul dynamique du niveau en fonction de l'XP (ex: 2500 XP par niveau)
+// 2. Calcul dynamique du niveau (ex: 1 niveau tous les 2500 XP)
 $userLevel = floor($userXp / 2500) + 1;
 $nextLevelXp = $userLevel * 2500;
 
@@ -28,21 +29,20 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 if (!in_array($lang, ['fr', 'en'])) $lang = 'fr';
 $textes = require_once "lang/$lang.php";
 
-$sql = "SELECT * FROM challenges ORDER BY domaine, categorie, titre_$lang";
+// 3. Récupération des défis et groupement basé sur la BDD
+$sql = "SELECT * FROM challenges ORDER BY categorie, titre_$lang";
 $stmt = $pdo->query($sql);
 $allChallenges = $stmt->fetchAll();
 
-// Groupement des défis dynamiquement depuis la base de données (colonne 'categorie')
 $groupedChallenges = [];
 foreach ($allChallenges as $c) {
-    // On utilise la catégorie de la BDD. Si vide, on la classe dans "Autre"
-    $catName = !empty($c['categorie']) ? $c['categorie'] : 'Autre';
+    // Utilisation de la catégorie définie dans la base de données
+    $catName = !empty($c['categorie']) ? $c['categorie'] : 'Général';
     if (!isset($groupedChallenges[$catName])) {
         $groupedChallenges[$catName] = [];
     }
     $groupedChallenges[$catName][] = $c;
 }
-$groupedChallenges = array_filter($groupedChallenges, function($a) { return !empty($a); });
 ?>
 
 <!DOCTYPE html>
@@ -78,10 +78,10 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
         .clip-parallelogram { clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); }
         .clip-filter { clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%); }
         
-        /* Correction du responsive pour tous les formats */
+        /* Conteneur principal responsive */
         .app-container { 
             width: 100%; 
-            max-width: 500px; 
+            max-width: 480px; /* S'adapte à tous les écrans mobiles */
             margin: 0 auto; 
             min-height: 100vh; 
             position: relative; 
@@ -90,7 +90,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
             overflow-x: hidden; 
         }
     </style>
-  <script>
+    <script>
       tailwind.config = {
           theme: {
               extend: {
@@ -107,23 +107,20 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                       sans: ['Inter', 'sans-serif'],
                       bahnschrift: ['Bahnschrift', 'sans-serif'],
                       stacked: ['"Stacked Strong"', 'sans-serif'],
-                  },
-                  screens: {
-                      'xs': '320px', 
                   }
               }
           }
       }
-  </script>
+    </script>
 </head>
-<body class="bg-gray-100 flex justify-center">
+<body class="bg-gray-200 flex justify-center">
 
     <div class="app-container pb-24">
         
         <div class="sticky top-0 z-40 bg-white pt-3 pb-2 px-3 flex items-center justify-between">
             <div class="flex items-center space-x-1 bg-gray-300 rounded-full pr-3">
                 <div class="w-8 h-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-bold text-xs border-2 border-white shrink-0"><?= $userLevel ?></div>
-                <span class="text-[10px] font-bold"><?= $userXp ?>/<?= $nextLevelXp ?></span>
+                <span class="text-[10px] font-bold"><?= $userXp ?>/<?= $nextLevelXp ?> XP</span>
             </div>
 
             <div class="flex items-center space-x-1 bg-gray-300 px-4 py-1 clip-parallelogram">
@@ -145,14 +142,14 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
             <div class="absolute right-0 top-0 w-[55%] h-full bg-tab-inactive clip-tab-mesdefis flex items-center justify-center cursor-pointer hover:opacity-90 transition">
                 <span class="text-sm font-stacked text-black opacity-40 ml-4">MES DÉFIS</span>
             </div>
-            <div class="absolute left-0 top-0 w-[55%] h-full bg-header-grey clip-tab-search flex flex-col justify-center items-center z-10 shadow-md cursor-pointer hover:bg-gray-300 transition">
+            <div class="absolute left-0 top-0 w-[55%] h-full bg-header-grey clip-tab-search flex flex-col justify-center items-center z-10 shadow-md cursor-pointer">
                 <h2 class="text-sm font-stacked text-black leading-none uppercase text-center pr-4">Rechercher<br>des défis</h2>
             </div>
         </div>
 
-        <button onclick="toggleFilter()" class="bg-tab-inactive py-1.5 w-32 clip-filter mt-4 mb-6 flex items-center justify-center cursor-pointer hover:bg-gray-400 transition border-none text-black">
-            <span class="text-[10px] font-bold uppercase text-center pr-2">Filtre</span>
-        </button>
+        <div class="bg-tab-inactive py-2 w-32 clip-filter mt-4 mb-6 flex items-center justify-center cursor-pointer hover:bg-gray-400 transition" onclick="toggleFilter()">
+            <span class="text-[11px] font-bold uppercase text-black pr-3">Filtre</span>
+        </div>
 
         <div class="px-3 space-y-8">
             <?php foreach ($groupedChallenges as $categoryName => $challengesInCat): ?>
@@ -161,16 +158,18 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                     
                     <?php foreach($challengesInCat as $defi): ?>
                         <?php 
+                            // Vérification limite actions journalières
                             $sql_today = "SELECT COUNT(*) FROM user_actions WHERE user_id = :uid AND challenge_id = :cid AND DATE(date_action) = CURDATE()";
                             $stmt_td = $pdo->prepare($sql_today);
                             $stmt_td->execute(['uid' => $_SESSION['user_id'], 'cid' => $defi['id']]);
                             $today_count = $stmt_td->fetchColumn();
                             $disabled = ($today_count >= $defi['max_actions_day']);
                             
-                            // Correction Bug Difficulté
+                            // 4. Correction des feuilles de difficulté
                             $diff = strtolower($defi['difficulty'] ?? 'facile');
                             $leafCount = ($diff == 'difficile') ? 3 : (($diff == 'moyen') ? 2 : 1);
                         ?>
+                        
                         <div class="bg-card-bg rounded-[25px] p-2 flex relative h-24 mb-4 shadow-md items-center cursor-pointer transition transform hover:scale-[1.02]" onclick="openModal('modal-<?= $defi['id'] ?>')">
                             <div class="w-20 h-20 bg-gray-300 rounded-[20px] flex items-center justify-center shrink-0 ml-1">
                                 <span class="text-gray-600 text-xl font-bold">+</span>
@@ -183,8 +182,14 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                                     <?php endfor; ?>
                                 </div>
                                 
-                                <h3 class="font-bahnschrift font-bold text-[11px] leading-tight mb-0.5 uppercase truncate w-[85%]"><?= get_trad_bdd($defi, 'titre', $lang) ?></h3>
-                                <p class="text-[9px] text-black mb-1.5 opacity-60 italic">Date</p>
+                                <h3 class="font-bahnschrift font-bold text-[11px] leading-tight mb-0.5 uppercase truncate w-[85%]">
+                                    <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
+                                </h3>
+                                
+                                <p class="text-[9px] text-black mb-1.5 opacity-60 italic">
+                                    <?= $defi['duration_days'] > 1 ? "Durée : " . $defi['duration_days'] . " jours" : "Quotidien" ?>
+                                </p>
+                                
                                 <div class="flex items-center text-[10px] font-bold space-x-3">
                                     <span> PT</span>
                                     <span><?= htmlspecialchars($defi['xp_gain']) ?> XP</span>
@@ -201,7 +206,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                             </div>
                         </div>
 
-                       <div id="modal-<?= $defi['id'] ?>" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+                        <div id="modal-<?= $defi['id'] ?>" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
                             <div class="bg-card-bg w-full max-w-[320px] rounded-[35px] p-2 relative shadow-2xl">
                                 <button onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20 hover:text-gray-600 transition">&times;</button>
                                 
@@ -211,28 +216,31 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                                         <img src="https://cdn-icons-png.flaticon.com/512/751/751463.png" alt="icon" class="w-10 h-10 object-contain">
                                     </div>
 
-                                    <h2 class="font-stacked text-lg text-center uppercase leading-tight mb-4 text-black"><?= get_trad_bdd($defi, 'titre', $lang) ?></h2>
+                                    <h2 class="font-stacked text-lg text-center uppercase leading-tight mb-4 text-black">
+                                        <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
+                                    </h2>
 
                                     <div class="flex flex-col items-start w-full px-2 mb-4 space-y-1">
                                         <p class="text-[11px] font-bahnschrift text-gray-800">
-                                            <span class="font-bold">Difficulté :</span> <?= ucfirst($defi['difficulty'] ?? 'Moyen') ?>
+                                            <span class="font-bold">Difficulté :</span> <?= ucfirst($diff) ?>
                                         </p>
                                         <p class="text-[11px] font-bahnschrift text-gray-800">
-                                            <span class="font-bold">Date :</span> Aujourd'hui
+                                            <span class="font-bold">Durée :</span> <?= $defi['duration_days'] > 1 ? $defi['duration_days'] . " jours" : "Aujourd'hui" ?>
                                         </p>
                                         <p class="text-[11px] font-bahnschrift text-gray-800">
                                             <span class="font-bold">Type :</span> <?= htmlspecialchars($categoryName) ?>
                                         </p>
                                     </div>
+
                                     <div class="text-[11px] font-bahnschrift text-gray-800 mb-5 px-2 text-left w-full bg-white/40 p-3 rounded-xl shadow-sm">
                                         <p class="font-bold mb-1 underline decoration-gray-400">Description de la tâche :</p>
-                                        <p class="mb-2"><?= $defi['descr_'.$lang] ?? 'Pas de description disponible.' ?></p>
+                                        <p class="mb-2"><?= htmlspecialchars($defi['descr_'.$lang] ?? 'Pas de description disponible.') ?></p>
                                     </div>
 
                                     <div class="flex items-center justify-between w-full px-4 mb-5 text-[12px] font-bold text-black bg-gray-300 py-2 rounded-lg">
                                         <div class="flex items-center gap-1">
                                             <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            <span><?= $defi['duration_days'] ?? '1' ?> jours</span>
+                                            <span><?= htmlspecialchars($defi['xp_gain']) ?> XP</span>
                                         </div>
                                         <div class="flex items-center gap-1">
                                             <svg class="w-4 h-4 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -252,34 +260,27 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
             <?php endforeach; ?>
         </div>
 
-      <?php if (isset($_SESSION['flash_message'])): ?>
-    <div id="success-modal" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="bg-card-bg w-full max-w-[320px] rounded-[35px] p-2 relative shadow-2xl">
-            
-            <button onclick="closeModal('success-modal')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20 hover:text-gray-600 transition">&times;</button>
-
-            <div class="bg-inner-card rounded-[30px] p-6 pt-10 flex flex-col items-center text-center">
-                
-                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center border-[4px] border-green-500 mb-5 shadow-sm overflow-hidden">
-                    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="success icon" class="w-12 h-12 object-contain">
+        <?php if (isset($_SESSION['flash_message'])): ?>
+        <div id="success-modal" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            <div class="bg-card-bg w-full max-w-[320px] rounded-[35px] p-2 relative shadow-2xl">
+                <button onclick="closeModal('success-modal')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20 hover:text-gray-600 transition">&times;</button>
+                <div class="bg-inner-card rounded-[30px] p-6 pt-10 flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center border-[4px] border-green-500 mb-5 shadow-sm overflow-hidden">
+                        <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="success icon" class="w-12 h-12 object-contain">
+                    </div>
+                    <h2 class="font-stacked text-2xl uppercase mb-3 text-green-700">Merci !</h2>
+                    <p class="font-bahnschrift text-[13px] text-gray-800 mb-4 font-bold">Votre tâche a bien été validée.</p>
+                    <p class="font-bahnschrift text-[11px] text-gray-500 mb-6 uppercase border-t border-gray-300 pt-3 w-full">
+                        <?= htmlspecialchars($_SESSION['flash_message']) ?>
+                    </p>
+                    <button onclick="closeModal('success-modal')" class="bg-group-bg text-black font-stacked w-full py-3 rounded-[20px] text-xs uppercase shadow-md transition hover:bg-gray-400">Continuer</button>
                 </div>
-
-                <h2 class="font-stacked text-2xl uppercase mb-3 text-green-700">Merci !</h2>
-                
-                <p class="font-bahnschrift text-[13px] text-gray-800 mb-4 font-bold">Votre tâche a bien été validée.</p>
-                
-                <p class="font-bahnschrift text-[11px] text-gray-500 mb-6 uppercase border-t border-gray-300 pt-3 w-full">
-                    <?= htmlspecialchars($_SESSION['flash_message']) ?>
-                </p>
-                
-                <button onclick="closeModal('success-modal')" class="bg-group-bg text-black font-stacked w-full py-3 rounded-[20px] text-xs uppercase shadow-md transition hover:bg-gray-400">Continuer</button>
             </div>
         </div>
-    </div>
-    <?php unset($_SESSION['flash_message']); ?>
+        <?php unset($_SESSION['flash_message']); ?>
+        <?php endif; ?>
 
-<?php endif; ?>
-        <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[500px] bg-dark-nav h-16 flex items-center justify-around z-40">
+        <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-dark-nav h-16 flex items-center justify-around z-40">
             <a href="#" class="text-white opacity-50 hover:opacity-100 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg></a>
             <a href="#" class="text-white opacity-50 hover:opacity-100 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21h6M12 17v4M7 4v7c0 2.8 2.2 5 5 5s5-2.2 5-5V4H7z"/><path d="M7 6H5c-1.1 0-2 .9-2 2s.9 2 2 2h2M17 6h2c1.1 0 2 .9 2 2s-.9 2-2 2h-2"/></svg></a>
             <a href="defis.php" class="text-white transform scale-110"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg></a>
@@ -296,7 +297,8 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
             document.getElementById(id).classList.add('hidden');
         }
         function toggleFilter() {
-           console.log('Filtre cliqué');
+            console.log('Filtre cliqué');
+            // Logique de filtrage à implémenter si besoin
         }
     </script>
 </body>
