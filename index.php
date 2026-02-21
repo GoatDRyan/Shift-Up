@@ -1,37 +1,6 @@
 <?php
-session_start();
 require_once 'db_connect.php';
-// --- 1. SÉCURITÉ ---
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-$user_id = $_SESSION['user_id'];
-
-// --- 2. FONCTIONS & LANGUE ---
-if (file_exists('includes/functions.php')) { require_once 'includes/functions.php'; } 
-elseif (file_exists('functions.php')) { require_once 'functions.php'; }
-
-if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en'])) {
-    $new = $_GET['lang'];
-    $pdo->prepare("UPDATE users SET language_pref = ? WHERE id = ?")->execute([$new, $user_id]);
-    $_SESSION['lang'] = $new;
-}
-
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-$stmt->execute([$user_id]);
-$user = $stmt->fetch();
-
-if (!$user) { header("Location: logout.php"); exit(); }
-
-$lang = $_SESSION['lang'] ?? ($user['language_pref'] ?? 'fr');
-$t = require_once "lang/$lang.php";
-
-$pseudo = $user['pseudo'] ?? "Joueur";
-$money = $user['points_wallet'] ?? 0;
-
-// --- 3. LOGIQUE MÉTIER ---
-
+require_once 'includes/init.php';
 // Niveau 
 if (function_exists('get_level_data')) {
     $levelData = get_level_data($user['points_rank']);
@@ -88,12 +57,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shift'Up</title>
-    
+    <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/tailwind-config.js"></script>
-    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24">
@@ -140,7 +108,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
 
             <div id="btn-dept" onclick="switchView('dept')" 
-                 class="absolute right-[-5%] top-[45%] w-[45%] h-28 max-[375px]:h-24 max-[320px]:h-20 bg-brand-border skew-tile cursor-pointer flex items-center justify-center pl-4 transition-colors border-l-4 border-brand-primary">
+                 class="absolute right-[-5%] top-[45%] w-[45%] h-28 max-[375px]:h-24 max-[320px]:h-20 bg-brand-border skew-tile cursor-pointer flex items-center justify-center pl-4 transition-colors">
                 <div class="unskew">
                     <h2 class="font-display text-2xl max-[375px]:text-xl max-[320px]:text-lg font-bold text-brand-tertiary uppercase tracking-tighter">Ranked</h2>
                 </div>
@@ -149,22 +117,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </header>
 
-    <div id="settings-menu" class="fixed inset-0 bg-brand-dark/95 z-50 hidden flex flex-col justify-center items-center opacity-0 transition-opacity duration-300">
-        <button onclick="toggleMenu()" class="absolute top-6 right-6 text-brand-primary text-2xl">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2 class="font-display text-brand-primary text-2xl font-bold mb-6"><?= $t['settings'] ?></h2>
-        <p class="text-brand-tertiary text-sm mb-3"><?= $t['choose_lang'] ?></p>
-        <div class="flex gap-4 mb-8">
-            <a href="?lang=fr" class="border border-brand-tertiary px-6 py-2 rounded-full text-sm font-bold transition <?= $lang == 'fr' ? 'bg-brand-primary text-brand-dark' : 'text-brand-tertiary hover:text-brand-primary' ?>">Français 🇫🇷</a>
-            <a href="?lang=en" class="border border-brand-tertiary px-6 py-2 rounded-full text-sm font-bold transition <?= $lang == 'en' ? 'bg-brand-primary text-brand-dark' : 'text-brand-tertiary hover:text-brand-primary' ?>">English 🇬🇧</a>
-        </div>
-        <nav class="flex flex-col gap-6 text-center text-xl w-full px-10 text-brand-primary">
-            <a href="#" class="hover:text-brand-tertiary border-b border-brand-tertiary pb-4"><?= $t['account'] ?></a>
-            <a href="#" class="hover:text-brand-tertiary border-b border-brand-tertiary pb-4"><?= $t['privacy'] ?></a>
-            <a href="logout.php" class="text-brand-accent mt-4 font-bold"><?= $t['logout'] ?></a>
-        </nav>
-    </div>
+    <?php include 'includes/settings_menu.php'; ?>
 
     <main class="px-4 max-[375px]:px-2 pt-10">
 
@@ -173,8 +126,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <div class="bg-brand-primary border border-brand-border rounded-2xl p-4 mb-6 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="font-bold text-sm text-brand-dark flex items-center gap-2">
-                        <i class="fa-solid fa-fire text-brand-accent"></i> 
-                        <?= $t['streak_title'] ?>
+                        <img class="w-4 h-4" src="img/icone/icone-flamme.svg" alt="Flamme">
+                        Shift streak
                     </h3>
                     <span class="text-xs font-mono text-brand-tertiary font-bold"><?= $user['current_streak'] ?> Jours</span>
                 </div>
@@ -183,10 +136,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <?php foreach($week_streak as $day): ?>
                         <div class="flex flex-col items-center gap-1.5">
                             <div class="w-8 h-8 rounded-full flex items-center justify-center border-2 
-                                <?= $day['active'] ? 'bg-brand-accent border-brand-accent text-brand-primary' : 'bg-brand-card border-brand-border text-brand-secondary' ?> 
+                                <?= $day['active'] ? 'bg-brand-primary text-brand-primary' : 'bg-brand-card border-brand-border text-brand-secondary' ?> 
                                 <?= $day['is_today'] ? 'ring-2 ring-brand-tertiary ring-offset-2 ring-offset-brand-primary' : '' ?>">
                                 <?php if($day['active']): ?>
-                                    <i class="fa-solid fa-fire text-xs"></i>
+                                    <img class="w-6 h-6" src="img/icone/icone-flamme.svg" alt="Flamme">
                                 <?php else: ?>
                                     <div class="w-1.5 h-1.5 rounded-full bg-brand-secondary"></div>
                                 <?php endif; ?>
