@@ -177,7 +177,7 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                                 <h3 class="font-bahnschrift font-bold text-[11px] leading-tight mb-0.5 uppercase truncate w-[85%]"><?= get_trad_bdd($defi, 'titre', $lang) ?></h3>
                                 <p class="text-[9px] text-black mb-1.5 opacity-60 italic">Date</p>
                                 <div class="flex items-center text-[10px] font-bold space-x-3">
-                                    <span>50 PT</span>
+                                    <span> PT</span>
                                     <span><?= $defi['xp_gain'] ?> XP</span>
                                 </div>
                             </div>
@@ -192,65 +192,85 @@ $groupedChallenges = array_filter($groupedChallenges, function($a) { return !emp
                             </div>
                         </div>
 
-                        <div id="modal-<?= $defi['id'] ?>" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/70 backdrop-blur-sm">
-                            <div class="bg-card-bg w-[290px] rounded-[35px] p-2 relative shadow-2xl">
-                                <button onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20">&times;</button>
-                                
-                                <div class="bg-inner-card rounded-[30px] p-5 pt-8 flex flex-col items-center">
-                                    <div class="w-24 h-24 bg-gray-300 rounded-[20px] mb-4 flex items-center justify-center shadow-inner">
-                                        <span class="text-4xl text-gray-500 font-bold">+</span>
-                                    </div>
-                                    
-                                    <h2 class="font-stacked text-base text-center uppercase leading-tight mb-3"><?= get_trad_bdd($defi, 'titre', $lang) ?></h2>
-                                    
-                                    <div class="flex items-center justify-center space-x-4 mb-4">
-                                        <div class="bg-gray-400 px-3 py-1 rounded-full text-[11px] font-bold uppercase shadow-sm">50 PT</div>
-                                        <div class="bg-gray-400 px-3 py-1 rounded-full text-[11px] font-bold uppercase shadow-sm"><?= $defi['xp_gain'] ?> XP</div>
-                                    </div>
+                       <div id="modal-<?= $defi['id'] ?>" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/70 backdrop-blur-sm">
+    <div class="bg-card-bg w-[290px] rounded-[35px] p-2 relative shadow-2xl">
+        <button onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20">&times;</button>
+        
+        <div class="bg-inner-card rounded-[30px] p-5 pt-8 flex flex-col items-center">
+            
+            <div class="w-16 h-16 bg-white rounded-full mb-3 flex items-center justify-center shadow-inner overflow-hidden border-2 border-gray-300">
+                <img src="https://cdn-icons-png.flaticon.com/512/751/751463.png" alt="icon" class="w-10 h-10 object-contain">
+            </div>
 
-                                    <div class="flex space-x-1 mb-4">
-                                        <?php for($i=0; $i<$leafCount; $i++): ?>
-                                            <svg class="w-5 h-5 text-black fill-current" viewBox="0 0 24 24"><path d="M17,8C8,10 5,16 5,16C5,16 11,13 20,15C20,15 18,8 17,8Z"/></svg>
-                                        <?php endfor; ?>
-                                    </div>
+            <h2 class="font-stacked text-lg text-center uppercase leading-tight mb-4 text-black"><?= get_trad_bdd($defi, 'titre', $lang) ?></h2>
 
-                                    <p class="text-xs text-center font-bahnschrift text-gray-800 mb-6 leading-relaxed">
-                                        <?= isset($defi['description_' . $lang]) && !empty($defi['description_' . $lang]) ? $defi['description_' . $lang] : "Participez à ce défi pour gagner des points, augmenter votre niveau et réduire votre impact carbone !" ?>
-                                    </p>
+            <div class="flex flex-col items-start w-full px-2 mb-4 space-y-1">
+                <p class="text-[11px] font-bahnschrift text-gray-800">
+                    <span class="font-bold">Difficulté :</span> <?= ucfirst($defi['difficulty'] ?? 'Moyen') ?>
+                </p>
+                <p class="text-[11px] font-bahnschrift text-gray-800">
+                    <span class="font-bold">Date :</span> Aujourd'hui
+                </p>
+                <p class="text-[11px] font-bahnschrift text-gray-800">
+                    <span class="font-bold">Type :</span> <?= $categoryName ?>
+                </p>
+            </div>
+<div class="text-[11px] font-bahnschrift text-gray-800 mb-5 px-2 text-left w-full bg-white/40 p-3 rounded-xl shadow-sm">
+                <p class="font-bold mb-1 underline decoration-gray-400">Description de la tâche :</p>
+                <p class="mb-2"><?= $defi['descr_'.$lang] ?? 'Pas de description disponible.' ?></p>
+                
+            </div>
 
-                                    <form action="validate_mission.php" method="POST" class="w-full">
-                                        <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                        <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-full bg-group-bg text-black font-stacked py-3 rounded-[20px] text-sm uppercase tracking-wider shadow-md <?= $disabled ? 'opacity-50' : 'hover:bg-gray-500' ?> transition">
-                                            <?= $disabled ? 'Déjà fait aujourd\'hui' : 'Ajouter le défi' ?>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+            <div class="flex items-center justify-between w-full px-4 mb-5 text-[12px] font-bold text-black bg-gray-300 py-2 rounded-lg">
+                <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span><?= $defi['duration_days'] ?? '1' ?> jours</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span><?= isset($defi['co2_kg']) ? ($defi['co2_kg'] * 1000) : '0' ?> g de CO2</span>
+                </div>
+            </div>
 
+            <form action="validate_mission.php" method="POST" class="w-full">
+                <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
+                <button type="submit" class="w-full bg-group-bg text-black font-stacked py-3 rounded-[20px] text-[13px] uppercase shadow-md transition hover:bg-gray-400">Valider la tâche</button>
+            </form>
+        </div>
+    </div>
+</div>
                     <?php endforeach; ?>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <?php if (isset($_SESSION['flash_message'])): ?>
-            <div id="success-modal" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-                <div class="bg-card-bg w-[290px] rounded-[35px] p-2 relative shadow-2xl">
-                    <div class="bg-inner-card rounded-[30px] p-6 flex flex-col items-center text-center">
-                        <div class="w-20 h-20 bg-group-bg rounded-full flex items-center justify-center border-[5px] border-white mb-4 shadow-sm">
-                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M5 13l4 4L19 7"/></svg>
-                        </div>
-                        <h2 class="font-stacked text-xl uppercase mb-2">Félicitations !</h2>
-                        <p class="font-bahnschrift text-sm text-gray-800 mb-6 font-bold"><?= htmlspecialchars($_SESSION['flash_message']) ?></p>
-                        <button onclick="closeModal('success-modal')" class="bg-group-bg text-black font-stacked px-10 py-3 rounded-[20px] text-sm uppercase tracking-wider shadow-md hover:bg-gray-500 transition">
-                            Continuer
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <?php unset($_SESSION['flash_message']); ?>
-        <?php endif; ?>
+      <?php if (isset($_SESSION['flash_message'])): ?>
+    <div id="success-modal" class="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div class="bg-card-bg w-[290px] rounded-[35px] p-2 relative shadow-2xl">
+            
+            <button onclick="closeModal('success-modal')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20">&times;</button>
 
+            <div class="bg-inner-card rounded-[30px] p-6 pt-10 flex flex-col items-center text-center">
+                
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center border-[4px] border-green-500 mb-5 shadow-sm overflow-hidden">
+                    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="success icon" class="w-12 h-12 object-contain">
+                </div>
+
+                <h2 class="font-stacked text-2xl uppercase mb-3 text-green-700">Merci !</h2>
+                
+                <p class="font-bahnschrift text-[13px] text-gray-800 mb-4 font-bold">Votre tâche a bien été validée.</p>
+                
+                <p class="font-bahnschrift text-[11px] text-gray-500 mb-6 uppercase border-t border-gray-300 pt-3 w-full">
+                    <?= htmlspecialchars($_SESSION['flash_message']) ?>
+                </p>
+                
+                <button onclick="closeModal('success-modal')" class="bg-group-bg text-black font-stacked w-full py-3 rounded-[20px] text-xs uppercase shadow-md transition hover:bg-gray-400">Continuer</button>
+            </div>
+        </div>
+    </div>
+    <?php unset($_SESSION['flash_message']); ?>
+
+<?php endif; ?>
         <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-[320px] bg-dark-nav h-16 flex items-center justify-around z-40">
             <a href="#" class="text-white opacity-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg></a>
             <a href="#" class="text-white opacity-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21h6M12 17v4M7 4v7c0 2.8 2.2 5 5 5s5-2.2 5-5V4H7z"/><path d="M7 6H5c-1.1 0-2 .9-2 2s.9 2 2 2h2M17 6h2c1.1 0 2 .9 2 2s-.9 2-2 2h-2"/></svg></a>
