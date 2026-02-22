@@ -26,19 +26,26 @@ $lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
 if (!in_array($lang, ['fr', 'en'])) $lang = 'fr';
 $textes = require_once "lang/$lang.php";
 
-$sql = "SELECT * FROM challenges ORDER BY categorie, titre_$lang";
+$sql = "SELECT * FROM challenges ORDER BY domaine, categorie, titre_$lang";
 $stmt = $pdo->query($sql);
 $allChallenges = $stmt->fetchAll();
 
 $groupedChallenges = [];
-$categories = []; // Pour remplir le filtre dynamiquement
+$categories = [];
+$domaines = []; 
+
 foreach ($allChallenges as $c) {
+    $domaineName = !empty($c['domaine']) ? $c['domaine'] : 'Autre';
     $catName = !empty($c['categorie']) ? $c['categorie'] : 'Général';
-    if (!isset($groupedChallenges[$catName])) {
-        $groupedChallenges[$catName] = [];
-        $categories[] = $catName;
+    
+    if (!isset($groupedChallenges[$domaineName])) {
+        $groupedChallenges[$domaineName] = [];
     }
-    $groupedChallenges[$catName][] = $c;
+    
+    if (!in_array($domaineName, $domaines)) $domaines[] = $domaineName;
+    if (!in_array($catName, $categories)) $categories[] = $catName;
+    
+    $groupedChallenges[$domaineName][] = $c;
 }
 ?>
 
@@ -53,28 +60,21 @@ foreach ($allChallenges as $c) {
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         @font-face {
             font-family: 'Bahnschrift';
-            src: url('Bahnschrift.woff2') format('woff2'),
-                 url('Bahnschrift.woff') format('woff');
+            src: url('Bahnschrift.woff2') format('woff2'), url('Bahnschrift.woff') format('woff');
             font-weight: normal; font-style: normal; font-display: swap;
         }
         @font-face {
             font-family: 'Stacked Strong';
-            src: url('Stacked-Strong.woff2') format('woff2'),
-                 url('Stacked-Strong.woff') format('woff');
+            src: url('Stacked-Strong.woff2') format('woff2'), url('Stacked-Strong.woff') format('woff');
             font-weight: normal; font-style: normal; font-display: swap;
         }
-
         body { font-family: 'Bahnschrift', sans-serif; background-color: #f3f4f6; }
-
+        
         .clip-tab-search { clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%); }
         .clip-tab-mesdefis { clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%); }
-        .clip-parallelogram { clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); }
         .clip-filter { clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%); }
         
-        .app-container { 
-            width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; 
-            position: relative; background: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.1); overflow-x: hidden; 
-        }
+        .app-container { width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.1); overflow-x: hidden; }
     </style>
     <script>
       tailwind.config = {
@@ -84,11 +84,7 @@ foreach ($allChallenges as $c) {
                       'app-bg': '#ffffff', 'header-grey': '#D9D9D9', 'group-bg': '#8A8989',   
                       'card-grey': '#A7A7A7', 'inner-card': '#D9D9D9', 'tab-inactive': '#B0B0B0', 'dark-nav': '#1e1e1e',
                   },
-                  fontFamily: {
-                      sans: ['Inter', 'sans-serif'],
-                      bahnschrift: ['Bahnschrift', 'sans-serif'],
-                      stacked: ['"Stacked Strong"', 'sans-serif'],
-                  }
+                  fontFamily: { sans: ['Inter', 'sans-serif'], bahnschrift: ['Bahnschrift', 'sans-serif'], stacked: ['"Stacked Strong"', 'sans-serif'], }
               }
           }
       }
@@ -100,42 +96,38 @@ foreach ($allChallenges as $c) {
         
         <div class="sticky top-0 z-40 bg-white pt-3 pb-2 px-3 flex items-center justify-between">
             <div class="flex items-center space-x-1 bg-gray-300 rounded-full pr-3">
-                <div class="w-8 h-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-bold text-xs border-2 border-white shrink-0"><?= $userLevel ?></div>
+                <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs border-2 border-white shrink-0 shadow-sm">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17,8C8,10 5,16 5,16C5,16 11,13 20,15C20,15 18,8 17,8Z"/></svg>
+                </div>
                 <span class="text-[10px] font-bold"><?= $userXp ?>/<?= $nextLevelXp ?> XP</span>
             </div>
-
-            <div class="flex items-center space-x-1 bg-gray-300 px-4 py-1 clip-parallelogram">
+            <div class="flex items-center space-x-1 bg-gray-300 px-4 py-1" style="clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);">
                 <div class="w-4 h-4 rounded-full border border-black flex items-center justify-center text-[9px] font-bold">$</div>
                 <span class="text-[10px] font-bold"><?= $userMoney ?></span>
             </div>
-
             <div class="flex space-x-2">
-                <div class="p-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                </div>
-                <div class="p-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </div>
+                <div class="p-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+                <div class="p-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
             </div>
         </div>
 
-        <div class="relative w-full h-16 mt-2 flex">
-            <div class="absolute right-0 top-0 w-[55%] h-full bg-tab-inactive clip-tab-mesdefis flex items-center justify-center cursor-pointer hover:opacity-90 transition">
-                <span class="text-sm font-stacked text-black opacity-40 ml-4">MES DÉFIS</span>
+        <div class="relative w-full h-14 mt-3 flex px-2">
+            <div class="w-[55%] h-full bg-header-grey clip-tab-search flex flex-col justify-center items-center z-10 shadow-md cursor-pointer relative">
+                <h2 class="text-sm font-stacked text-black leading-none uppercase text-center pr-6">Rechercher<br>des défis</h2>
             </div>
-            <div class="absolute left-0 top-0 w-[55%] h-full bg-header-grey clip-tab-search flex flex-col justify-center items-center z-10 shadow-md cursor-pointer">
-                <h2 class="text-sm font-stacked text-black leading-none uppercase text-center pr-4">Rechercher<br>des défis</h2>
+            <div class="w-[55%] h-full bg-tab-inactive clip-tab-mesdefis flex items-center justify-center cursor-pointer absolute right-2 top-0 hover:opacity-90 transition">
+                <span class="text-sm font-stacked text-black opacity-50 pl-4">MES DÉFIS</span>
             </div>
         </div>
 
-        <div class="bg-tab-inactive py-2 w-32 clip-filter mt-4 mb-6 flex items-center justify-center cursor-pointer hover:bg-gray-400 transition" onclick="toggleFilter()">
+        <div class="bg-tab-inactive py-2 w-32 clip-filter mt-4 mb-6 flex items-center justify-center cursor-pointer hover:bg-gray-400 transition" onclick="openFilter()">
             <span class="text-[11px] font-bold uppercase text-black pr-3">Filtre</span>
         </div>
 
-        <div class="px-3 space-y-8" id="challenges-container">
-            <?php foreach ($groupedChallenges as $categoryName => $challengesInCat): ?>
-                <div class="category-block bg-group-bg rounded-[30px] p-4 pb-6 shadow-sm" data-cat-name="<?= htmlspecialchars($categoryName) ?>">
-                    <h2 class="text-center text-lg font-stacked mb-5 text-black uppercase tracking-wider"><?= htmlspecialchars($categoryName) ?> :</h2>
+        <div class="px-3 space-y-8" id="challenges-list">
+            <?php foreach ($groupedChallenges as $domaineName => $challengesInCat): ?>
+                <div class="category-block bg-group-bg rounded-[30px] p-4 pb-6 shadow-sm" data-domain-name="<?= htmlspecialchars($domaineName) ?>">
+                    <h2 class="text-center text-lg font-stacked mb-5 text-black uppercase tracking-wider"><?= htmlspecialchars($domaineName) ?> :</h2>
                     
                     <?php foreach($challengesInCat as $defi): ?>
                         <?php 
@@ -144,36 +136,37 @@ foreach ($allChallenges as $c) {
                             $stmt_td->execute(['uid' => $_SESSION['user_id'], 'cid' => $defi['id']]);
                             $today_count = $stmt_td->fetchColumn();
                             $disabled = ($today_count >= $defi['max_actions_day']);
-                            
                             $diff = strtolower($defi['difficulty'] ?? 'facile');
                             $leafCount = ($diff == 'difficile') ? 3 : (($diff == 'moyen') ? 2 : 1);
+                            $catName = !empty($defi['categorie']) ? $defi['categorie'] : 'Général';
                         ?>
                         
-                        <div class="challenge-card bg-card-bg rounded-[25px] p-2 flex relative h-24 mb-4 shadow-md items-center cursor-pointer transition transform hover:scale-[1.02]" 
+                        <div class="challenge-card bg-card-bg rounded-[25px] p-2 flex relative h-24 mb-4 shadow-md items-center cursor-pointer transition transform hover:scale-[1.01]" 
                              data-difficulty="<?= $diff ?>" 
-                             data-category="<?= htmlspecialchars($categoryName) ?>"
+                             data-domain="<?= htmlspecialchars($domaineName) ?>"
+                             data-category="<?= htmlspecialchars($catName) ?>"
                              onclick="openModal('modal-<?= $defi['id'] ?>')">
                             
-                            <div class="w-20 h-20 bg-gray-300 rounded-[20px] flex items-center justify-center shrink-0 ml-1">
-                                <span class="text-gray-600 text-xl font-bold">+</span>
+                            <div class="w-20 h-20 bg-gray-200 rounded-[20px] flex items-center justify-center shrink-0 ml-1 shadow-inner">
+                                <svg class="w-8 h-8 text-green-600 fill-current opacity-80" viewBox="0 0 24 24"><path d="M17,8C8,10 5,16 5,16C5,16 11,13 20,15C20,15 18,8 17,8Z"/></svg>
                             </div>
                             
-                            <div class="ml-4 flex-1 flex flex-col justify-center bg-inner-card h-full rounded-[20px] pl-3 pr-10 relative">
+                            <div class="ml-4 flex-1 min-w-0 flex flex-col justify-center bg-inner-card h-full rounded-[20px] pl-3 pr-10 relative overflow-hidden">
                                 <div class="absolute top-2 right-2 flex space-x-0.5">
                                     <?php for($i=0; $i<$leafCount; $i++): ?>
-                                        <svg class="w-3.5 h-3.5 text-black fill-current" viewBox="0 0 24 24"><path d="M17,8C8,10 5,16 5,16C5,16 11,13 20,15C20,15 18,8 17,8Z"/></svg>
+                                        <svg class="w-3.5 h-3.5 text-green-700 fill-current" viewBox="0 0 24 24"><path d="M17,8C8,10 5,16 5,16C5,16 11,13 20,15C20,15 18,8 17,8Z"/></svg>
                                     <?php endfor; ?>
                                 </div>
                                 
-                                <h3 class="font-bahnschrift font-bold text-[11px] leading-tight mb-0.5 uppercase truncate w-[85%]">
+                                <h3 class="font-bahnschrift font-bold text-[11px] leading-tight mb-0.5 uppercase truncate w-[90%] text-gray-900">
                                     <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
                                 </h3>
                                 
-                                <p class="text-[9px] text-black mb-1.5 opacity-60 italic">
+                                <p class="text-[9px] text-gray-700 mb-1.5 opacity-80 italic">
                                     <?= $defi['duration_days'] > 1 ? "Durée : " . $defi['duration_days'] . " jours" : "Quotidien" ?>
                                 </p>
                                 
-                                <div class="flex items-center text-[10px] font-bold space-x-3">
+                                <div class="flex items-center text-[10px] font-bold space-x-3 text-gray-800">
                                     <span> PT</span>
                                     <span><?= htmlspecialchars($defi['xp_gain']) ?> XP</span>
                                 </div>
@@ -191,16 +184,40 @@ foreach ($allChallenges as $c) {
 
                         <div id="modal-<?= $defi['id'] ?>" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
                             <div class="bg-card-bg w-full max-w-[320px] rounded-[35px] p-2 relative shadow-2xl">
-                                <button onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20">&times;</button>
+                                <button onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-5 text-black font-bold text-2xl z-20 hover:text-gray-600 transition">&times;</button>
                                 <div class="bg-inner-card rounded-[30px] p-5 pt-8 flex flex-col items-center">
-                                    <h2 class="font-stacked text-lg text-center uppercase mb-4 text-black"><?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?></h2>
-                                    <div class="text-[11px] font-bahnschrift text-gray-800 mb-5 px-2 text-left w-full bg-white/40 p-3 rounded-xl">
-                                        <p class="font-bold mb-1">Description :</p>
-                                        <p><?= htmlspecialchars($defi['descr_'.$lang] ?? 'Pas de description.') ?></p>
+                                    <div class="w-16 h-16 bg-white rounded-full mb-3 flex items-center justify-center shadow-inner overflow-hidden border-2 border-green-500">
+                                        <svg class="w-8 h-8 text-green-600 fill-current" viewBox="0 0 24 24"><path d="M17,8C8,10 5,16 5,16C5,16 11,13 20,15C20,15 18,8 17,8Z"/></svg>
+                                    </div>
+                                    <h2 class="font-stacked text-lg text-center uppercase leading-tight mb-4 text-black"><?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?></h2>
+                                    <div class="flex flex-col items-start w-full px-2 mb-4 space-y-1">
+                                        <p class="text-[11px] font-bahnschrift text-gray-800 flex items-center gap-1">
+                                            <span class="font-bold">Difficulté :</span> 
+                                            <?php for($i=0; $i<$leafCount; $i++): ?>
+                                                <svg class="w-3 h-3 text-green-700 fill-current" viewBox="0 0 24 24"><path d="M17,8C8,10 5,16 5,16C5,16 11,13 20,15C20,15 18,8 17,8Z"/></svg>
+                                            <?php endfor; ?>
+                                            (<?= ucfirst($diff) ?>)
+                                        </p>
+                                        <p class="text-[11px] font-bahnschrift text-gray-800"><span class="font-bold">Durée :</span> <?= $defi['duration_days'] > 1 ? $defi['duration_days'] . " jours" : "Aujourd'hui" ?></p>
+                                        <p class="text-[11px] font-bahnschrift text-gray-800"><span class="font-bold">Type :</span> <?= htmlspecialchars($domaineName) ?></p>
+                                    </div>
+                                    <div class="text-[11px] font-bahnschrift text-gray-800 mb-5 px-2 text-left w-full bg-white/40 p-3 rounded-xl shadow-sm">
+                                        <p class="font-bold mb-1 underline decoration-gray-400">Description de la tâche :</p>
+                                        <p class="mb-2"><?= htmlspecialchars($defi['descr_'.$lang] ?? 'Pas de description disponible.') ?></p>
+                                    </div>
+                                    <div class="flex items-center justify-between w-full px-4 mb-5 text-[12px] font-bold text-black bg-gray-300 py-2 rounded-lg">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span><?= htmlspecialchars($defi['xp_gain']) ?> XP</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span><?= isset($defi['co2_kg']) ? ($defi['co2_kg'] * 1000) : '0' ?> g de CO2</span>
+                                        </div>
                                     </div>
                                     <form action="validate_mission.php" method="POST" class="w-full">
                                         <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                        <button type="submit" class="w-full bg-group-bg text-black font-stacked py-3 rounded-[20px] text-[13px] uppercase">Valider la tâche</button>
+                                        <button type="submit" class="w-full bg-group-bg text-black font-stacked py-3 rounded-[20px] text-[13px] uppercase shadow-md transition hover:bg-gray-400">Valider la tâche</button>
                                     </form>
                                 </div>
                             </div>
@@ -211,26 +228,34 @@ foreach ($allChallenges as $c) {
         </div>
 
         <div id="filter-modal" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div class="bg-card-bg w-full max-w-[320px] rounded-[35px] p-2 relative shadow-2xl">
-                <button onclick="toggleFilter()" class="absolute top-4 right-5 text-black font-bold text-2xl">&times;</button>
-                <div class="bg-inner-card rounded-[30px] p-6 pt-8">
-                    <h2 class="font-stacked text-center text-xl uppercase mb-6">Filtrer par :</h2>
+            <div class="bg-card-bg w-full max-w-[340px] rounded-[35px] p-2 relative shadow-2xl">
+                <button onclick="closeFilter()" class="absolute top-4 right-5 text-black font-bold text-2xl z-20 hover:text-gray-600 transition">&times;</button>
+                <div class="bg-inner-card rounded-[30px] p-6 pt-10">
+                    <h2 class="font-stacked text-center text-xl uppercase mb-6">Filtrer les défis</h2>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-bold uppercase mb-2">Difficulté</label>
-                            <select id="filter-difficulty" class="w-full p-3 rounded-xl bg-white/50 font-bahnschrift text-sm outline-none">
-                                <option value="all">Toutes</option>
-                                <option value="facile">Facile (1 feuille)</option>
-                                <option value="moyen">Moyen (2 feuilles)</option>
-                                <option value="difficile">Difficile (3 feuilles)</option>
+                            <label class="block text-[10px] font-bold uppercase mb-1 ml-1 text-gray-700">Difficulté</label>
+                            <select id="filter-difficulty" class="w-full bg-white rounded-xl p-3 text-sm font-bahnschrift outline-none border border-gray-300">
+                                <option value="all">Toutes les difficultés</option>
+                                <option value="facile">Facile</option>
+                                <option value="moyen">Moyen</option>
+                                <option value="difficile">Difficile</option>
                             </select>
                         </div>
-                        
                         <div>
-                            <label class="block text-[10px] font-bold uppercase mb-2">Catégorie</label>
-                            <select id="filter-category" class="w-full p-3 rounded-xl bg-white/50 font-bahnschrift text-sm outline-none">
-                                <option value="all">Toutes</option>
+                            <label class="block text-[10px] font-bold uppercase mb-1 ml-1 text-gray-700">Type de tâche</label>
+                            <select id="filter-domain" class="w-full bg-white rounded-xl p-3 text-sm font-bahnschrift outline-none border border-gray-300">
+                                <option value="all">Tous les types</option>
+                                <?php foreach($domaines as $dom): ?>
+                                    <option value="<?= htmlspecialchars($dom) ?>"><?= htmlspecialchars($dom) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase mb-1 ml-1 text-gray-700">Catégorie</label>
+                            <select id="filter-category" class="w-full bg-white rounded-xl p-3 text-sm font-bahnschrift outline-none border border-gray-300">
+                                <option value="all">Toutes les catégories</option>
                                 <?php foreach($categories as $cat): ?>
                                     <option value="<?= htmlspecialchars($cat) ?>"><?= htmlspecialchars($cat) ?></option>
                                 <?php endforeach; ?>
@@ -238,7 +263,7 @@ foreach ($allChallenges as $c) {
                         </div>
                     </div>
 
-                    <button onclick="applyFilters()" class="w-full bg-group-bg text-black font-stacked py-4 rounded-[20px] text-[13px] uppercase mt-8 shadow-md">Appliquer</button>
+                    <button onclick="applyFilters()" class="w-full bg-group-bg text-black font-stacked py-4 rounded-[20px] text-sm uppercase mt-8 shadow-md hover:bg-gray-400 transition">Appliquer</button>
                 </div>
             </div>
         </div>
@@ -252,9 +277,8 @@ foreach ($allChallenges as $c) {
                         <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="success" class="w-12 h-12 object-contain">
                     </div>
                     <h2 class="font-stacked text-2xl uppercase mb-3 text-green-700">Merci !</h2>
-                    <p class="font-bahnschrift text-[13px] text-gray-800 mb-6 uppercase border-t border-gray-300 pt-3 w-full">
-                        <?= htmlspecialchars($_SESSION['flash_message']) ?>
-                    </p>
+                    <p class="font-bahnschrift text-[13px] text-gray-800 mb-4 font-bold">Votre tâche a bien été validée.</p>
+                    <p class="font-bahnschrift text-[11px] text-gray-500 mb-6 uppercase border-t border-gray-300 pt-3 w-full"><?= htmlspecialchars($_SESSION['flash_message']) ?></p>
                     <button onclick="closeModal('success-modal')" class="bg-group-bg text-black font-stacked w-full py-3 rounded-[20px] text-xs uppercase shadow-md">Continuer</button>
                 </div>
             </div>
@@ -275,41 +299,39 @@ foreach ($allChallenges as $c) {
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         
-        function toggleFilter() {
-            const modal = document.getElementById('filter-modal');
-            modal.classList.toggle('hidden');
-        }
+        function openFilter() { document.getElementById('filter-modal').classList.remove('hidden'); }
+        function closeFilter() { document.getElementById('filter-modal').classList.add('hidden'); }
 
         function applyFilters() {
-            const diffValue = document.getElementById('filter-difficulty').value;
-            const catValue = document.getElementById('filter-category').value;
+            const diff = document.getElementById('filter-difficulty').value;
+            const dom = document.getElementById('filter-domain').value; // Type de tâche
+            const cat = document.getElementById('filter-category').value; // Catégorie
+            
             const cards = document.querySelectorAll('.challenge-card');
-            const blocks = document.querySelectorAll('.category-block');
+            const sections = document.querySelectorAll('.category-block');
 
             cards.forEach(card => {
                 const cardDiff = card.getAttribute('data-difficulty');
+                const cardDom = card.getAttribute('data-domain');
                 const cardCat = card.getAttribute('data-category');
-                
-                const diffMatch = (diffValue === 'all' || cardDiff === diffValue);
-                const catMatch = (catValue === 'all' || cardCat === catValue);
 
-                if (diffMatch && catMatch) {
+                const showDiff = (diff === 'all' || cardDiff === diff);
+                const showDom = (dom === 'all' || cardDom === dom);
+                const showCat = (cat === 'all' || cardCat === cat);
+
+                if (showDiff && showDom && showCat) {
                     card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }
             });
 
-            blocks.forEach(block => {
-                const visibleCards = block.querySelectorAll('.challenge-card[style="display: flex;"]');
-                if (visibleCards.length === 0 && Array.from(block.querySelectorAll('.challenge-card')).some(c => c.style.display === 'none')) {
-                    block.style.display = 'none';
-                } else {
-                    block.style.display = 'block';
-                }
+            sections.forEach(sec => {
+                const visible = sec.querySelectorAll('.challenge-card[style="display: flex;"]');
+                sec.style.display = (visible.length > 0) ? 'block' : 'none';
             });
 
-            toggleFilter();
+            closeFilter();
         }
     </script>
 </body>
