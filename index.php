@@ -1,5 +1,4 @@
 <?php
-require_once 'db_connect.php';
 require_once 'includes/init.php';
 // Niveau 
 if (function_exists('get_level_data')) {
@@ -78,12 +77,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </span>
             </div>
 
-            <div class="flex items-center bg-brand-secondary w-[130px] h-10 max-[375px]:h-8 px-4 max-[375px]:px-2 shadow-sm rounded-l-3xl" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
+            <div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[95px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
                 <div class="flex items-center gap-2 max-[375px]:gap-1">
-                    <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary">
+                    <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0">
                         <i class="fa-solid fa-leaf text-brand-tertiary text-[10px] max-[375px]:text-[8px]"></i>
                     </div>
-                    <span class="text-sm max-[375px]:text-xs font-bold text-brand-dark"><?= number_format($money, 0, '.', ' ') ?></span>
+                    <span class="text-sm max-[375px]:text-[11px] font-bold text-brand-dark truncate">
+                        <?= number_format($money, 0, '.', ' ') ?>
+                    </span>
                 </div>
             </div>
 
@@ -116,7 +117,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
         </div>
     </header>
-
+    
     <?php include 'includes/settings_menu.php'; ?>
 
     <main class="px-4 max-[375px]:px-2 pt-10">
@@ -163,14 +164,33 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </div>
             <?php else: ?>
                 
-                <h3 class="text-brand-tertiary uppercase text-xs font-bold tracking-widest mb-2 mt-4">Statistiques</h3>
+            <h3 class="text-brand-tertiary uppercase text-xs font-bold tracking-widest mb-2 mt-4"><?= $t['stat_title'] ?? 'Statistiques' ?></h3>
+
+                <div class="bg-brand-dark p-5 rounded-2xl shadow-md mb-5 flex justify-between items-center relative overflow-hidden">
+                    <i class="fa-solid fa-earth-europe text-8xl text-white opacity-5 absolute -right-6 -bottom-6"></i>
+                    
+                    <div class="flex flex-col relative z-10">
+                        <p class="text-[10px] uppercase font-bold text-brand-secondary mb-1 tracking-wider"><?= $t['base_footprint'] ?? 'Bilan de départ' ?></p>
+                        <p class="font-display text-3xl font-black text-brand-primary mb-3">
+                            <?= number_format($user['initial_footprint_kg'], 0, ',', ' ') ?> <span class="text-sm font-sans text-brand-secondary font-medium"><?= $t['unit_kg'] ?></span>
+                        </p>
+                        
+                        <a href="questionnaire_impact.php" class="text-[10px] font-bold text-brand-primary bg-brand-tertiary/50 hover:bg-brand-tertiary w-fit px-3 py-1.5 rounded-full transition-colors flex items-center gap-2 border border-brand-tertiary">
+                            <i class="fa-solid fa-rotate-right"></i> <?= $t['btn_retake'] ?? 'Refaire le test' ?>
+                        </a>
+                    </div>
+                    
+                    <div class="w-12 h-12 rounded-full bg-brand-tertiary border-2 border-brand-secondary flex items-center justify-center relative z-10">
+                        <i class="fa-solid fa-leaf text-xl text-brand-primary"></i>
+                    </div>
+                </div>
                 <div class="grid grid-cols-2 gap-4 max-[375px]:gap-2 mb-6">
                     <div class="bg-brand-primary p-4 max-[375px]:p-3 rounded-2xl border border-brand-border shadow-sm flex flex-col items-center justify-center">
-                        <p class="text-[10px] uppercase font-bold text-brand-tertiary mb-1">Niveau Actuel</p>
+                        <p class="text-[10px] uppercase font-bold text-brand-tertiary mb-1"><?= $t['niv_title'] ?></p>
                         <p class="font-display text-2xl font-black text-brand-dark"><?= $levelData['titre_actuel'] ?></p>
                     </div>
                     <div class="bg-brand-primary p-4 max-[375px]:p-3 rounded-2xl border border-brand-border shadow-sm flex flex-col items-center justify-center">
-                        <p class="text-[10px] uppercase font-bold text-brand-tertiary mb-1">Total Économisé</p>
+                        <p class="text-[10px] uppercase font-bold text-brand-tertiary mb-1"><?= $t['carbon_title'] ?></p>
                         <p class="font-display text-2xl font-black text-brand-success">- <?= round($user['total_carbon_saved'], 1) ?> <span class="text-sm">kg</span></p>
                     </div>
                 </div>
@@ -214,7 +234,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <?php 
                             $rank = $index + 1;
                             $is_me = ($joueur['id'] == $user_id);
-                            // Couleurs Médailles
                             $medalColor = $rank == 1 ? 'text-yellow-500' : ($rank == 2 ? 'text-gray-400' : ($rank == 3 ? 'text-orange-500' : 'text-brand-tertiary'));
                             $bg_class = $is_me ? 'border-2 border-brand-tertiary shadow-md' : 'border border-transparent';
                         ?>
@@ -242,17 +261,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <?php include 'includes/navbar.php'; ?>
     
     <script>
-        function toggleMenu() {
-            const menu = document.getElementById('settings-menu');
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                setTimeout(() => menu.classList.remove('opacity-0'), 10);
-            } else {
-                menu.classList.add('opacity-0');
-                setTimeout(() => menu.classList.add('hidden'), 300);
-            }
-        }
-        
         function switchView(viewName) {
             const btnSolo = document.getElementById('btn-solo');
             const btnDept = document.getElementById('btn-dept');
@@ -261,22 +269,30 @@ $current_page = basename($_SERVER['PHP_SELF']);
             
             const textSolo = btnSolo.querySelector('h2');
             const textDept = btnDept.querySelector('h2');
+            const pseudoSolo = document.getElementById('solo-pseudo');
+            const activeClasses = ['left-[-10%]', 'w-[68%]', 'h-32', 'max-[375px]:h-28', 'max-[320px]:h-24', 'bg-brand-secondary', 'justify-end', 'pr-8', 'z-20'];
+            const inactiveClasses = ['right-[-5%]', 'left-auto', 'top-[45%]', 'w-[45%]', 'h-28', 'max-[375px]:h-24', 'max-[320px]:h-20', 'bg-brand-border', 'justify-center', 'pl-4', 'z-10', 'border-brand-primary'];
 
             if (viewName === 'solo') {
-                btnSolo.classList.replace('bg-brand-border', 'bg-brand-secondary');
+                btnSolo.classList.remove(...inactiveClasses);
+                btnSolo.classList.add(...activeClasses);
+                btnDept.classList.remove(...activeClasses);
+                btnDept.classList.add(...inactiveClasses);
                 textSolo.classList.replace('text-brand-tertiary', 'text-brand-dark');
-                
-                btnDept.classList.replace('bg-brand-secondary', 'bg-brand-border');
                 textDept.classList.replace('text-brand-dark', 'text-brand-tertiary');
-                
+                if(pseudoSolo) pseudoSolo.classList.remove('hidden');
                 viewDept.classList.add('hidden');
                 viewSolo.classList.remove('hidden');
             } else {
-                btnDept.classList.replace('bg-brand-border', 'bg-brand-secondary');
-                textDept.classList.replace('text-brand-tertiary', 'text-brand-dark');
+                btnDept.classList.remove(...inactiveClasses);
+                btnDept.classList.add(...activeClasses);
                 
-                btnSolo.classList.replace('bg-brand-secondary', 'bg-brand-border');
+                btnSolo.classList.remove(...activeClasses);
+                btnSolo.classList.add(...inactiveClasses);
+
+                textDept.classList.replace('text-brand-tertiary', 'text-brand-dark');
                 textSolo.classList.replace('text-brand-dark', 'text-brand-tertiary');
+                if(pseudoSolo) pseudoSolo.classList.add('hidden');
                 
                 viewSolo.classList.add('hidden');
                 viewDept.classList.remove('hidden');
@@ -292,7 +308,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 datasets: [{
                     label: 'CO2 Économisé (kg)',
                     data: <?= json_encode($data_points) ?>,
-                    borderColor: '#111827', // Ligne Dark
+                    borderColor: '#111827',
                     backgroundColor: 'rgba(17, 24, 39, 0.1)',
                     borderWidth: 2,
                     tension: 0.4,
