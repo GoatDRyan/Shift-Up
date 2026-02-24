@@ -1,80 +1,42 @@
 <?php
+// admin_ban.php - bascule est_actif pour l'utilisateur cible
 session_start();
-require_once 'db_connect.php'; 
+require_once 'db_connect.php'; // doit définir $pdo (PDO)
 
-$currentUserId = $_SESSION['user_id'] ?? $_SESSION['id'] ?? null;
-
-function redirect_back($msg = null) {
-    $loc = 'admin_gestion.php';
-    if ($msg) $loc .= '?msg=' . urlencode($msg);
-    header('Location: ' . $loc);
+if (!isset($_GET['id'])) {
+    header('Location: admin_gestion.php?msg=missing_id');
     exit;
 }
 
-if (!$currentUserId) {
-    redirect_back('accès_non_autorisé');
+$id = intval($_GET['id']);
+if ($id <= 0) {
+    header('Location: admin_gestion.php?msg=invalid_id');
+    exit;
 }
 
-$targetId = isset($_GET['id']) ? intval($_GET['id']) : 0;
-if ($targetId <= 0) redirect_back('utilisateur_invalide');
-
 try {
-    if (isset($pdo)) {
-        $stmt = $pdo->prepare("SELECT role FROM users WHERE id = :id LIMIT 1");
-        $stmt->execute([':id' => $currentUserId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    } elseif (isset($conn)) {
-        $stmt = $conn->prepare("SELECT role FROM users WHERE id = ?");
-        $stmt->bind_param('i', $currentUserId);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $row = $res->fetch_assoc();
-    } else {
-        redirect_back('erreur_connexion_db');
+    // Récupère l'état actuel
+    $stmt = $pdo->prepare("SELECT est_actif FROM users WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        header('Location: admin_gestion.php?msg=not_found');
+        exit;
     }
 
-    $currentRole = $row['role'] ?? null;
-    if (!in_array($currentRole, ['admin', 'super_admin'], true)) {
-        redirect_back('droits_insuffisants');
-    }
+    $current = (int)$row['est_actif'];
+    $new = $current ? 0 : 1;
 
-    if ($currentUserId == $targetId) {
-        redirect_back('action_interdite_sur_soi_meme');
-    }
+    // Met à jour
+    $u = $pdo->prepare("UPDATE users SET est_actif = :val WHERE id = :id");
+    $u->execute([':val' => $new, ':id' => $id]);
 
-    if (isset($pdo)) {
-        $stmt = $pdo->prepare("SELECT est_actif, role FROM users WHERE id = :id LIMIT 1");
-        $stmt->execute([':id' => $targetId]);
-        $t = $stmt->fetch(PDO::FETCH_ASSOC);
-    } else {
-        $stmt = $conn->prepare("SELECT est_actif, role FROM users WHERE id = ?");
-        $stmt->bind_param('i', $targetId);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $t = $res->fetch_assoc();
-    }
-
-    if (!$t) redirect_back('utilisateur_introuvable');
-
-    if (($t['role'] ?? '') === 'super_admin' && $currentRole !== 'super_admin') {
-        redirect_back('impossible_bannir_super_admin');
-    }
-
-    $currentActive = (int) ($t['est_actif'] ?? 1);
-    $newActive = $currentActive ? 0 : 1;
-
-    if (isset($pdo)) {
-        $stmt = $pdo->prepare("UPDATE users SET est_actif = :val WHERE id = :id");
-        $stmt->execute([':val' => $newActive, ':id' => $targetId]);
-    } else {
-        $stmt = $conn->prepare("UPDATE users SET est_actif = ? WHERE id = ?");
-        $stmt->bind_param('ii', $newActive, $targetId);
-        $stmt->execute();
-    }
-
-    $msg = $newActive ? 'utilisateur_retabli' : 'utilisateur_banni';
-    redirect_back($msg);
+    $msg = $new ? 'unbanned' : 'banned';
+    header('Location: admin_gestion.php?msg=' . $msg);
+    exit;
 
 } catch (Exception $e) {
-    redirect_back('erreur_operation');
+    header('Location: admin_gestion.php?msg=error');
+    exit;
 }
