@@ -1,5 +1,5 @@
 <script src="js/settings_menu.js"></script>
-<div id="settings-menu" class="fixed inset-0 bg-brand-dark/90 z-50 hidden flex items-center justify-center transition-opacity duration-300 opacity-0">
+<div id="settings-menu" class="fixed inset-0 backdrop-blur-md bg-brand-dark/60 z-50 hidden flex items-center justify-center transition-opacity duration-300 opacity-0">
     
     <div class="relative w-11/12 max-w-sm rounded-3xl bg-brand-secondary flex flex-col p-6 shadow-xl">
         
