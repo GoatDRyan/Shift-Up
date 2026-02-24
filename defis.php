@@ -1,13 +1,6 @@
 <?php
 require_once 'includes/init.php';
 
-if (function_exists('get_level_data')) {
-    $levelData = get_level_data($user['points_rank']);
-}
-$userLevel = $levelData['niveau_actuel'] ?? 1;
-$userXp = $levelData['xp_actuel'] ?? 0;
-$nextLevelXp = $levelData['xp_prochain'] ?? 2500;
-
 $sql = "SELECT * FROM challenges ORDER BY categorie DESC, titre_$lang";
 $stmt = $pdo->query($sql);
 $allChallenges = $stmt->fetchAll();

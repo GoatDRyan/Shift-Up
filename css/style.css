@@ -12,7 +12,7 @@
     --brand-success: #22c55e;
 }
 
-/* --- THEME SOMBRE (Quand la classe .dark est active) --- */
+/* --- THEME SOMBRE --- */
 .dark {
     --brand-primary: #121212;
     --brand-secondary: #3f3f3f;

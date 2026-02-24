@@ -1,9 +1,5 @@
 <?php
 require_once 'includes/init.php';
-// Niveau 
-if (function_exists('get_level_data')) {
-    $levelData = get_level_data($user['points_rank']);
-}
 
 // Streak des 7 jours
 $week_streak = [];
@@ -27,7 +23,7 @@ for ($i = 6; $i >= 0; $i--) {
 
 // --- SYSTÈME DE CLASSEMENTS
 
-// 1. Classement Département (Uniquement si l'utilisateur a un département assigné)
+// 1. Classement Département
 $rank_dept = [];
 if (!empty($user['department_id'])) {
     $stmt_dept = $pdo->prepare("SELECT pseudo, points_rank, id FROM users WHERE department_id = :val AND role = 'shifter' ORDER BY points_rank DESC LIMIT 10");
