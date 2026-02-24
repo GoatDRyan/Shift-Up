@@ -20,9 +20,10 @@ return [
     'todo_today' => 'À faire aujourd\'hui',
     'btn_article' => 'Article & Quiz',
     'btn_question' => 'Question Solo',
-    'ranking_title' => 'Top Département',
+    'ranking_title' => 'Classement',
     'btn_todo' => 'Voir les défis',
-    'who_rank' => 'moi',
+    'who_rank' => '(moi)',
+    'company_rank' => 'Entreprise',
 
     // Vue Solo
     'impact_title' => 'Quel est ton impact ?',
@@ -55,6 +56,8 @@ return [
     'logout' => 'Se déconnecter',
     'terms' => 'Conditions d\'utilisation',
     'player_id' => 'Id du joueur :',
+    'mode_dark' => 'Sombre',
+    'mode_light' => 'Clair',
 
     // Mot de passe
     'old_password' => 'Ancien mot de passe',
@@ -93,4 +96,37 @@ return [
     'base_footprint' => 'Bilan de départ',
     'btn_retake' => 'Refaire le test',
     'unit_kg' => 'kg/an',
+
+    // Défis
+    'tab_explore' => 'Explorer',
+    'tab_my_challenges' => 'Mes défis',
+    'btn_filter' => 'Filtre',
+    'already_done' => 'Déjà fait aujourd\'hui',
+    'validate_challenge' => 'Valider ce défi',
+    'history' => 'Historique',
+    'no_action_validated' => 'Aucune action validée.',
+    'filter_title' => 'Filtres',
+    'filter_difficulty' => 'Difficulté',
+    'filter_all' => 'Toutes',
+    'filter_easy' => 'Facile',
+    'filter_medium' => 'Moyen',
+    'filter_hard' => 'Difficile',
+    'filter_domain' => 'Domaine',
+    'filter_all_domains' => 'Tous les domaines',
+    'filter_ecological' => 'Écologique',
+    'filter_social' => 'Social',
+    'filter_category' => 'Catégorie',
+    'filter_all_categories' => 'Toutes les catégories',
+    'btn_apply_filters' => 'Appliquer les filtres',
+    'days_abbr' => 'j',
+    'in_progress' => 'En cours',
+    'no_challenge_in_progress' => 'Aucun défi en cours.',
+
+    // Catégories
+    'cat_Mobilité' => 'Mobilité',
+    'cat_Numérique' => 'Numérique',
+    'cat_Bureau' => 'Bureau',
+    'cat_Recyclage' => 'Recyclage',
+    'cat_Autre' => 'Autre',
+    'cat_Général' => 'Général',
 ];

@@ -1,3 +1,31 @@
+/* --- THEME CLAIR --- */
+:root {
+    --brand-primary: #ffffff;
+    --brand-secondary: #a0a0a0;
+    --brand-tertiary: #373737;
+    --brand-dark: #000000;
+    --brand-card: #f9fafb;
+    --brand-border: #dbdbdb;
+    
+    --brand-accent: #f97316;
+    --brand-accentdark: #ea580c;
+    --brand-success: #22c55e;
+}
+
+/* --- THEME SOMBRE --- */
+.dark {
+    --brand-primary: #121212;
+    --brand-secondary: #3f3f3f;
+    --brand-tertiary: #a0a0a0;
+    --brand-dark: #ffffff;
+    --brand-card: #1e1e1e;
+    --brand-border: #2e2e2e;
+    
+    --brand-accent: #f97316;
+    --brand-accentdark: #ea580c;
+    --brand-success: #22c55e;
+}
+
 @font-face { 
     font-family: 'ShiftTitle'; 
     src: url('../fonts/Stacked-Strong.woff2') format('woff2');

@@ -1,17 +1,18 @@
 tailwind.config = {
+    darkMode: 'class',
     theme: {
         extend: {
             colors: {                   
                 brand: {
-                    primary: '#ffffff',
-                    secondary: '#a0a0a0',
-                    tertiary: '#373737',
-                    dark: '#000000',
-                    card: '#f9fafb',
-                    border: '#dbdbdb',
-                    accent: '#f97316', 
-                    accentdark: '#ea580c',
-                    success: '#22c55e', 
+                    primary: 'var(--brand-primary)',
+                    secondary: 'var(--brand-secondary)',
+                    tertiary: 'var(--brand-tertiary)',
+                    dark: 'var(--brand-dark)',
+                    card: 'var(--brand-card)',
+                    border: 'var(--brand-border)',
+                    accent: 'var(--brand-accent)', 
+                    accentdark: 'var(--brand-accentdark)',
+                    success: 'var(--brand-success)', 
                 }
             },
             fontFamily: {
