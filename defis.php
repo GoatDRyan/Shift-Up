@@ -73,7 +73,7 @@ foreach ($allChallenges as $c) {
                 </span>
             </div>
 
-            <div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[95px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
+            <div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
                 <div class="flex items-center gap-2 max-[375px]:gap-1">
                     <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0">
                         <i class="fa-solid fa-leaf text-brand-tertiary text-[10px] max-[375px]:text-[8px]"></i>
@@ -110,7 +110,7 @@ foreach ($allChallenges as $c) {
                 </div>
             </div>
 
-            <div id="filter-btn" class="absolute left-[-10%] top-[180px] max-[375px]:top-[150px] max-[320px]:top-[134px] w-[60%] h-[36px] bg-brand-secondary skew-tile flex items-center justify-center cursor-pointer hover:bg-brand-secondary transition z-30 shadow-sm" onclick="openFilter()">
+            <div id="filter-btn" class="absolute left-[-10%] top-[180px] max-[375px]:top-[170px] max-[320px]:top-[134px] w-[60%] h-[36px] bg-brand-secondary skew-tile flex items-center justify-center cursor-pointer hover:bg-brand-secondary transition z-30 shadow-sm" onclick="openFilter()">
                 <div class="unskew pl-10 max-[375px]:pl-6 flex items-center justify-center">
                     <span class="text-l text-brand-dark font-bold tracking-widest"><?= htmlspecialchars($t['btn_filter'] ?? 'Filtre') ?></span>
                 </div>
