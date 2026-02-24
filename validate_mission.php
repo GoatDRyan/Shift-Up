@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id']) || !isset($_POST['challenge_id'])) {
 
 $user_id = $_SESSION['user_id'];
 $challenge_id = (int) $_POST['challenge_id'];
+$is_success = false; // On initialise la variable pour savoir si on doit afficher la pop-up
 
 try {
     $pdo->beginTransaction();
@@ -23,6 +24,7 @@ try {
     $stmt_today->execute(['uid' => $user_id, 'cid' => $challenge_id]);
     $actions_aujourdhui = $stmt_today->fetchColumn();
 
+    // Si la limite du jour est atteinte, on redirige sans le message de succès
     if ($actions_aujourdhui >= $defi['max_actions_day']) {
         $pdo->commit();
         $_SESSION['flash_message'] = "Limite atteinte pour aujourd'hui.";
@@ -30,8 +32,12 @@ try {
         exit();
     }
 
+    // On enregistre l'action
     $insert = $pdo->prepare("INSERT INTO user_actions (user_id, challenge_id, date_action) VALUES (:uid, :cid, NOW())");
     $insert->execute(['uid' => $user_id, 'cid' => $challenge_id]);
+    
+    // L'action est bien enregistrée, on prépare le succès
+    $is_success = true;
 
     $sql_streak_logic = "
         current_streak = CASE 
@@ -102,11 +108,18 @@ try {
         
         else {
             $pdo->commit();
+            // Si le défi sur plusieurs jours est déjà terminé et qu'on reclique, on annule le succès de la popup
+            $is_success = false; 
             $_SESSION['flash_message'] = "Déjà terminé !";
         }
     }
 
-    header("Location: defis.php");
+    // Redirection finale selon le statut du succès
+    if ($is_success) {
+        header("Location: defis.php?success=1");
+    } else {
+        header("Location: defis.php");
+    }
     exit();
 
 } catch (Exception $e) {
