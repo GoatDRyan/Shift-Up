@@ -25,13 +25,32 @@ for ($i = 6; $i >= 0; $i--) {
     ];
 }
 
-// Classement
-$filter_col = $user['department_id'] ? 'department_id' : 'company_id';
-$filter_val = $user['department_id'] ? $user['department_id'] : $user['company_id'];
-$sql_rank = "SELECT pseudo, points_rank, id FROM users WHERE $filter_col = :val AND role = 'shifter' ORDER BY points_rank DESC LIMIT 5";
-$stmt_rank = $pdo->prepare($sql_rank);
-$stmt_rank->execute(['val' => $filter_val]);
-$classement = $stmt_rank->fetchAll();
+// --- SYSTÈME DE CLASSEMENTS
+
+// 1. Classement Département (Uniquement si l'utilisateur a un département assigné)
+$rank_dept = [];
+if (!empty($user['department_id'])) {
+    $stmt_dept = $pdo->prepare("SELECT pseudo, points_rank, id FROM users WHERE department_id = :val AND role = 'shifter' ORDER BY points_rank DESC LIMIT 10");
+    $stmt_dept->execute(['val' => $user['department_id']]);
+    $rank_dept = $stmt_dept->fetchAll();
+}
+
+// 2. Classement Entreprise (Tous les collègues)
+$stmt_comp = $pdo->prepare("SELECT pseudo, points_rank, id FROM users WHERE company_id = :val AND role = 'shifter' ORDER BY points_rank DESC LIMIT 10");
+$stmt_comp->execute(['val' => $user['company_id']]);
+$rank_comp = $stmt_comp->fetchAll();
+
+// 3. Classement Inter-Entreprises (Les meilleures entreprises le goat des goats ceux a qui on presque mon niveau)
+$stmt_global = $pdo->query("
+    SELECT c.nom as pseudo, SUM(u.points_rank) as points_rank, c.id 
+    FROM users u 
+    JOIN companies c ON u.company_id = c.id 
+    WHERE u.role = 'shifter' 
+    GROUP BY c.id 
+    ORDER BY points_rank DESC 
+    LIMIT 10
+");
+$rank_global = $stmt_global->fetchAll();
 
 // Graphique
 $sql_graph = "SELECT DATE(ua.date_action) as jour, SUM(c.co2_kg) as total_co2 FROM user_actions ua JOIN challenges c ON ua.challenge_id = c.id WHERE ua.user_id = :uid AND ua.date_action >= DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY DATE(ua.date_action) ORDER BY jour ASC";
@@ -82,7 +101,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0">
                         <i class="fa-solid fa-leaf text-brand-tertiary text-[10px] max-[375px]:text-[8px]"></i>
                     </div>
-                    <span class="text-sm max-[375px]:text-[11px] font-bold text-brand-dark truncate">
+                    <span class="text-sm max-[376px]:text-[11px] font-bold text-brand-dark truncate">
                         <?= number_format($money, 0, '.', ' ') ?>
                     </span>
                 </div>
@@ -225,34 +244,93 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </div>
 
-            <h3 class="text-brand-tertiary uppercase text-xs font-bold tracking-widest mb-4 mt-8"><?= $t['ranking_title'] ?></h3>
-            <div class="bg-brand-primary rounded-3xl p-2 border border-brand-border shadow-sm">
-                <?php if(empty($classement)): ?>
-                    <p class="text-brand-tertiary text-center text-sm py-4">Aucun classement disponible.</p>
-                <?php else: ?>
-                    <?php foreach($classement as $index => $joueur): ?>
-                        <?php 
+            <h3 class="text-brand-tertiary uppercase text-xs font-bold tracking-widest mb-3 mt-8"><?= $t['ranking_title'] ?? 'Classement' ?></h3>
+            
+            <div class="flex bg-brand-primary rounded-2xl p-1 border border-brand-border shadow-sm mb-4">
+                <?php if(!empty($user['department_id'])): ?>
+                <button id="btn-rank-dept" onclick="switchRank('dept')" class="flex-1 text-[11px] font-bold py-2.5 rounded-xl bg-brand-dark text-brand-primary transition active:scale-95">Équipe</button>
+                <?php endif; ?>
+                <button id="btn-rank-comp" onclick="switchRank('comp')" class="flex-1 text-[11px] font-bold py-2.5 rounded-xl <?= empty($user['department_id']) ? 'bg-brand-dark text-brand-primary' : 'text-brand-tertiary hover:bg-brand-secondary' ?> transition active:scale-95"><?= $t['company_rank'] ?></button>
+                <button id="btn-rank-glob" onclick="switchRank('glob')" class="flex-1 text-[11px] font-bold py-2.5 rounded-xl text-brand-tertiary hover:bg-brand-secondary transition active:scale-95">Global</button>
+            </div>
+
+            <div class="bg-brand-primary rounded-3xl p-2 border border-brand-border shadow-sm min-h-[250px]">
+                
+                <?php if(!empty($user['department_id'])): ?>
+                <div id="list-rank-dept" class="rank-list">
+                    <?php if(empty($rank_dept)): ?>
+                        <p class="text-brand-tertiary text-center text-sm py-8">Aucun classement disponible.</p>
+                    <?php else: ?>
+                        <?php foreach($rank_dept as $index => $joueur): 
                             $rank = $index + 1;
                             $is_me = ($joueur['id'] == $user_id);
                             $medalColor = $rank == 1 ? 'text-yellow-500' : ($rank == 2 ? 'text-gray-400' : ($rank == 3 ? 'text-orange-500' : 'text-brand-tertiary'));
                             $bg_class = $is_me ? 'border-2 border-brand-tertiary shadow-md' : 'border border-transparent';
                         ?>
-                        <div class="flex items-center justify-between <?= $bg_class ?> p-4 max-[375px]:p-3 bg-brand-card rounded-2xl mb-2">
+                            <div class="flex items-center justify-between <?= $bg_class ?> p-4 max-[375px]:p-3 bg-brand-card rounded-2xl mb-2 transition-all">
+                                <span class="<?= $medalColor ?> font-display font-bold text-xl w-6 text-center"><?= $rank ?></span>
+                                <div class="flex items-center gap-3 flex-1 px-4">
+                                    <div class="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center text-xs font-bold text-brand-dark shrink-0">
+                                        <?= strtoupper(substr($joueur['pseudo'], 0, 1)) ?>
+                                    </div>
+                                    <span class="font-bold text-brand-dark max-[375px]:text-sm truncate">
+                                        <?= htmlspecialchars($joueur['pseudo']) ?> 
+                                        <?= $is_me ? '<span class="text-[10px] text-brand-tertiary ml-1">'.$t['who_rank'].'</span>' : '' ?>
+                                    </span>
+                                </div>
+                                <span class="font-display font-bold text-brand-dark max-[375px]:text-sm shrink-0"><?= number_format($joueur['points_rank'], 0, ',', ' ') ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+
+                <div id="list-rank-comp" class="rank-list <?= !empty($user['department_id']) ? 'hidden' : '' ?>">
+                    <?php foreach($rank_comp as $index => $joueur): 
+                        $rank = $index + 1;
+                        $is_me = ($joueur['id'] == $user_id);
+                        $medalColor = $rank == 1 ? 'text-yellow-500' : ($rank == 2 ? 'text-gray-400' : ($rank == 3 ? 'text-orange-500' : 'text-brand-tertiary'));
+                        $bg_class = $is_me ? 'border-2 border-brand-tertiary shadow-md' : 'border border-transparent';
+                    ?>
+                        <div class="flex items-center justify-between <?= $bg_class ?> p-4 max-[375px]:p-3 bg-brand-card rounded-2xl mb-2 transition-all">
                             <span class="<?= $medalColor ?> font-display font-bold text-xl w-6 text-center"><?= $rank ?></span>
-                            
                             <div class="flex items-center gap-3 flex-1 px-4">
-                                <div class="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center text-xs font-bold text-brand-dark">
+                                <div class="w-8 h-8 rounded-full bg-brand-border flex items-center justify-center text-xs font-bold text-brand-dark shrink-0">
                                     <?= strtoupper(substr($joueur['pseudo'], 0, 1)) ?>
                                 </div>
-                                <span class="font-bold text-brand-dark max-[375px]:text-sm">
+                                <span class="font-bold text-brand-dark max-[375px]:text-sm truncate">
                                     <?= htmlspecialchars($joueur['pseudo']) ?> 
-                                    <?= $is_me ? '<span class="text-[10px] text-brand-tertiary ml-1">('.($t['who_rank'] ?? 'Moi').')</span>' : '' ?>
+                                    <?= $is_me ? '<span class="text-[10px] text-brand-tertiary ml-1">'.$t['who_rank'].'</span>' : '' ?>
                                 </span>
                             </div>
-                            <span class="font-display font-bold text-brand-dark max-[375px]:text-sm"><?= number_format($joueur['points_rank'], 0, ',', ' ') ?> XP</span>
+                            <span class="font-display font-bold text-brand-dark max-[375px]:text-sm shrink-0"><?= number_format($joueur['points_rank'], 0, ',', ' ') ?></span>
                         </div>
                     <?php endforeach; ?>
-                <?php endif; ?>
+                </div>
+
+                <div id="list-rank-glob" class="rank-list hidden">
+                    <?php foreach($rank_global as $index => $entreprise): 
+                        $rank = $index + 1;
+                        $is_my_company = ($entreprise['id'] == $user['company_id']); 
+                        $medalColor = $rank == 1 ? 'text-yellow-500' : ($rank == 2 ? 'text-gray-400' : ($rank == 3 ? 'text-orange-500' : 'text-brand-tertiary'));
+                        $bg_class = $is_my_company ? 'border-2 border-brand-tertiary shadow-md' : 'border border-transparent';
+                    ?>
+                        <div class="flex items-center justify-between <?= $bg_class ?> p-4 max-[375px]:p-3 bg-brand-card rounded-2xl mb-2 transition-all">
+                            <span class="<?= $medalColor ?> font-display font-bold text-xl w-6 text-center"><?= $rank ?></span>
+                            <div class="flex items-center gap-3 flex-1 px-4">
+                                <div class="w-8 h-8 rounded-full bg-brand-secondary flex items-center justify-center text-xs font-bold text-brand-dark shrink-0">
+                                    <i class="fa-solid fa-building"></i>
+                                </div>
+                                <span class="font-bold text-brand-dark max-[375px]:text-sm truncate">
+                                    <?= htmlspecialchars($entreprise['pseudo']) ?> 
+                                    <?= $is_my_company ? '<span class="text-[10px] text-brand-tertiary ml-1">(Nous)</span>' : '' ?>
+                                </span>
+                            </div>
+                            <span class="font-display font-bold text-brand-dark max-[375px]:text-sm shrink-0"><?= number_format($entreprise['points_rank'], 0, ',', ' ') ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
             </div>
         </div>
 
@@ -297,6 +375,27 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 viewSolo.classList.add('hidden');
                 viewDept.classList.remove('hidden');
             }
+        }
+
+        function switchRank(rankType) {
+            const types = ['dept', 'comp', 'glob'];
+            
+            types.forEach(type => {
+                const btn = document.getElementById(`btn-rank-${type}`);
+                const list = document.getElementById(`list-rank-${type}`);
+                
+                if(!btn || !list) return;
+                
+                if (type === rankType) {
+                    btn.classList.replace('text-brand-tertiary', 'text-brand-primary');
+                    btn.classList.replace('hover:bg-brand-secondary', 'bg-brand-dark');
+                    list.classList.remove('hidden');
+                } else {
+                    btn.classList.replace('bg-brand-dark', 'hover:bg-brand-secondary');
+                    btn.classList.replace('text-brand-primary', 'text-brand-tertiary');
+                    list.classList.add('hidden');
+                }
+            });
         }
         
         <?php if ($has_done_quiz): ?>

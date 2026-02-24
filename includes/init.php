@@ -34,7 +34,6 @@ if (!$user) {
 $lang = $_SESSION['lang'] ?? ($user['language_pref'] ?? 'fr');
 $t = require_once __DIR__ . "/../lang/$lang.php";
 
-// Variables globales utiles
 $pseudo = $user['pseudo'] ?? "Joueur";
 $money = $user['points_wallet'] ?? 0;
 $current_page = basename($_SERVER['PHP_SELF']);

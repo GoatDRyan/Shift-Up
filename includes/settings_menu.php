@@ -11,9 +11,8 @@
             
             <div class="flex flex-col items-center">
                 <span class="text-[10px] font-semibold text-brand-dark mb-1"><?= $t['mode'] ?? 'Mode' ?></span>
-                <button class="w-full bg-brand-primary py-2 rounded-full shadow-sm text-sm font-medium text-brand-dark hover:bg-brand-card transition-colors">
-                    <?= $t['mode_light'] ?? 'Clair' ?>
-                </button>
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-full bg-brand-primary py-2 rounded-full shadow-sm text-sm font-medium text-brand-dark hover:bg-brand-card transition-colors">
+                    <?= $t['mode_light'] ?? 'Clair' ?> </button>
             </div>
 
             <div class="flex flex-col items-center">

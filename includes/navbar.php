@@ -13,7 +13,7 @@
     </a>
 
     <a href="index.php" class="group relative -top-6 flex flex-col items-center justify-center w-16 h-16 bg-brand-primary rounded-full border-brand-primary shadow-lg shadow-brand-dark/20 transition transform hover:scale-105">
-        <img class="h-[26px] group-hover:hidden <?= $current_page == 'index.php' ? 'hidden' : 'block' ?>" src="img/icone/icone-home.svg" alt="Accueil" style="filter: invert(1);">
+        <img class="h-[26px] group-hover:hidden <?= $current_page == 'index.php' ? 'hidden' : 'block' ?>" src="img/icone/icone-home.svg" alt="Accueil">
         <img class="h-[26px] hidden group-hover:block <?= $current_page == 'index.php' ? '!block' : '' ?>" src="img/icone/icone-home-hover.svg" alt="Accueil">
     </a>
 
