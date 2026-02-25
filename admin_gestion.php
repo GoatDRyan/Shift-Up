@@ -76,7 +76,7 @@ try {
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
       <a href="#" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="#" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
