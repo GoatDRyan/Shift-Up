@@ -12,8 +12,15 @@ require_once 'db_connect.php';
   <style>
     .rounded-full-xl { border-radius: 999px; }
     .card-radius { border-radius: 12px; }
-    .leaf { width:18px; height:18px; display:inline-block; margin-right:4px; vertical-align:middle; }
+    .leaf { width:18px; height:18px; display:inline-block; margin-right:6px; vertical-align:middle; }
     .leaf svg { width:100%; height:100%; }
+    :root{
+      --bg:#ececec;
+      --panel:#dcdcdc;
+      --card:#bdbdbd;
+      --accent:#9a9a9a;
+    }
+    body{ background: #fff; color:#111; }
   </style>
 </head>
 <header class="bg-gray-200 h-16 relative">
@@ -49,13 +56,12 @@ require_once 'db_connect.php';
 </header>
 
 <div class="max-w-screen-2xl mx-auto p-8">
-    <h1 class="text-3xl font-light mb-4"> Shift Manager</h1>
+  <h1 class="text-3xl font-light mb-4"> Shift Manager</h1>
 </div>
 
 <?php
-// helper pour feuille SVG
 function leafSVG() {
-    return '<span class="leaf" title="feuille"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 4c-4 0-8 3-10 6C7.5 13.5 4 16 4 16s2.5-3.5 6-6c3-2.2 6-2.5 10-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>';
+    return '<span class="leaf" title="feuille"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10ZM2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg></span>';
 }
 function renderLeaves($n){
     $n = max(0, min(3, (int)$n));
@@ -64,14 +70,14 @@ function renderLeaves($n){
     return $out;
 }
 
-// charger options distinctes depuis la DB
 $types = []; $categories = []; $difficulties = [];
 if (isset($pdo) && $pdo instanceof PDO) {
     try {
         $types = $pdo->query("SELECT DISTINCT domaine FROM challenges WHERE domaine IS NOT NULL AND domaine<>''")->fetchAll(PDO::FETCH_COLUMN);
         $categories = $pdo->query("SELECT DISTINCT categorie FROM challenges WHERE categorie IS NOT NULL AND categorie<>''")->fetchAll(PDO::FETCH_COLUMN);
         $difficulties = $pdo->query("SELECT DISTINCT difficulty FROM challenges WHERE difficulty IS NOT NULL AND difficulty<>''")->fetchAll(PDO::FETCH_COLUMN);
-    } catch (Exception $e) { /* ignore */ }
+    } catch (Exception $e){
+    }
 }
 ?>
 
@@ -79,39 +85,45 @@ if (isset($pdo) && $pdo instanceof PDO) {
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     <div class="lg:col-span-1 space-y-6">
+
       <div class="bg-gray-200 card-radius p-6">
         <h2 class="text-2xl mb-4">Titre</h2>
+
         <div class="grid grid-cols-1 gap-4">
           <div class="flex items-center justify-between">
             <span>Expérience de la tâche :</span>
-            <span id="xp_shown">10 XP</span>
+            <span id="xp_shown">XP</span>
           </div>
+
           <div class="flex items-center justify-between">
             <span>Récompense de la tâche :</span>
-            <span id="score_shown">0.1 Score</span>
+            <span id="score_shown">Score</span>
           </div>
+
           <div class="flex items-center justify-between">
             <label>Type :</label>
             <select id="create_type" class="border rounded p-2 w-40">
               <?php if(!empty($types)) foreach($types as $t) echo '<option>'.htmlspecialchars($t).'</option>'; else echo '<option>ecologique</option><option>social</option>'; ?>
             </select>
           </div>
+
           <div class="flex items-center justify-between">
             <label>Catégorie :</label>
             <input id="create_category" type="text" class="border rounded p-2 w-40" placeholder="Général" />
           </div>
+
           <div class="flex items-center gap-2">
             <label>Durée de la tâche :</label>
             <input id="create_duration" type="number" min="1" value="1" class="border rounded p-2 w-24"/>
             <span>jours</span>
           </div>
+
           <div class="flex justify-center mt-4">
             <button id="openCreateBtn" class="bg-gray-400 px-6 py-2 rounded-full-xl">Crée la tâche</button>
           </div>
         </div>
       </div>
 
-      <!-- Classement Solo -->
       <div>
         <h2 class="text-2xl mb-4">Classement Solo</h2>
         <div class="bg-gray-200 card-radius p-4 space-y-3">
@@ -120,12 +132,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                 echo "<div class='text-sm text-red-600'>La connexion DB (\$pdo) n'est pas définie dans db_connect.php</div>";
             } else {
                 try {
-                    $sql = "SELECT u.id, u.pseudo, COUNT(ua.id) as actions
-                            FROM users u
-                            LEFT JOIN user_actions ua ON ua.user_id = u.id
-                            GROUP BY u.id
-                            ORDER BY actions DESC
-                            LIMIT 3";
+                    $sql = "SELECT u.id, u.pseudo, COUNT(ua.id) as actions FROM users u LEFT JOIN user_actions ua ON ua.user_id = u.id GROUP BY u.id ORDER BY actions DESC LIMIT 3";
                     $stmt = $pdo->query($sql);
                     $pos = 1;
                     while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -146,7 +153,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
     </div>
 
-    <!-- Liste des tâches -->
     <div class="lg:col-span-2 bg-gray-200 card-radius p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl">Liste des taches :</h2>
@@ -163,7 +169,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
               echo "<div class='text-red-600'>Impossible d'afficher les tâches : \$pdo introuvable.</div>";
           } else {
               try {
-                  // create disabled table if needed
                   $pdo->exec("CREATE TABLE IF NOT EXISTS disabled_challenges (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     challenge_id INT NOT NULL UNIQUE,
@@ -180,11 +185,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       $id = (int)$r['id'];
                       $titre = htmlspecialchars($r['titre_fr'] ?? 'Tâche');
                       $difficulty = htmlspecialchars($r['difficulty'] ?? 'facile');
-                      $leafCount = 1;
-                      $dl = strtolower($difficulty);
-                      if (strpos($dl,'diffic') !== false || $dl==='difficile') $leafCount = 3;
-                      elseif (strpos($dl,'moy') !== false || $dl==='moyen') $leafCount = 2;
-                      else $leafCount = 1;
                       $xp = (int)($r['xp_gain'] ?? 0);
                       $score = (float)($r['co2_kg'] ?? 0);
                       $domaine = htmlspecialchars($r['domaine'] ?? '');
@@ -192,9 +192,13 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       $duration = (int)($r['duration_days'] ?? 0);
                       $disabled = (int)$r['disabled'];
                       $users_count = (int)$r['users_count'];
+
+                      $dl = strtolower($difficulty);
+                      $leafCount = 1;
+                      if (strpos($dl,'diffic') !== false || $dl==='difficile') $leafCount = 3;
+                      elseif (strpos($dl,'moy') !== false || $dl==='moyen') $leafCount = 2;
                       $leaves_html = renderLeaves($leafCount);
 
-                      // task row - note: bouton Désactiver avant paramètres (swap)
                       echo '<div class="flex items-center justify-between bg-gray-300 p-4 rounded card-radius"'
                          .' data-title="'.htmlspecialchars($titre, ENT_QUOTES).'"'
                          .' data-difficulty="'.htmlspecialchars($difficulty, ENT_QUOTES).'"'
@@ -213,15 +217,14 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       echo '</div>';
 
                       echo '<div class="flex items-center gap-3">';
-                      // DÉSACTIVER bouton (first)
                       echo '<button class="px-4 py-2 rounded bg-gray-100" onclick="toggleDisable('.$id.', this)">'.($disabled ? 'Réactiver' : 'Désactiver').'</button>';
-                      // paramètres/menu (icon with three lines)
-                      echo '<button class="px-3 py-2 rounded bg-gray-100" onclick="openParams('.$id.')"
-                                title="Paramètres"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      echo '<button class="px-3 py-2 rounded bg-gray-100" onclick="openParams('.$id.')" title="Paramètres">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="3" y="5" width="18" height="2" rx="1" fill="currentColor"/>
                                 <rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor"/>
                                 <rect x="3" y="17" width="18" height="2" rx="1" fill="currentColor"/>
-                              </svg></button>';
+                              </svg>
+                            </button>';
                       echo '</div>';
 
                       echo '</div>';
@@ -237,12 +240,14 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- CREATE MODAL -->
 <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
     <h3 class="text-xl mb-4">Créer une tâche</h3>
     <div class="space-y-3">
       <input id="modal_title" placeholder="Titre de la tâche (FR)" class="w-full border p-2 rounded" />
+      <textarea id="modal_descr_fr" placeholder="Description (FR)" class="w-full border p-2 rounded" rows="3"></textarea>
+      <textarea id="modal_descr_en" placeholder="Description (EN)" class="w-full border p-2 rounded" rows="2"></textarea>
+
       <div class="flex gap-2 items-center">
         <select id="modal_difficulty" class="border p-2 rounded w-1/2">
           <?php
@@ -254,6 +259,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           ?>
         </select>
         <div id="modal_difficulty_preview" class="ml-2"></div>
+
         <input id="modal_xp" type="number" min="0" value="10" class="border p-2 rounded w-1/2" placeholder="XP">
       </div>
 
@@ -277,7 +283,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- FILTER MODAL -->
 <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-40">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/4">
     <h3 class="text-xl mb-4">Filtrer</h3>
@@ -299,7 +304,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- PARAMS MODAL -->
 <div id="paramsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
     <h3 class="text-xl mb-4">Paramètres de la tâche</h3>
@@ -315,11 +319,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </div>
 
 <script>
-  function leafSVG() {
-    return '<span class="leaf" title="feuille"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 4c-4 0-8 3-10 6C7.5 13.5 4 16 4 16s2.5-3.5 6-6c3-2.2 6-2.5 10-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>';
+  function leafSVG(){
+    return '<span class="leaf" title="feuille"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10ZM2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg></span>';
   }
 
-  // popup controls
   const createModal = document.getElementById('createModal');
   const openCreateBtn = document.getElementById('openCreateBtn');
   const createCancel = document.getElementById('createCancel');
@@ -333,10 +336,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   const paramsModal = document.getElementById('paramsModal');
   const paramsClose = document.getElementById('paramsClose');
 
-  openCreateBtn.addEventListener('click', ()=> {
-    createModal.classList.remove('hidden');
-    updateCreateDifficultyPreview();
-  });
+  openCreateBtn.addEventListener('click', ()=> { createModal.classList.remove('hidden'); updateCreateDifficultyPreview(); });
   createCancel.addEventListener('click', ()=> createModal.classList.add('hidden'));
 
   openFilterBtn.addEventListener('click', ()=> filterModal.classList.remove('hidden'));
@@ -347,9 +347,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
     applyFilters();
   });
   filterApply.addEventListener('click', ()=> { applyFilters(); filterModal.classList.add('hidden'); });
+
   paramsClose.addEventListener('click', ()=> paramsModal.classList.add('hidden'));
 
-  // difficulty preview in create modal
   const modalDifficulty = document.getElementById('modal_difficulty');
   const modalDifficultyPreview = document.getElementById('modal_difficulty_preview');
   function getLeafCountFromDifficulty(value) {
@@ -366,9 +366,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
   modalDifficulty.addEventListener('change', updateCreateDifficultyPreview);
 
-  // Create : envoi AJAX (POST JSON)
   createValidate.addEventListener('click', ()=>{
     const titre = document.getElementById('modal_title').value.trim();
+    const descr_fr = document.getElementById('modal_descr_fr').value.trim();
+    const descr_en = document.getElementById('modal_descr_en').value.trim();
     const difficulty = document.getElementById('modal_difficulty').value;
     const xp = document.getElementById('modal_xp').value;
     const score = document.getElementById('modal_score').value;
@@ -381,20 +382,26 @@ if (isset($pdo) && $pdo instanceof PDO) {
     fetch('admin_shift_manager_create.php', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ titre_fr: titre, difficulty, xp_gain: xp, score: score, duration_days: duration, domaine: type, categorie: category })
+      body: JSON.stringify({
+        titre_fr: titre,
+        descr_fr: descr_fr,
+        descr_en: descr_en,
+        difficulty: difficulty,
+        xp_gain: xp,
+        score: score,
+        duration_days: duration,
+        domaine: type,
+        categorie: category
+      })
     })
     .then(r=>r.json())
     .then(data=>{
-      if (data.success) {
-        location.reload();
-      } else {
-        alert('Erreur création: '+(data.error||''));
-      }
+      if (data.success) location.reload();
+      else alert('Erreur création: '+(data.error||''));
     })
-    .catch(err=> alert('Erreur réseau'));
+    .catch(err=> { console.error(err); alert('Erreur réseau'); });
   });
 
-  // Filtrage client
   function applyFilters(){
     const t = document.getElementById('filter_type').value;
     const d = document.getElementById('filter_difficulty').value;
@@ -418,7 +425,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
   document.getElementById('task_search').addEventListener('input', applyFilters);
 
-  // toggle disable via AJAX
   function toggleDisable(id, btn) {
     btn.disabled = true;
     fetch('admin_shift_manager_desactiver.php', {
@@ -430,19 +436,20 @@ if (isset($pdo) && $pdo instanceof PDO) {
     .then(data=>{
       btn.disabled = false;
       if (data.success) {
-        if (data.action === 'disabled') btn.innerText = 'Réactiver';
-        else btn.innerText = 'Désactiver';
+        btn.innerText = (data.action === 'disabled') ? 'Réactiver' : 'Désactiver';
       } else {
         alert('Erreur: ' + (data.error||''));
       }
     })
-    .catch(()=> { btn.disabled = false; alert('Erreur réseau'); });
+    .catch(err=> { btn.disabled = false; console.error(err); alert('Erreur réseau'); });
   }
 
-  // open params popup and fetch details
   function openParams(id){
-    fetch('admin_shift_manager_task_params.php?challenge_id=' + encodeURIComponent(id))
-      .then(r=>r.json())
+    fetch('admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
+      .then(r=>{
+        if (!r.ok) throw new Error('HTTP '+r.status);
+        return r.json();
+      })
       .then(data=>{
         if (data.success) {
           document.getElementById('p_title').innerText = data.titre;
@@ -450,12 +457,12 @@ if (isset($pdo) && $pdo instanceof PDO) {
           document.getElementById('p_users').innerText = data.users_count;
           paramsModal.classList.remove('hidden');
         } else {
-          alert('Erreur: ' + data.error);
+          alert('Erreur: ' + (data.error||''));
         }
-      }).catch(()=> alert('Erreur réseau'));
+      })
+      .catch(err=> { console.error(err); alert('Erreur réseau'); });
   }
 
-  // initial
   updateCreateDifficultyPreview();
 </script>
 
