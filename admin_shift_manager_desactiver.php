@@ -9,32 +9,32 @@ if (!$challenge_id) {
     echo json_encode(['success'=>false,'error'=>'ID invalide']); exit;
 }
 
-if (!isset($conn)) {
-    echo json_encode(['success'=>false,'error'=>'Connexion DB non définie']); exit;
+if (!isset($pdo) || !($pdo instanceof PDO)) {
+    echo json_encode(['success'=>false,'error'=>'Connexion DB non définie (db_connect.php)']); exit;
 }
 
-// s'assurer de l'existence de la table
-$conn->query("CREATE TABLE IF NOT EXISTS disabled_challenges (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    challenge_id INT NOT NULL UNIQUE,
-    disabled_at DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+try {
+    // s'assurer de l'existence de la table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS disabled_challenges (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        challenge_id INT NOT NULL UNIQUE,
+        disabled_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-$stmt = $conn->prepare("SELECT id FROM disabled_challenges WHERE challenge_id = ?");
-$stmt->bind_param('i', $challenge_id);
-$stmt->execute();
-$res = $stmt->get_result();
-if ($res && $res->num_rows > 0) {
-    $del = $conn->prepare("DELETE FROM disabled_challenges WHERE challenge_id = ?");
-    $del->bind_param('i', $challenge_id);
-    $ok = $del->execute();
-    if ($ok) echo json_encode(['success'=>true,'action'=>'enabled']);
-    else echo json_encode(['success'=>false,'error'=>$conn->error]);
-} else {
-    $ins = $conn->prepare("INSERT INTO disabled_challenges (challenge_id) VALUES (?)");
-    $ins->bind_param('i', $challenge_id);
-    $ok = $ins->execute();
-    if ($ok) echo json_encode(['success'=>true,'action'=>'disabled']);
-    else echo json_encode(['success'=>false,'error'=>$ins->error]);
+    $stmt = $pdo->prepare("SELECT id FROM disabled_challenges WHERE challenge_id = :cid");
+    $stmt->execute([':cid'=>$challenge_id]);
+    $row = $stmt->fetch();
+    if ($row) {
+        // réactiver -> supprimer
+        $del = $pdo->prepare("DELETE FROM disabled_challenges WHERE challenge_id = :cid");
+        $del->execute([':cid'=>$challenge_id]);
+        echo json_encode(['success'=>true,'action'=>'enabled']);
+    } else {
+        // désactiver -> insérer
+        $ins = $pdo->prepare("INSERT INTO disabled_challenges (challenge_id) VALUES (:cid)");
+        $ins->execute([':cid'=>$challenge_id]);
+        echo json_encode(['success'=>true,'action'=>'disabled']);
+    }
+} catch (Exception $e) {
+    echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
 }
-?>
