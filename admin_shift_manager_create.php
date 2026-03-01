@@ -13,6 +13,7 @@ if (!isset($pdo) || !($pdo instanceof PDO)) {
 }
 
 $titre_fr = trim($body['titre_fr'] ?? '');
+$titre_en = trim($body['titre_en'] ?? ''); 
 $descr_fr = trim($body['descr_fr'] ?? '');
 $descr_en = trim($body['descr_en'] ?? '');
 $difficulty = trim($body['difficulty'] ?? 'facile');
@@ -23,14 +24,15 @@ $domaine = trim($body['domaine'] ?? '');
 $categorie = trim($body['categorie'] ?? '');
 
 if ($titre_fr === '') {
-    echo json_encode(['success'=>false,'error'=>'Titre requis']); exit;
+    echo json_encode(['success'=>false,'error'=>'Titre (FR) requis']); exit;
 }
+
+if ($titre_en === '') $titre_en = $titre_fr;
 
 try {
     $sql = "INSERT INTO challenges (titre_fr, titre_en, descr_fr, descr_en, xp_gain, co2_kg, difficulty, domaine, categorie, duration_days, max_actions_day, company_id)
             VALUES (:titre_fr, :titre_en, :descr_fr, :descr_en, :xp_gain, :co2_kg, :difficulty, :domaine, :categorie, :duration_days, 1, NULL)";
     $stmt = $pdo->prepare($sql);
-    $titre_en = $titre_fr;
     $stmt->execute([
         ':titre_fr'=>$titre_fr,
         ':titre_en'=>$titre_en,

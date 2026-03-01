@@ -1,6 +1,7 @@
-<?php
+<?php 
 session_start();
 require_once 'db_connect.php';
+
 
 ?>
 <!doctype html>
@@ -8,19 +9,14 @@ require_once 'db_connect.php';
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shift Manager - Tableau de bord</title>
+  <title>Shift Manager - Tableau de bord (Super Admin)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .rounded-full-xl { border-radius: 999px; }
     .card-radius { border-radius: 12px; }
     .leaf { width:18px; height:18px; display:inline-block; margin-right:6px; vertical-align:middle; }
     .leaf svg { width:100%; height:100%; }
-    :root{
-      --bg:#ececec;
-      --panel:#dcdcdc;
-      --card:#bdbdbd;
-      --accent:#9a9a9a;
-    }
+    :root{ --bg:#ececec; --panel:#dcdcdc; --card:#bdbdbd; --accent:#9a9a9a; }
     body{ background: #fff; color:#111; }
   </style>
 </head>
@@ -56,6 +52,7 @@ require_once 'db_connect.php';
   </div>
 </header>
 
+<body>
 <div class="max-w-screen-2xl mx-auto p-8">
   <h1 class="text-3xl font-light mb-4"> Shift Manager</h1>
 </div>
@@ -156,7 +153,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
     <div class="lg:col-span-2 bg-gray-200 card-radius p-6">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl">Liste des taches :</h2>
+        <h2 class="text-2xl">Bibliothèque de défis :</h2>
         <button id="openFilterBtn" class="bg-gray-400 px-4 py-2 rounded card-radius">Filtre</button>
       </div>
 
@@ -170,16 +167,9 @@ if (isset($pdo) && $pdo instanceof PDO) {
               echo "<div class='text-red-600'>Impossible d'afficher les tâches : \$pdo introuvable.</div>";
           } else {
               try {
-                  $pdo->exec("CREATE TABLE IF NOT EXISTS disabled_challenges (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    challenge_id INT NOT NULL UNIQUE,
-                    disabled_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
-
-                  $sql = "SELECT c.*, IF(dc.challenge_id IS NOT NULL,1,0) as disabled,
+                  $sql = "SELECT c.*,
                              (SELECT COUNT(DISTINCT ua.user_id) FROM user_actions ua WHERE ua.challenge_id=c.id) as users_count
                           FROM challenges c
-                          LEFT JOIN disabled_challenges dc ON dc.challenge_id = c.id
                           ORDER BY c.id DESC";
                   $stmt = $pdo->query($sql);
                   while($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -191,8 +181,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       $domaine = htmlspecialchars($r['domaine'] ?? '');
                       $categorie = htmlspecialchars($r['categorie'] ?? '');
                       $duration = (int)($r['duration_days'] ?? 0);
-                      $disabled = (int)$r['disabled'];
-                      $users_count = (int)$r['users_count'];
+                      $users_count = (int)($r['users_count'] ?? 0);
 
                       $dl = strtolower($difficulty);
                       $leafCount = 1;
@@ -218,7 +207,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       echo '</div>';
 
                       echo '<div class="flex items-center gap-3">';
-                      echo '<button class="px-4 py-2 rounded bg-gray-100" onclick="toggleDisable('.$id.', this)">'.($disabled ? 'Réactiver' : 'Désactiver').'</button>';
+                      // Bouton Désactiver retiré pour Super Admin (bibliothèque)
                       echo '<button class="px-3 py-2 rounded bg-gray-100" onclick="openParams('.$id.')" title="Paramètres">
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="3" y="5" width="18" height="2" rx="1" fill="currentColor"/>
@@ -241,6 +230,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
+<!-- Create modal -->
 <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
     <h3 class="text-xl mb-4">Créer une tâche</h3>
@@ -284,6 +274,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
     </div>
   </div>
 </div>
+
+<!-- Filter modal -->
 <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-40">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/4">
     <h3 class="text-xl mb-4">Filtrer</h3>
@@ -311,7 +303,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
     <div id="paramsBody" class="space-y-2">
       <div><strong>Titre :</strong> <span id="p_title"></span></div>
       <div><strong>XP :</strong> <span id="p_xp"></span></div>
-        <div><strong>Score :</strong> <span id="p_score"></span></div>
+      <div><strong>Score :</strong> <span id="p_score"></span></div>
       <div><strong>Nombre de personnes :</strong> <span id="p_users"></span></div>
     </div>
     <div class="flex justify-end mt-4">
@@ -338,7 +330,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   const paramsModal = document.getElementById('paramsModal');
   const paramsClose = document.getElementById('paramsClose');
 
-  openCreateBtn.addEventListener('click', ()=> { createModal.classList.remove('hidden'); updateCreateDifficultyPreview(); });
+  openCreateBtn.addEventListener('click', ()=> createModal.classList.remove('hidden'));
   createCancel.addEventListener('click', ()=> createModal.classList.add('hidden'));
 
   openFilterBtn.addEventListener('click', ()=> filterModal.classList.remove('hidden'));
@@ -361,49 +353,42 @@ if (isset($pdo) && $pdo instanceof PDO) {
     return 1;
   }
   function updateCreateDifficultyPreview(){
+    if (!modalDifficulty) return;
     const val = modalDifficulty.value;
     const leaves = getLeafCountFromDifficulty(val);
     modalDifficultyPreview.innerHTML = '';
     for (let i=0;i<leaves;i++) modalDifficultyPreview.innerHTML += leafSVG();
   }
-  modalDifficulty.addEventListener('change', updateCreateDifficultyPreview);
+  if (modalDifficulty) modalDifficulty.addEventListener('change', updateCreateDifficultyPreview);
 
  createValidate.addEventListener('click', ()=>{
   const titre = document.getElementById('modal_title').value.trim();
-  const titre_en = document.getElementById('modal_title_en').value.trim();
-  const descr_fr = document.getElementById('modal_descr_fr').value.trim();
-  const descr_en = document.getElementById('modal_descr_en').value.trim();
-  const difficulty = document.getElementById('modal_difficulty').value;
-  const xp = document.getElementById('modal_xp').value;
-  const score = document.getElementById('modal_score').value;
-  const duration = document.getElementById('modal_duration').value;
-  const type = document.getElementById('modal_type').value;
-  const category = document.getElementById('modal_category').value;
-
   if (!titre) { alert('Titre (FR) requis'); return; }
 
-  fetch('admin_shift_manager_create.php', {
+  const payload = {
+    titre_fr: document.getElementById('modal_title').value.trim(),
+    titre_en: document.getElementById('modal_title_en').value.trim(),
+    descr_fr: document.getElementById('modal_descr_fr').value.trim(),
+    descr_en: document.getElementById('modal_descr_en').value.trim(),
+    difficulty: document.getElementById('modal_difficulty').value,
+    xp_gain: document.getElementById('modal_xp').value,
+    score: document.getElementById('modal_score').value,
+    duration_days: document.getElementById('modal_duration').value,
+    domaine: document.getElementById('modal_type').value,
+    categorie: document.getElementById('modal_category').value
+  };
+
+  fetch('super_admin_shift_manager_create.php', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      titre_fr: titre,
-      titre_en: titre_en,
-      descr_fr: descr_fr,
-      descr_en: descr_en,
-      difficulty: difficulty,
-      xp_gain: xp,
-      score: score,
-      duration_days: duration,
-      domaine: type,
-      categorie: category
-    })
+    body: JSON.stringify(payload)
   })
   .then(r=>r.json())
   .then(data=>{
     if (data.success) location.reload();
     else alert('Erreur création: '+(data.error||''));
   })
-  .catch(err=> { console.error(err); alert('Erreur réseau'); });
+  .catch(()=> { alert('Erreur réseau'); });
 });
 
   function applyFilters(){
@@ -429,44 +414,22 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
   document.getElementById('task_search').addEventListener('input', applyFilters);
 
-  function toggleDisable(id, btn) {
-    btn.disabled = true;
-    fetch('admin_shift_manager_desactiver.php', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ challenge_id: id })
-    })
-    .then(r=>r.json())
-    .then(data=>{
-      btn.disabled = false;
-      if (data.success) {
-        btn.innerText = (data.action === 'disabled') ? 'Réactiver' : 'Désactiver';
-      } else {
-        alert('Erreur: ' + (data.error||''));
-      }
-    })
-    .catch(err=> { btn.disabled = false; console.error(err); alert('Erreur réseau'); });
-  }
-
   function openParams(id){
-  fetch('admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
-    .then(r=>{
-      if (!r.ok) throw new Error('HTTP '+r.status);
-      return r.json();
-    })
-    .then(data=>{
-      if (data.success) {
-        document.getElementById('p_title').innerText = data.titre;
-        document.getElementById('p_xp').innerText = data.xp;
-        document.getElementById('p_score').innerText = (typeof data.score === 'number') ? data.score.toFixed(2) : data.score;
-        document.getElementById('p_users').innerText = data.users_count;
-        paramsModal.classList.remove('hidden');
-      } else {
-        alert('Erreur: ' + (data.error||''));
-      }
-    })
-    .catch(err=> { console.error(err); alert('Erreur réseau'); });
-}
+    fetch('super_admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
+      .then(r=>{ if (!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(data=>{
+        if (data.success) {
+          document.getElementById('p_title').innerText = data.titre;
+          document.getElementById('p_xp').innerText = data.xp;
+          document.getElementById('p_score').innerText = (typeof data.score === 'number') ? data.score.toFixed(2) : data.score;
+          document.getElementById('p_users').innerText = data.users_count;
+          paramsModal.classList.remove('hidden');
+        } else {
+          alert('Erreur: ' + (data.error||''));
+        }
+      })
+      .catch(()=> { alert('Erreur réseau'); });
+  }
 </script>
 
 </body>
