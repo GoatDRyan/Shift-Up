@@ -1,495 +1,120 @@
 <?php
-require_once 'includes/init.php';
+session_start();
+require_once 'db_connect.php';
 
-$sql = "SELECT * FROM challenges ORDER BY categorie DESC, titre_$lang";
+if (file_exists('includes/functions.php')) {
+    require_once 'includes/functions.php';
+} elseif (file_exists('functions.php')) {
+    require_once 'functions.php';
+} 
+
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 4;
+} 
+
+$lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'fr';
+if (!in_array($lang, ['fr', 'en', 'es'])) {
+    $lang = 'fr';
+}
+$textes = require_once "lang/$lang.php";
+
+$sql = "SELECT * FROM challenges";
 $stmt = $pdo->query($sql);
-$allChallenges = $stmt->fetchAll();
-
-$stmt_actions = $pdo->prepare("SELECT DISTINCT challenge_id FROM user_actions WHERE user_id = :uid");
-$stmt_actions->execute(['uid' => $user_id]);
-$userValidatedIds = $stmt_actions->fetchAll(PDO::FETCH_COLUMN);
-
-$stmt_prog = $pdo->prepare("SELECT challenge_id, COUNT(DISTINCT DATE(date_action)) as days_done FROM user_actions WHERE user_id = :uid GROUP BY challenge_id");
-$stmt_prog->execute(['uid' => $user_id]);
-$userProgress = $stmt_prog->fetchAll(PDO::FETCH_KEY_PAIR);
-
-$defis_en_cours = [];
-
-foreach ($allChallenges as $c) {
-    $duration = (int)($c['duration_days'] ?? 1);
-    $days_done = $userProgress[$c['id']] ?? 0;
-
-    if ($duration > 1 && $days_done > 0 && $days_done < $duration) {
-        $c['days_done'] = $days_done;
-        $defis_en_cours[] = $c;
-    }
-}
-
-$stmt_history = $pdo->prepare("
-    SELECT ua.date_action, c.titre_fr, c.titre_en, c.descr_fr, c.descr_en, c.xp_gain, c.difficulty
-    FROM user_actions ua 
-    JOIN challenges c ON ua.challenge_id = c.id 
-    WHERE ua.user_id = :uid 
-    ORDER BY ua.date_action DESC
-    LIMIT 20
-");
-$stmt_history->execute(['uid' => $user_id]);
-$userHistory = $stmt_history->fetchAll();
-
-$groupedChallenges = [];
-$categories = [];
-foreach ($allChallenges as $c) {
-    $catName = !empty($c['categorie']) ? $c['categorie'] : 'Général';
-    if (!isset($groupedChallenges[$catName])) {
-        $groupedChallenges[$catName] = [];
-        if (!in_array($catName, $categories)) $categories[] = $catName;
-    }
-    $groupedChallenges[$catName][] = $c;
-}
+$challenges = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title><?= htmlspecialchars(($t['nav_defs'] ?? 'Défis') . " - Shift'Up") ?></title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="js/tailwind-config.js"></script>
+    <title>Les Défis Shift'Up</title>
 </head>
-<body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24"> 
+<body>
 
-    <header class="top-0 w-full bg-brand-primary p-4 pb-0 relative z-40 shadow-sm">
-        <div class="flex items-center gap-2 max-[375px]:gap-1 mb-4 z-50 relative">
-            
-            <div class="flex items-center bg-brand-secondary rounded-full pr-4 max-[375px]:pr-2 h-10 max-[375px]:h-8 shadow-sm">
-                <div class="w-10 h-10 max-[375px]:w-8 max-[375px]:h-8 rounded-full bg-brand-tertiary flex items-center justify-center text-brand-primary font-display font-bold border-2 border-brand-primary text-lg max-[375px]:text-sm">
-                    <?= $levelData['niveau_actuel'] ?? 1 ?>
-                </div>
-                <span class="ml-2 text-xs max-[320px]:text-[10px] font-bold text-brand-dark whitespace-nowrap">
-                    <?= number_format($levelData['xp_actuel'] ?? 0) ?>/<?= number_format($levelData['xp_prochain'] ?? 2500) ?>
-                </span>
-            </div>
+    <h1><?= $textes['liste_defis'] ?? 'Liste des Défis' ?></h1>
 
-            <div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
-                <div class="flex items-center gap-2 max-[375px]:gap-1">
-                    <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0">
-                        <i class="fa-solid fa-leaf text-brand-tertiary text-[10px] max-[375px]:text-[8px]"></i>
-                    </div>
-                    <span class="text-sm max-[376px]:text-xs font-bold text-brand-dark truncate">
-                        <?= number_format($money ?? 0, 0, '.', ' ') ?>
-                    </span>
-                </div>
-            </div>
-
-            <div class="absolute right-0 top-12 flex gap-2 max-[375px]:gap-1 z-50">
-                <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                    <i class="fa-solid fa-newspaper text-xl max-[375px]:text-base"></i>
-                </button>
-                <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                    <i class="fa-solid fa-bars text-xl max-[375px]:text-base"></i>
-                </button>
-            </div>
+    <?php if (isset($_SESSION['flash_message'])): ?>
+        <div>
+            <?= $_SESSION['flash_message']; ?>
         </div>
+        <?php unset($_SESSION['flash_message']); ?>
+    <?php endif; ?>
 
-        <div class="relative h-[200px] top-[-35px] flex items-center justify-center -mx-4 mt-2 z-10">
-            
-            <div id="tab-search" onclick="switchTab('search')" 
-                 class="absolute left-[-10%] w-[68%] h-32 max-[375px]:h-28 max-[320px]:h-24 bg-brand-secondary skew-tile cursor-pointer flex items-center justify-end pr-8 max-[375px]:pr-4 transition-colors z-20">
-                <div class="unskew text-right flex flex-col justify-center">
-                    <h2 class="font-display text-3xl max-[375px]:text-2xl font-bold text-brand-dark leading-none mb-1 transition-colors"><?= htmlspecialchars($t['tab_explore'] ?? 'Explorer') ?></h2>
-                </div>
-            </div>
+    <div class="liste-defis">
+        
+        <?php foreach($challenges as $defi): ?>
 
-            <div id="tab-my" onclick="switchTab('my')" 
-                 class="absolute right-[-5%] top-[45%] w-[45%] h-28 max-[375px]:h-24 max-[320px]:h-20 bg-brand-border skew-tile cursor-pointer flex items-center justify-center pl-4 transition-colors z-10">
-                <div class="unskew text-center">
-                    <span class="font-display text-xl max-[375px]:text-lg font-bold text-brand-tertiary transition-colors"><?= htmlspecialchars($t['tab_my_challenges'] ?? 'Mes défis') ?></span>
-                </div>
-            </div>
+            <?php
+            $sql_today = "SELECT COUNT(*) FROM user_actions WHERE user_id = :uid AND challenge_id = :cid AND DATE(date_action) = CURDATE()";
+            $stmt_td = $pdo->prepare($sql_today);
+            $stmt_td->execute(['uid' => $_SESSION['user_id'], 'cid' => $defi['id']]);
+            $today_count = $stmt_td->fetchColumn();
 
-            <div id="filter-btn" class="absolute left-[-10%] top-[180px] max-[375px]:top-[170px] max-[320px]:top-[134px] w-[60%] h-[36px] bg-brand-secondary skew-tile flex items-center justify-center cursor-pointer hover:bg-brand-secondary transition z-30 shadow-sm" onclick="openFilter()">
-                <div class="unskew pl-10 max-[375px]:pl-6 flex items-center justify-center">
-                    <span class="text-l text-brand-dark font-bold tracking-widest"><?= htmlspecialchars($t['btn_filter'] ?? 'Filtre') ?></span>
-                </div>
-            </div>
-
-        </div>
-    </header>
-
-    <div class="px-4 space-y-6 mt-10" id="challenges-list">
-        <?php foreach ($groupedChallenges as $categoryName => $challengesInCat): ?>
-            <div class="category-block bg-brand-primary rounded-[20px] p-4 pb-6 shadow-sm border border-brand-border" data-cat-name="<?= htmlspecialchars($categoryName) ?>">
-                <h2 class="text-left text-xs font-bold uppercase tracking-widest text-brand-tertiary mb-4 border-b border-brand-border pb-2">
-                    <?= htmlspecialchars($t['cat_' . $categoryName] ?? $categoryName) ?>
-                </h2>
+            $progression_totale = 0;
+            $percent = 0;
+            if ($defi['duration_days'] > 1) {
+                $sql_total = "SELECT COUNT(*) FROM user_actions WHERE user_id = :uid AND challenge_id = :cid";
+                $stmt_tot = $pdo->prepare($sql_total);
+                $stmt_tot->execute(['uid' => $_SESSION['user_id'], 'cid' => $defi['id']]);
+                $progression_totale = $stmt_tot->fetchColumn();
                 
-                <?php foreach($challengesInCat as $defi): ?>
-                    <?php 
-                        $sql_today = "SELECT COUNT(*) FROM user_actions WHERE user_id = :uid AND challenge_id = :cid AND DATE(date_action) = CURDATE()";
-                        $stmt_td = $pdo->prepare($sql_today);
-                        $stmt_td->execute(['uid' => $user_id, 'cid' => $defi['id']]);
-                        $today_count = $stmt_td->fetchColumn();
-                        
-                        $disabled = ($today_count >= $defi['max_actions_day']);
-                        $diff = strtolower($defi['difficulty'] ?? 'facile');
-                        $leafCount = ($diff == 'difficile') ? 3 : (($diff == 'moyen') ? 2 : 1);
-                        $isValidated = in_array($defi['id'], $userValidatedIds);
+                $percent = min(100, ($progression_totale / $defi['duration_days']) * 100);
+            }
+            ?>
 
-                        $duration = (int)($defi['duration_days'] ?? 1);
-                        $days_done = $userProgress[$defi['id']] ?? 0;
-                        if ($days_done > $duration) $days_done = $duration;
-                        $progress_percent = ($duration > 0) ? round(($days_done / $duration) * 100) : 0;
-                    ?>
+            <div class="carte-defi">
+                <div>
+                    <h3><?= get_trad_bdd($defi, 'titre', $lang) ?></h3>
                     
-                    <div class="challenge-card bg-brand-card border border-brand-border rounded-2xl p-2.5 flex relative mb-4 shadow-sm items-stretch cursor-pointer hover:border-brand-tertiary transition" 
-                         data-difficulty="<?= $diff ?>" 
-                         data-category="<?= htmlspecialchars($categoryName) ?>"
-                         data-domain="<?= htmlspecialchars($defi['domaine'] ?? 'ecologique') ?>"
-                         onclick="openModal('modal-<?= $defi['id'] ?>')">
-                        
-                        <div class="w-[65px] min-h-[65px] bg-brand-secondary rounded-xl flex items-center justify-center shrink-0 relative">
-                            <i class="fa-solid fa-seedling text-2xl text-brand-dark"></i>
-                        </div>
-                        
-                        <div class="ml-3 flex-1 flex flex-col justify-center py-1">
-                            <div class="flex justify-between items-start w-full gap-2">
-                                <h3 class="font-bold text-[13px] text-brand-dark leading-tight line-clamp-2 pr-10">
-                                    <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
-                                </h3>
-                                <div class="flex items-center gap-0.5 shrink-0 text-brand-tertiary mt-0.5">
-                                        <?php for($i=0; $i<$leafCount; $i++): ?>
-                                            <i class="fa-solid fa-leaf text-[10px]"></i>
-                                        <?php endfor; ?>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 mt-1.5">
-                                <span class="text-[10px] font-bold text-brand-tertiary uppercase"><i class="fa-solid fa-clock mr-1"></i><?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                <span class="text-[10px] font-bold text-brand-success uppercase"><i class="fa-solid fa-star mr-1"></i><?= htmlspecialchars($defi['xp_gain']) ?> XP</span>
-                            </div>
+                    <?php 
+                    $colors = ['facile' => '#2ecc71', 'moyen' => '#f1c40f', 'difficile' => '#e74c3c'];
+                    $c = $colors[$defi['difficulty']] ?? '#ccc'; 
+                    ?>
+                    <span class="badge-diff"><?= ucfirst($defi['difficulty']) ?></span>
+                </div>
 
-                            <?php if ($duration > 1): ?>
-                            <div class="mt-2 pr-10">
-                                <div class="flex justify-between items-center text-[9px] font-bold text-brand-tertiary mb-1">
-                                    <span class="uppercase tracking-wider">Progression</span>
-                                    <span><?= $days_done ?>/<?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                </div>
-                                <div class="w-full h-1.5 bg-brand-border rounded-full overflow-hidden">
-                                    <div class="h-full bg-brand-dark transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
-                                </div>
-                            </div>
-                            <?php endif; ?>
-                        </div>
+                <p><?= get_trad_bdd($defi, 'descr', $lang) ?></p>
 
-                        <div class="absolute -bottom-2 -right-2 z-10" onclick="event.stopPropagation();">
-                            <form action="validate_mission.php" method="POST">
-                                <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-10 h-10 bg-brand-dark rounded-full flex items-center justify-center text-brand-primary <?= $disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black active:scale-95' ?> transition shadow-md">
-                                    <i class="fa-solid fa-check"></i>
-                                </button>
-                            </form>
-                        </div>
+                <?php if ($defi['duration_days'] > 1): ?>
+                    <div class="progress-bg">
+                        <div class="progress-bar"></div>
                     </div>
+                    <small>Objectif : <?= $progression_totale ?> / <?= $defi['duration_days'] ?> étapes</small>
+                <?php else: ?>
+                    <small>Gain immédiat : +<?= $defi['xp_gain'] ?> XP à chaque validation</small>
+                <?php endif; ?>
 
-                    <div id="modal-<?= $defi['id'] ?>" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-brand-dark/80 p-4 backdrop-blur-sm">
-                        <div class="relative w-full max-w-sm bg-brand-primary rounded-3xl p-6 shadow-2xl border border-brand-border">
-                            <button type="button" onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-4 w-8 h-8 bg-brand-border rounded-full flex items-center justify-center text-brand-dark hover:bg-brand-secondary transition">
-                                <i class="fa-solid fa-xmark"></i>
+
+                <div>
+                    <?php
+                    $is_finished_long_term = ($defi['duration_days'] > 1 && $progression_totale >= $defi['duration_days']);
+                    
+                    $is_limit_today_reached = ($today_count >= $defi['max_actions_day']);
+                    ?>
+
+                    <?php if ($is_finished_long_term): ?>
+                        <button disabled>Défi Terminé</button>
+                    
+                    <?php elseif ($is_limit_today_reached): ?>
+                        <button disabled>Reviens demain (Max atteint)</button>
+                    
+                    <?php else: ?>
+                        <form action="validate_mission.php" method="POST">
+                            <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
+                            <button type="submit">
+                                <?php if ($defi['duration_days'] > 1): ?>
+                                    Avancer (+1)
+                                <?php else: ?>
+                                    Valider (+<?= $defi['xp_gain'] ?> XP)
+                                <?php endif; ?>
                             </button>
-                            
-                            <div class="flex items-center gap-1 text-brand-tertiary mb-3">
-                                <?php for ($i=0; $i < ($leafCount ?? 1); $i++): ?>
-                                    <i class="fa-solid fa-leaf text-xs"></i>
-                                <?php endfor; ?>
-                            </div>
-                            
-                            <h3 class="text-xl font-display font-bold text-brand-dark leading-tight mb-2"><?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?></h3>
-                            <p class="text-sm text-brand-tertiary mb-6 max-h-40 overflow-y-auto"><?= nl2br(htmlspecialchars($defi['descr_' . $lang] ?? $defi['descr_fr'])) ?></p>
-                            
-                            <div class="flex gap-3 mb-6">
-                                <div class="flex-1 text-center py-2 rounded-xl bg-brand-card border border-brand-border text-brand-dark text-xs font-bold shadow-sm flex flex-col justify-center">
-                                    <i class="fa-solid fa-calendar mb-1 text-brand-tertiary"></i>
-                                    <span><?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                </div>
-                                <div class="flex-1 text-center py-2 rounded-xl bg-brand-card border border-brand-border text-brand-dark text-xs font-bold shadow-sm flex flex-col justify-center">
-                                    <i class="fa-solid fa-cloud mb-1 text-brand-tertiary"></i>
-                                    <span><?= floatval($defi['co2_kg']) ?> kg CO2</span>
-                                </div>
-                            </div>
-                            
-                            <?php if ($duration > 1): ?>
-                            <div class="mb-6 bg-brand-card border border-brand-border p-3 rounded-xl">
-                                <div class="flex justify-between items-center text-[10px] font-bold text-brand-tertiary mb-2 uppercase tracking-widest">
-                                    <span>Avancement</span>
-                                    <span class="text-brand-dark"><?= $days_done ?> / <?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                </div>
-                                <div class="w-full h-2 bg-brand-border rounded-full overflow-hidden shadow-inner">
-                                    <div class="h-full bg-brand-dark transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
-                                </div>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <form action="validate_mission.php" method="POST">
-                                <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-full py-4 rounded-xl bg-brand-dark text-brand-primary font-bold shadow-lg <?= $disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black' ?> transition">
-                                    <?= $disabled ? htmlspecialchars($t['already_done'] ?? "Déjà fait aujourd'hui") : htmlspecialchars($t['validate_challenge'] ?? 'Valider ce défi') ?>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+                        </form>
+                    <?php endif; ?>
+                </div>
+            </div> 
+
         <?php endforeach; ?>
     </div>
 
-    <div class="px-4 space-y-8 mt-10 hidden" id="my-challenges-page">
-        
-        <div>
-            <h2 class="text-left text-xs font-bold uppercase tracking-widest text-brand-tertiary mb-4 border-b border-brand-border pb-2">
-                <?= htmlspecialchars($t['in_progress'] ?? 'En cours') ?>
-            </h2>
-            
-            <?php if(empty($defis_en_cours)): ?>
-                <div class="text-center py-8 bg-brand-primary rounded-[20px] border border-brand-border border-dashed">
-                    <p class="text-sm text-brand-tertiary font-bold"><?= htmlspecialchars($t['no_challenge_in_progress'] ?? 'Aucun défi en cours.') ?></p>
-                </div>
-            <?php else: ?>
-                <div class="space-y-4">
-                    <?php foreach($defis_en_cours as $defi): ?>
-                        <?php 
-                            $sql_today = "SELECT COUNT(*) FROM user_actions WHERE user_id = :uid AND challenge_id = :cid AND DATE(date_action) = CURDATE()";
-                            $stmt_td = $pdo->prepare($sql_today);
-                            $stmt_td->execute(['uid' => $user_id, 'cid' => $defi['id']]);
-                            $today_count = $stmt_td->fetchColumn();
-                            
-                            $disabled = ($today_count >= $defi['max_actions_day']);
-                            $diff = strtolower($defi['difficulty'] ?? 'facile');
-                            $leafCount = ($diff == 'difficile') ? 3 : (($diff == 'moyen') ? 2 : 1);
-                            
-                            $duration = (int)($defi['duration_days'] ?? 1);
-                            $days_done = $defi['days_done'];
-                            $progress_percent = round(($days_done / $duration) * 100);
-                        ?>
-                        
-                        <div class="challenge-card bg-brand-card border-2 border-brand-dark rounded-2xl p-2.5 flex relative shadow-sm items-stretch cursor-pointer hover:border-brand-tertiary transition" 
-                             onclick="openModal('modal-my-<?= $defi['id'] ?>')">
-                            
-                            <div class="w-[65px] min-h-[65px] bg-brand-secondary rounded-xl flex items-center justify-center shrink-0 relative">
-                                <i class="fa-solid fa-seedling text-2xl text-brand-dark"></i>
-                            </div>
-                            
-                            <div class="ml-3 flex-1 flex flex-col justify-center py-1">
-                                <h3 class="font-bold text-[13px] text-brand-dark leading-tight line-clamp-2 pr-10">
-                                    <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
-                                </h3>
-                                
-                                <div class="mt-2 pr-10">
-                                    <div class="flex justify-between items-center text-[9px] font-bold text-brand-tertiary mb-1">
-                                        <span class="uppercase tracking-wider">Progression</span>
-                                        <span><?= $days_done ?>/<?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                    </div>
-                                    <div class="w-full h-1.5 bg-brand-border rounded-full overflow-hidden">
-                                        <div class="h-full bg-brand-dark transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="absolute -bottom-2 -right-2 z-10" onclick="event.stopPropagation();">
-                                <form action="validate_mission.php" method="POST">
-                                    <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                    <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-10 h-10 bg-brand-dark rounded-full flex items-center justify-center text-brand-primary <?= $disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black active:scale-95' ?> transition shadow-md">
-                                        <i class="fa-solid fa-check"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div id="modal-my-<?= $defi['id'] ?>" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-brand-dark/80 p-4 backdrop-blur-sm">
-                            <div class="relative w-full max-w-sm bg-brand-primary rounded-3xl p-6 shadow-2xl border border-brand-border">
-                                <button type="button" onclick="closeModal('modal-my-<?= $defi['id'] ?>')" class="absolute top-4 right-4 w-8 h-8 bg-brand-border rounded-full flex items-center justify-center text-brand-dark hover:bg-brand-secondary transition">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                                
-                                <h3 class="text-xl font-display font-bold text-brand-dark leading-tight mb-2 mt-4"><?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?></h3>
-                                <p class="text-sm text-brand-tertiary mb-6 max-h-40 overflow-y-auto"><?= nl2br(htmlspecialchars($defi['descr_' . $lang] ?? $defi['descr_fr'])) ?></p>
-                                
-                                <div class="mb-6 bg-brand-card border border-brand-border p-3 rounded-xl">
-                                    <div class="flex justify-between items-center text-[10px] font-bold text-brand-tertiary mb-2 uppercase tracking-widest">
-                                        <span>Avancement</span>
-                                        <span class="text-brand-dark"><?= $days_done ?> / <?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                    </div>
-                                    <div class="w-full h-2 bg-brand-border rounded-full overflow-hidden shadow-inner">
-                                        <div class="h-full bg-brand-dark transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
-                                    </div>
-                                </div>
-                                
-                                <form action="validate_mission.php" method="POST">
-                                    <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                    <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-full py-4 rounded-xl bg-brand-dark text-brand-primary font-bold shadow-lg <?= $disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black' ?> transition">
-                                        <?= $disabled ? htmlspecialchars($t['already_done'] ?? "Déjà fait aujourd'hui") : htmlspecialchars($t['validate_challenge'] ?? 'Valider ce défi') ?>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <div>
-            <h2 class="text-left text-xs font-bold uppercase tracking-widest text-brand-tertiary mb-4 border-b border-brand-border pb-2">
-                <?= htmlspecialchars($t['history'] ?? 'Historique') ?>
-            </h2>
-            
-            <?php if(empty($userHistory)): ?>
-                <div class="text-center py-8 bg-brand-primary rounded-[20px] border border-brand-border border-dashed">
-                    <p class="text-sm text-brand-tertiary font-bold"><?= htmlspecialchars($t['no_action_validated'] ?? 'Aucune action validée.') ?></p>
-                </div>
-            <?php else: ?>
-                <div class="space-y-3 max-h-[300px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
-                    <?php foreach($userHistory as $history): ?>
-                        <div class="bg-brand-primary border border-brand-border rounded-2xl p-4 flex flex-col relative shadow-sm shrink-0">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-sm text-brand-dark pr-4">
-                                    <?= htmlspecialchars($history['titre_' . $lang] ?? $history['titre_fr']) ?>
-                                </h3>
-                                <span class="bg-brand-success/20 text-brand-success px-2 py-1 rounded-md text-[10px] font-bold shrink-0">
-                                    +<?= htmlspecialchars($history['xp_gain']) ?> XP
-                                </span>
-                            </div>
-                            <div class="flex justify-between items-center mt-2 border-t border-brand-border pt-2">
-                                <span class="text-[10px] text-brand-tertiary"><i class="fa-regular fa-calendar mr-1"></i> <?= date('d/m/Y', strtotime($history['date_action'])) ?></span>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-
-    </div>
-
-    <div id="filter-modal" class="fixed inset-0 z-[150] hidden flex items-end justify-center bg-brand-dark/80 backdrop-blur-sm sm:items-center">
-        <div class="bg-brand-primary w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 relative shadow-2xl border-t sm:border border-brand-border transition-transform transform translate-y-0">
-            <button onclick="closeFilter()" class="absolute top-4 right-4 text-brand-tertiary hover:text-brand-dark font-bold text-xl z-20 transition"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="text-center text-lg mb-6 font-display font-bold uppercase tracking-widest text-brand-dark"><?= htmlspecialchars($t['filter_title'] ?? 'Filtres') ?></h2>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-brand-tertiary"><?= htmlspecialchars($t['filter_difficulty'] ?? 'Difficulté') ?></label>
-                    <select id="filter-difficulty" class="w-full bg-brand-card rounded-xl p-3 text-sm outline-none border border-brand-border text-brand-dark font-bold">
-                        <option value="all"><?= htmlspecialchars($t['filter_all'] ?? 'Toutes') ?></option>
-                        <option value="facile"><?= htmlspecialchars($t['filter_easy'] ?? 'Facile') ?></option>
-                        <option value="moyen"><?= htmlspecialchars($t['filter_medium'] ?? 'Moyen') ?></option>
-                        <option value="difficile"><?= htmlspecialchars($t['filter_hard'] ?? 'Difficile') ?></option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-brand-tertiary mt-4"><?= htmlspecialchars($t['filter_domain'] ?? 'Domaine') ?></label>
-                    <select id="filter-domain" class="w-full bg-brand-card rounded-xl p-3 text-sm outline-none border border-brand-border text-brand-dark font-bold">
-                        <option value="all"><?= htmlspecialchars($t['filter_all_domains'] ?? 'Tous les domaines') ?></option>
-                        <option value="ecologique"><?= htmlspecialchars($t['filter_ecological'] ?? 'Écologique') ?></option>
-                        <option value="social"><?= htmlspecialchars($t['filter_social'] ?? 'Social') ?></option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1 uppercase tracking-wider text-brand-tertiary mt-4"><?= htmlspecialchars($t['filter_category'] ?? 'Catégorie') ?></label>
-                    
-                    <select id="filter-category" class="w-full bg-brand-card rounded-xl p-3 text-sm outline-none border border-brand-border text-brand-dark font-bold">
-                        <option value="all"><?= htmlspecialchars($t['filter_all_categories'] ?? 'Toutes les catégories') ?></option>
-                        
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?= htmlspecialchars($cat) ?>">
-                                <?= htmlspecialchars($t['cat_' . $cat] ?? $cat) ?>
-                            </option>
-                        <?php endforeach; ?>
-                        
-                    </select>
-                    </div>
-            </div>
-            <button onclick="applyFilters()" class="w-full bg-brand-dark text-brand-primary font-bold py-4 rounded-xl mt-8 shadow-lg hover:bg-black transition"><?= htmlspecialchars($t['btn_apply_filters'] ?? 'Appliquer les filtres') ?></button>
-        </div>
-    </div>
-    <?php include 'includes/level_up_popup.php'; ?>
-    <?php include 'includes/settings_menu.php'; ?>
-    <?php include 'includes/navbar.php'; ?>
-
-    <script>
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
-        function openFilter() { document.getElementById('filter-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
-        function closeFilter() { document.getElementById('filter-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
-        function switchTab(tab) {
-            const tabSearch = document.getElementById('tab-search');
-            const tabMy = document.getElementById('tab-my');
-            const searchList = document.getElementById('challenges-list');
-            const myList = document.getElementById('my-challenges-page');
-            const filterBtn = document.getElementById('filter-btn');
-            const textSearch = tabSearch.querySelector('h2');
-            const textMy = tabMy.querySelector('span');
-            const activeClasses = ['left-[-10%]', 'w-[68%]', 'h-32', 'max-[375px]:h-28', 'max-[320px]:h-24', 'bg-brand-secondary', 'justify-end', 'pr-8', 'z-20'];
-            const inactiveClasses = ['right-[-5%]', 'left-auto', 'top-[45%]', 'w-[45%]', 'h-28', 'max-[375px]:h-24', 'max-[320px]:h-20', 'bg-brand-border', 'justify-center', 'pl-4', 'z-10', 'border-brand-primary'];
-            const textActive = ['text-3xl', 'max-[375px]:text-2xl', 'text-brand-dark'];
-            const textInactive = ['text-xl', 'max-[375px]:text-lg', 'text-brand-tertiary'];
-            if (tab === 'search') {
-                tabSearch.classList.remove(...inactiveClasses);
-                tabSearch.classList.add(...activeClasses);
-                tabMy.classList.remove(...activeClasses);
-                tabMy.classList.add(...inactiveClasses);
-
-                textSearch.classList.replace('text-brand-tertiary', 'text-brand-dark');
-                textMy.classList.replace('text-brand-dark', 'text-brand-tertiary');
-                
-                searchList.classList.remove('hidden');
-                myList.classList.add('hidden');
-                filterBtn.style.display = 'flex';
-            } else {
-                tabMy.classList.remove(...inactiveClasses);
-                tabMy.classList.add(...activeClasses);
-                tabSearch.classList.remove(...activeClasses);
-                tabSearch.classList.add(...inactiveClasses);
-
-                textMy.classList.replace('text-brand-tertiary', 'text-brand-dark');
-                textSearch.classList.replace('text-brand-dark', 'text-brand-tertiary');
-                
-                searchList.classList.add('hidden');
-                myList.classList.remove('hidden');
-                filterBtn.style.display = 'none';
-            }
-        }
-
-        function applyFilters() {
-            const diff = document.getElementById('filter-difficulty').value;
-            const domain = document.getElementById('filter-domain').value;
-            const cat = document.getElementById('filter-category').value;
-
-            const cards = document.querySelectorAll('.challenge-card');
-            const sections = document.querySelectorAll('.category-block');
-
-            cards.forEach(card => {
-                const cardDiff = card.getAttribute('data-difficulty');
-                const cardDomain = card.getAttribute('data-domain');
-                const cardCat = card.getAttribute('data-category');
-
-                const matchDiff = (diff === 'all' || cardDiff === diff);
-                const matchDomain = (domain === 'all' || cardDomain === domain);
-                const matchCat = (cat === 'all' || cardCat === cat);
-
-                if (matchDiff && matchDomain && matchCat) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            
-            sections.forEach(sec => {
-                const visibleCardsInSec = sec.querySelectorAll('.challenge-card[style="display: flex;"], .challenge-card:not([style*="display: none"])');
-                sec.style.display = (visibleCardsInSec.length > 0) ? 'block' : 'none';
-            });
-
-            closeFilter();
-        }
-    </script>
 </body>
 </html>

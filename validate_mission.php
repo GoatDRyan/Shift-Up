@@ -7,7 +7,11 @@ if (!isset($user_id) || !isset($_POST['challenge_id'])) {
 }
 
 $challenge_id = (int) $_POST['challenge_id'];
+<<<<<<< HEAD
 $is_success = false;
+=======
+$is_success = false; // On initialise la variable pour savoir si on doit afficher la pop-up
+>>>>>>> oscar
 
 try {
     $pdo->beginTransaction();
@@ -24,6 +28,7 @@ try {
     $stmt_today->execute(['uid' => $user_id, 'cid' => $challenge_id]);
     $actions_aujourdhui = $stmt_today->fetchColumn();
 
+    // Si la limite du jour est atteinte, on redirige sans le message de succès
     if ($actions_aujourdhui >= $defi['max_actions_day']) {
         $pdo->rollBack();
         $_SESSION['flash_message'] = "Limite atteinte pour aujourd'hui.";
@@ -31,6 +36,7 @@ try {
         exit();
     }
 
+<<<<<<< HEAD
     // --- VÉRIFICATION DE LA LIMITE TOTALE (Si défi sur plusieurs jours) ---
     $objectif = (int)($defi['duration_days'] ?? 1);
     $total_fait = 0;
@@ -53,6 +59,14 @@ try {
     
     $is_success = true;
     $total_fait++;
+=======
+    // On enregistre l'action
+    $insert = $pdo->prepare("INSERT INTO user_actions (user_id, challenge_id, date_action) VALUES (:uid, :cid, NOW())");
+    $insert->execute(['uid' => $user_id, 'cid' => $challenge_id]);
+    
+    // L'action est bien enregistrée, on prépare le succès
+    $is_success = true;
+>>>>>>> oscar
 
     // Logique de série (Streak)
     $sql_streak_logic = "
@@ -91,6 +105,7 @@ try {
             }
         }
 
+<<<<<<< HEAD
         // 3. Vérification des Badges
         $msg_badge = "";
         $stmt_badge = $pdo->prepare("SELECT * FROM badges WHERE challenge_required_id = :cid");
@@ -103,6 +118,17 @@ try {
             if ($insert_badge->rowCount() > 0) {
                 $msg_badge = " + Badge débloqué !";
             }
+=======
+            $pdo->commit();
+            $_SESSION['flash_message'] = "DÉFI TERMINÉ ! " . $defi['xp_gain'] . " XP" . $msg_badge;
+        }
+        
+        else {
+            $pdo->commit();
+            // Si le défi sur plusieurs jours est déjà terminé et qu'on reclique, on annule le succès de la popup
+            $is_success = false; 
+            $_SESSION['flash_message'] = "Déjà terminé !";
+>>>>>>> oscar
         }
 
         $_SESSION['flash_message'] = "DÉFI TERMINÉ ! " . $defi['xp_gain'] . " XP gagnés !" . $msg_badge;
@@ -115,9 +141,13 @@ try {
         $_SESSION['flash_message'] = "Progression enregistrée : $total_fait / $objectif jours.";
     }
 
+<<<<<<< HEAD
     $pdo->commit();
 
     // Redirection finale
+=======
+    // Redirection finale selon le statut du succès
+>>>>>>> oscar
     if ($is_success) {
         header("Location: defis.php?success=1");
     } else {
