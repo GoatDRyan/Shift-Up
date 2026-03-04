@@ -2,7 +2,6 @@
 session_start();
 require_once 'db_connect.php';
 
-// Export via server-side (fallback) is kept, JS will fetch it for nicer UX
 if (isset($_GET['export']) && $_GET['export'] == '1' && !isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     try {
         $stmt = $pdo->prepare("SELECT u.id, u.pseudo, u.email, u.last_activity, u.points_wallet, u.points_rank, d.nom AS department
@@ -22,7 +21,6 @@ if (isset($_GET['export']) && $_GET['export'] == '1' && !isset($_SERVER['HTTP_X_
         fclose($out);
         exit;
     } catch (Exception $e) {
-        // ignore and continue to page display
     }
 }
 
@@ -68,7 +66,7 @@ try {
 <header class="bg-gray-200 h-16 relative">
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
     <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
-      <a href="admin_dashboard.php" aria-label="Aller au dashboard">
+      <a href="admin/admin_dashboard.php" aria-label="Aller au dashboard">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
           <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
                 stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
@@ -81,8 +79,8 @@ try {
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin/admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="admin/admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
@@ -103,7 +101,6 @@ try {
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-medium text-gray-800">Gestion utilisateur</h1>
       <div class="flex items-center gap-4">
-        <!-- exportBtn has href as fallback if JS disabled -->
         <a id="exportBtn" href="?export=1" class="inline-flex items-center pill-export btn-pill text-gray-800 shadow-sm border border-gray-200">
           Export des données
         </a>
@@ -111,7 +108,7 @@ try {
     </div>
 
    <div class="bg-gray-200 p-6 card-radius">
-      <form id="searchForm" method="get" class="mb-6" action="admin_gestion.php">
+      <form id="searchForm" method="get" class="mb-6" action="admin/admin_gestion.php">
         <div class="relative max-w-4xl mx-auto">
           <label for="q" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-900">
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
@@ -119,7 +116,6 @@ try {
               <path d="M21 21l-4.35-4.35"></path>
             </svg>
           </label>
-          <!-- search input: instant filter as you type (client-side) and submit on Enter (server-side) -->
           <input id="q" name="q" value="<?php echo htmlspecialchars($q); ?>" placeholder="Rechercher une personne" autocomplete="off"
                  class="w-full pill-search rounded-full-xl h-14 pl-14 pr-6 text-black placeholder-black/70 focus:outline-none" />
         </div>
@@ -146,7 +142,6 @@ try {
                 $points = (int)$u['points_wallet'];
                 $maxxp = 3000;
                 $pct = min(100, $maxxp ? intval($points / $maxxp * 100) : 0);
-                // Escaped values for data- attributes
                 $ds_pseudo = htmlspecialchars($u['pseudo'] ?: $u['email'], ENT_QUOTES);
                 $ds_email = htmlspecialchars($u['email'] ?? '', ENT_QUOTES);
                 $ds_dept = htmlspecialchars($department, ENT_QUOTES);
@@ -176,7 +171,7 @@ try {
 
   <div class="col-span-1 px-4 flex items-center justify-center">
     <div class="flex flex-col items-center gap-3">
-      <a href="admin_ban.php?id=<?php echo $u['id']; ?>"
+      <a href="admin/admin_ban.php?id=<?php echo $u['id']; ?>"
          title="Bannir <?php echo htmlspecialchars($u['pseudo'] ?: $u['email']); ?>"
          class="action-pill rounded-full-xl border border-gray-300 bg-gray-300 text-gray-800 text-sm inline-flex items-center justify-center w-28">
          Bannir
@@ -204,7 +199,6 @@ try {
 
   <script>
     (function(){
-      // Elements
       const searchInput = document.getElementById('q');
       const usersList = document.getElementById('usersList');
       const userRows = usersList ? Array.from(usersList.querySelectorAll('.user-row')) : [];
@@ -212,7 +206,6 @@ try {
       const searchForm = document.getElementById('searchForm');
       const exportBtn = document.getElementById('exportBtn');
 
-      // Client-side instant filter
       function filterUsersClientside(q) {
         const ql = (q || '').trim().toLowerCase();
         let visible = 0;
@@ -237,31 +230,23 @@ try {
         }
       }
 
-      // Listen to input: immediate filter for each keystroke
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
           filterUsersClientside(e.target.value);
         });
-        // If user presses Enter, submit to server to perform server-side search (full DB)
         searchInput.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {
-            // allow normal form submit (no preventDefault)
-            // But ensure form action includes q param; form is method GET so it will send q
             return;
           }
         });
       }
 
-      // Initial filter on page load (in case q prefilled)
       filterUsersClientside(searchInput ? searchInput.value : '');
 
-      // Export handler: fetch CSV, download and show success alert
       if (exportBtn) {
         exportBtn.addEventListener('click', function(e){
-          // If JS disabled, href fallback will do it; here intercept to provide fetch+Swal UI
           e.preventDefault();
           const url = this.getAttribute('href') || '?export=1';
-          // show loading
           Swal.fire({
             title: 'Préparation de l’export...',
             didOpen: () => {
@@ -276,7 +261,6 @@ try {
           fetch(url, { method: 'GET', credentials: 'same-origin' })
             .then(response => {
               if (!response.ok) throw new Error('Erreur réseau ' + response.status);
-              // try to extract filename from header
               const disposition = response.headers.get('Content-Disposition') || '';
               let filename = 'export.csv';
               const m = disposition.match(/filename\*=UTF-8''([^;]+)|filename="([^"]+)"|filename=([^;]+)/);
@@ -286,7 +270,6 @@ try {
               return response.blob().then(blob => ({ blob, filename }));
             })
             .then(({ blob, filename }) => {
-              // create link and trigger download
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
@@ -296,7 +279,6 @@ try {
               a.remove();
               window.URL.revokeObjectURL(url);
 
-              // Show success alert like in dashboard
               Swal.fire({
                 title: 'Export réussi',
                 text: 'Les données ont bien été téléchargées au format CSV.',

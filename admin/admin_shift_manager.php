@@ -28,7 +28,7 @@ require_once 'db_connect.php';
   
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
     <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
-      <a href="admin_dashboard.php">
+      <a href="admin/admin_dashboard.php">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
               stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
@@ -41,8 +41,8 @@ require_once 'db_connect.php';
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin/admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="admin/admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
@@ -244,7 +244,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- CREATE MODAL -->
 <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3 max-h-[85vh] overflow-auto">
     <h3 class="text-xl mb-4">Créer une tâche</h3>
@@ -281,7 +280,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <input id="modal_category" type="text" class="border p-2 rounded w-1/2" placeholder="Catégorie">
       </div>
 
-      <!-- footer buttons (suffisamment visibles thanks to overflow-auto and pb) -->
       <div class="flex justify-end gap-2 mt-4">
         <button id="createCancel" class="px-5 py-2 rounded border">Annuler</button>
         <button id="createValidate" class="px-5 py-2 rounded bg-blue-600 text-white">Valider</button>
@@ -290,7 +288,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- FILTER MODAL (plus large, centré) -->
 <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-40">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/2 max-h-[80vh] overflow-auto">
     <h3 class="text-xl mb-4">Filtrer</h3>
@@ -312,7 +309,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- PARAMS MODAL -->
 <div id="paramsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3 max-h-[80vh] overflow-auto">
     <h3 class="text-xl mb-4">Paramètres de la tâche</h3>
@@ -346,7 +342,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   const paramsModal = document.getElementById('paramsModal');
   const paramsClose = document.getElementById('paramsClose');
 
-  // OUVERTURE / FERMETURE : on ajoute / retire 'flex' en plus de 'hidden' pour que items-center/justify-center fonctionnent
   openCreateBtn.addEventListener('click', ()=> {
     createModal.classList.remove('hidden');
     createModal.classList.add('flex');
@@ -418,7 +413,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
   if (!titre) { alert('Titre (FR) requis'); return; }
 
-  fetch('admin_shift_manager_create.php', {
+  fetch('admin/admin_shift_manager_create.php', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -467,7 +462,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
   function toggleDisable(id, btn) {
     btn.disabled = true;
-    fetch('admin_shift_manager_desactiver.php', {
+    fetch('admin/admin_shift_manager_desactiver.php', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ challenge_id: id })
@@ -485,7 +480,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
 
   function openParams(id){
-  fetch('admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
+  fetch('admin/admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
     .then(r=>{
       if (!r.ok) throw new Error('HTTP '+r.status);
       return r.json();

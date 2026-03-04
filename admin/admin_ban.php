@@ -1,16 +1,15 @@
 <?php
-// admin_ban.php - bascule est_actif pour l'utilisateur cible
 session_start();
-require_once 'db_connect.php'; // doit définir $pdo (PDO)
+require_once 'db_connect.php'; 
 
 if (!isset($_GET['id'])) {
-    header('Location: admin_gestion.php?msg=missing_id');
+    header('Location: admin/admin_gestion.php?msg=missing_id');
     exit;
 }
 
 $id = intval($_GET['id']);
 if ($id <= 0) {
-    header('Location: admin_gestion.php?msg=invalid_id');
+    header('Location: admin/admin_gestion.php?msg=invalid_id');
     exit;
 }
 
@@ -21,7 +20,7 @@ try {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$row) {
-        header('Location: admin_gestion.php?msg=not_found');
+        header('Location: admin/admin_gestion.php?msg=not_found');
         exit;
     }
 
@@ -33,10 +32,10 @@ try {
     $u->execute([':val' => $new, ':id' => $id]);
 
     $msg = $new ? 'unbanned' : 'banned';
-    header('Location: admin_gestion.php?msg=' . $msg);
+    header('Location: admin/admin_gestion.php?msg=' . $msg);
     exit;
 
 } catch (Exception $e) {
-    header('Location: admin_gestion.php?msg=error');
+    header('Location: admin/admin_gestion.php?msg=error');
     exit;
 }

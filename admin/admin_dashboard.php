@@ -40,7 +40,6 @@ if (!$userDistribution) {
 $carbonTrend = [];
 if ($pdo) {
     try {
-        // Utiliser le co2_kg depuis challenges (user_actions ne contient pas total_carbon_saved)
         $sqlTrend = "
             SELECT DATE_FORMAT(ua.date_action, '%Y-%m') AS period, 
                    ROUND(COALESCE(SUM(c.co2_kg),0), 2) AS val
@@ -55,7 +54,6 @@ if ($pdo) {
         if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
         $carbonTrend = $stmt->fetchAll();
     } catch (Exception $e) {
-        // silence volontaire, on utilisera fallback si nécessaire
     }
 }
 if (!$carbonTrend) {
@@ -74,7 +72,6 @@ $kpis = [
 ];
 
 if ($pdo) {
-    // Shifter moyen : moyenne du nombre d'XP par utilisateur (sum xp_gain des challenges par user, puis avg)
     try {
         $sqlAvg = "
             SELECT ROUND(AVG(total_xp),2) AS avg_xp FROM (
@@ -94,7 +91,6 @@ if ($pdo) {
         $kpis['shifter_moyen']['value'] = '0.00';
     }
 
-    // Top shifter : utilisateur avec le plus d'XP (sum xp_gain)
     try {
         $sqlTopShifter = "
             SELECT 
@@ -120,7 +116,6 @@ if ($pdo) {
         $kpis['top_shifter']['value'] = 'N/A';
     }
 
-    // Top département : le département avec le plus d'utilisateurs (déjà correct, on garde)
     try {
         $sqlDept = "
           SELECT COALESCE(d.nom,'Sans département') AS label, COUNT(u.id) AS cnt
@@ -186,7 +181,6 @@ if (isset($_GET['export']) && $_GET['export']=='1') {
     exit;
 }
 
-/* chart data preparation */
 $pieLabels = array_column($userDistribution, 'label');
 $pieValues = array_map('intval', array_column($userDistribution, 'cnt'));
 
@@ -210,7 +204,7 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
 <body class="bg-gray-50 text-gray-900">
 <header class="bg-gray-200 h-16 relative">
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
-     <a href="admin_dashboard.php">
+     <a href="admin/admin_dashboard.php">
   <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
@@ -224,8 +218,8 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin/admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="admin/admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
@@ -316,7 +310,6 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
               <?php
                 if ($pdo) {
                     try {
-                        // Calculer via user_actions -> challenges.co2_kg
                         $stmt = $pdo->prepare("SELECT ROUND(COALESCE(SUM(c.co2_kg),0),2) FROM user_actions ua JOIN users u ON ua.user_id = u.id JOIN challenges c ON ua.challenge_id = c.id WHERE ".($companyId ? "u.company_id = :company_id" : "1=1"));
                         if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
                         $val = $stmt->fetchColumn();
