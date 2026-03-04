@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 require_once 'db_connect.php';
 
@@ -30,7 +30,6 @@ require_once 'db_connect.php';
     <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
       <a href="admin_dashboard.php">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
-              <a href="admin_dashboard.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
               stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
         <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif"
@@ -124,7 +123,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </div>
 
           <div class="flex justify-center mt-4">
-            <button id="openCreateBtn" class="bg-gray-400 px-6 py-2 rounded-full-xl">Crée la tâche</button>
+            <button id="openCreateBtn" class="bg-gray-400 px-6 py-3 rounded-full-xl text-lg shadow">Crée la tâche</button>
           </div>
         </div>
       </div>
@@ -161,7 +160,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
     <div class="lg:col-span-2 bg-gray-200 card-radius p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl">Liste des taches :</h2>
-        <button id="openFilterBtn" class="bg-gray-400 px-4 py-2 rounded card-radius">Filtre</button>
+        <button id="openFilterBtn" class="bg-gray-400 px-6 py-3 rounded-full-xl text-lg shadow">Filtre</button>
       </div>
 
       <div class="mb-4">
@@ -214,7 +213,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                          .' data-duration="'.htmlspecialchars($duration, ENT_QUOTES).'"'
                          .' data-id="'.htmlspecialchars($id, ENT_QUOTES).'"'
                          .' data-users="'.htmlspecialchars($users_count, ENT_QUOTES).'"'
-                         .'>';
+                         .'>' ;
 
                       echo '<div class="flex items-center gap-3">';
                       echo '<div class="mr-3">'.$leaves_html.'</div>';
@@ -245,10 +244,11 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
+<!-- CREATE MODAL -->
 <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
+  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3 max-h-[85vh] overflow-auto">
     <h3 class="text-xl mb-4">Créer une tâche</h3>
-    <div class="space-y-3">
+    <div class="space-y-3 pb-6">
       <input id="modal_title" placeholder="Titre de la tâche (FR)" class="w-full border p-2 rounded" />
       <input id="modal_title_en" placeholder="Titre de la tâche (EN)" class="w-full border p-2 rounded" />
       <textarea id="modal_descr_fr" placeholder="Description (FR)" class="w-full border p-2 rounded" rows="3"></textarea>
@@ -281,15 +281,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
         <input id="modal_category" type="text" class="border p-2 rounded w-1/2" placeholder="Catégorie">
       </div>
 
+      <!-- footer buttons (suffisamment visibles thanks to overflow-auto and pb) -->
       <div class="flex justify-end gap-2 mt-4">
-        <button id="createCancel" class="px-4 py-2 rounded border">Annuler</button>
-        <button id="createValidate" class="px-4 py-2 rounded bg-blue-600 text-white">Valider</button>
+        <button id="createCancel" class="px-5 py-2 rounded border">Annuler</button>
+        <button id="createValidate" class="px-5 py-2 rounded bg-blue-600 text-white">Valider</button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- FILTER MODAL (plus large, centré) -->
 <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-40">
-  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/4">
+  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/2 max-h-[80vh] overflow-auto">
     <h3 class="text-xl mb-4">Filtrer</h3>
     <div class="space-y-3">
       <select id="filter_type" class="w-full border p-2 rounded">
@@ -309,13 +312,14 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
+<!-- PARAMS MODAL -->
 <div id="paramsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
+  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3 max-h-[80vh] overflow-auto">
     <h3 class="text-xl mb-4">Paramètres de la tâche</h3>
     <div id="paramsBody" class="space-y-2">
       <div><strong>Titre :</strong> <span id="p_title"></span></div>
       <div><strong>XP :</strong> <span id="p_xp"></span></div>
-        <div><strong>Score :</strong> <span id="p_score"></span></div>
+      <div><strong>Score :</strong> <span id="p_score"></span></div>
       <div><strong>Nombre de personnes :</strong> <span id="p_users"></span></div>
     </div>
     <div class="flex justify-end mt-4">
@@ -342,19 +346,47 @@ if (isset($pdo) && $pdo instanceof PDO) {
   const paramsModal = document.getElementById('paramsModal');
   const paramsClose = document.getElementById('paramsClose');
 
-  openCreateBtn.addEventListener('click', ()=> { createModal.classList.remove('hidden'); updateCreateDifficultyPreview(); });
-  createCancel.addEventListener('click', ()=> createModal.classList.add('hidden'));
+  // OUVERTURE / FERMETURE : on ajoute / retire 'flex' en plus de 'hidden' pour que items-center/justify-center fonctionnent
+  openCreateBtn.addEventListener('click', ()=> {
+    createModal.classList.remove('hidden');
+    createModal.classList.add('flex');
+    updateCreateDifficultyPreview();
+  });
+  createCancel.addEventListener('click', ()=> {
+    createModal.classList.add('hidden');
+    createModal.classList.remove('flex');
+  });
 
-  openFilterBtn.addEventListener('click', ()=> filterModal.classList.remove('hidden'));
+  openFilterBtn.addEventListener('click', ()=> {
+    filterModal.classList.remove('hidden');
+    filterModal.classList.add('flex');
+  });
   filterReset.addEventListener('click', ()=> {
     document.getElementById('filter_type').value = '';
     document.getElementById('filter_difficulty').value = '';
     document.getElementById('filter_category').value = '';
     applyFilters();
   });
-  filterApply.addEventListener('click', ()=> { applyFilters(); filterModal.classList.add('hidden'); });
+  filterApply.addEventListener('click', ()=> {
+    applyFilters();
+    filterModal.classList.add('hidden');
+    filterModal.classList.remove('flex');
+  });
 
-  paramsClose.addEventListener('click', ()=> paramsModal.classList.add('hidden'));
+  paramsClose.addEventListener('click', ()=> {
+    paramsModal.classList.add('hidden');
+    paramsModal.classList.remove('flex');
+  });
+
+  // Close modals when clicking backdrop (outside inner panel)
+  [createModal, filterModal, paramsModal].forEach(modal => {
+    modal.addEventListener('click', (ev) => {
+      if (ev.target === modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    });
+  });
 
   const modalDifficulty = document.getElementById('modal_difficulty');
   const modalDifficultyPreview = document.getElementById('modal_difficulty_preview');
@@ -465,6 +497,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
         document.getElementById('p_score').innerText = (typeof data.score === 'number') ? data.score.toFixed(2) : data.score;
         document.getElementById('p_users').innerText = data.users_count;
         paramsModal.classList.remove('hidden');
+        paramsModal.classList.add('flex');
       } else {
         alert('Erreur: ' + (data.error||''));
       }

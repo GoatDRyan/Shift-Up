@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 require_once 'db_connect.php';
 
@@ -14,7 +14,6 @@ if ($pdo) {
     $companies = $pdo->query("SELECT id, nom FROM companies ORDER BY id ASC")->fetchAll();
     if (!empty($companies)) $companyId = (int)$companies[0]['id'];
 }
-
 
 $userDistribution = [];
 if ($pdo) {
@@ -40,85 +39,106 @@ if (!$userDistribution) {
 
 $carbonTrend = [];
 if ($pdo) {
-    $sql = "
-      SELECT DATE_FORMAT(cl.date_log, '%Y-%m') AS period, ROUND(SUM(cl.amount_co2),2) AS val
-      FROM carbon_logs cl
-      JOIN users u ON cl.user_id = u.id
-      WHERE ".($companyId ? "u.company_id = :company_id AND " : "")." cl.date_log >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-      GROUP BY DATE_FORMAT(cl.date_log, '%Y-%m')
-      ORDER BY period ASC
-    ";
-    $stmt = $pdo->prepare($sql);
-    if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-    $carbonTrend = $stmt->fetchAll();
-    if (!$carbonTrend) {
-        $sql2 = "
-          SELECT DATE(cl.date_log) AS period, ROUND(SUM(cl.amount_co2),2) AS val
-          FROM carbon_logs cl
-          JOIN users u ON cl.user_id = u.id
-          WHERE ".($companyId ? "u.company_id = :company_id AND " : "")." cl.date_log >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-          GROUP BY DATE(cl.date_log)
-          ORDER BY period ASC
+    try {
+        // Utiliser le co2_kg depuis challenges (user_actions ne contient pas total_carbon_saved)
+        $sqlTrend = "
+            SELECT DATE_FORMAT(ua.date_action, '%Y-%m') AS period, 
+                   ROUND(COALESCE(SUM(c.co2_kg),0), 2) AS val
+            FROM user_actions ua
+            JOIN users u ON ua.user_id = u.id
+            LEFT JOIN challenges c ON ua.challenge_id = c.id
+            WHERE ".($companyId ? "u.company_id = :company_id" : "1=1")."
+            GROUP BY DATE_FORMAT(ua.date_action, '%Y-%m')
+            ORDER BY period ASC
         ";
-        $stmt2 = $pdo->prepare($sql2);
-        if ($companyId) $stmt2->execute([':company_id'=>$companyId]); else $stmt2->execute();
-        $carbonTrend = $stmt2->fetchAll();
+        $stmt = $pdo->prepare($sqlTrend);
+        if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
+        $carbonTrend = $stmt->fetchAll();
+    } catch (Exception $e) {
+        // silence volontaire, on utilisera fallback si nécessaire
     }
 }
 if (!$carbonTrend) {
     $now = new DateTime();
     for ($i=11;$i>=0;$i--) {
         $m = (clone $now)->modify("-{$i} months")->format('Y-m');
-        $carbonTrend[] = ['period'=>$m, 'val'=>round(120 - $i*5 + rand(-8,8),2)];
+        $carbonTrend[] = ['period'=>$m, 'val'=>0];
     }
 }
 
+
 $kpis = [
-    'shifter_moyen' => ['name'=>'Shifter moyen', 'value'=>'N/A'],
-    'top_shifter' => ['name'=>'Top shifter', 'value'=>'N/A'],
-    'top_department' => ['name'=>'Top département', 'value'=>'N/A'],
+    'shifter_moyen' => ['name'=>'Shifter moyen', 'value'=>''],
+    'top_shifter' => ['name'=>'Top shifter', 'value'=>''],
+    'top_department' => ['name'=>'Top département', 'value'=>''],
 ];
+
 if ($pdo) {
-    $sqlTop = "
-      SELECT COALESCE(u.pseudo, u.email) AS label, COUNT(ua.id) AS cnt
-      FROM user_actions ua
-      JOIN users u ON ua.user_id = u.id
-      WHERE ".($companyId ? "u.company_id = :company_id" : "1=1")."
-      GROUP BY ua.user_id
-      ORDER BY cnt DESC
-      LIMIT 1
-    ";
-    $stmt = $pdo->prepare($sqlTop);
-    if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-    $top = $stmt->fetch();
-    if ($top) $kpis['top_shifter']['value'] = ($top['label']?:'User').' ('.$top['cnt'].')';
+    // Shifter moyen : moyenne du nombre d'XP par utilisateur (sum xp_gain des challenges par user, puis avg)
+    try {
+        $sqlAvg = "
+            SELECT ROUND(AVG(total_xp),2) AS avg_xp FROM (
+                SELECT u.id AS user_id, COALESCE(SUM(c.xp_gain),0) AS total_xp
+                FROM users u
+                LEFT JOIN user_actions ua ON ua.user_id = u.id
+                LEFT JOIN challenges c ON ua.challenge_id = c.id
+                WHERE ".($companyId ? "u.company_id = :company_id" : "1=1")."
+                GROUP BY u.id
+            ) t
+        ";
+        $stmt = $pdo->prepare($sqlAvg);
+        if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
+        $avg = $stmt->fetchColumn();
+        $kpis['shifter_moyen']['value'] = ($avg !== false && $avg !== null) ? number_format((float)$avg, 2, '.', '') : '0.00';
+    } catch (Exception $e) {
+        $kpis['shifter_moyen']['value'] = '0.00';
+    }
 
-    $sqlAvg = "
-      SELECT ROUND(AVG(t.cnt),2) AS avgcnt FROM (
-        SELECT COUNT(*) AS cnt FROM user_actions ua
-        JOIN users u ON ua.user_id = u.id
-        WHERE ".($companyId ? "u.company_id = :company_id" : "1=1")."
-        GROUP BY ua.user_id
-      ) t
-    ";
-    $stmt = $pdo->prepare($sqlAvg);
-    if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-    $avg = $stmt->fetchColumn();
-    if ($avg !== false && $avg !== null) $kpis['shifter_moyen']['value'] = $avg;
+    // Top shifter : utilisateur avec le plus d'XP (sum xp_gain)
+    try {
+        $sqlTopShifter = "
+            SELECT 
+              COALESCE(u.pseudo, u.email, 'Utilisateur') AS name, 
+              COALESCE(SUM(c.xp_gain),0) AS total_xp
+            FROM users u
+            LEFT JOIN user_actions ua ON ua.user_id = u.id
+            LEFT JOIN challenges c ON ua.challenge_id = c.id
+            WHERE ".($companyId ? "u.company_id = :company_id" : "1=1")."
+            GROUP BY u.id
+            ORDER BY total_xp DESC
+            LIMIT 1
+        ";
+        $stmt = $pdo->prepare($sqlTopShifter);
+        if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
+        $top = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($top) {
+            $kpis['top_shifter']['value'] = ($top['name'] ?: 'Utilisateur').' ('.(float)$top['total_xp'].' XP)';
+        } else {
+            $kpis['top_shifter']['value'] = 'N/A';
+        }
+    } catch (Exception $e) {
+        $kpis['top_shifter']['value'] = 'N/A';
+    }
 
-    $sqlDept = "
-      SELECT COALESCE(d.nom,'Sans département') AS label, COUNT(u.id) AS cnt
-      FROM users u
-      LEFT JOIN departments d ON u.department_id = d.id
-      WHERE ".($companyId ? "u.company_id = :company_id" : "1=1")."
-      GROUP BY COALESCE(d.nom,'Sans département')
-      ORDER BY cnt DESC
-      LIMIT 1
-    ";
-    $stmt = $pdo->prepare($sqlDept);
-    if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-    $td = $stmt->fetch();
-    if ($td) $kpis['top_department']['value'] = ($td['label']?:'Inconnu').' ('.$td['cnt'].')';
+    // Top département : le département avec le plus d'utilisateurs (déjà correct, on garde)
+    try {
+        $sqlDept = "
+          SELECT COALESCE(d.nom,'Sans département') AS label, COUNT(u.id) AS cnt
+          FROM users u
+          LEFT JOIN departments d ON u.department_id = d.id
+          WHERE ".($companyId ? "u.company_id = :company_id" : "1=1")."
+          GROUP BY COALESCE(d.nom,'Sans département')
+          ORDER BY cnt DESC
+          LIMIT 1
+        ";
+        $stmt = $pdo->prepare($sqlDept);
+        if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
+        $td = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($td) $kpis['top_department']['value'] = ($td['label']?:'Inconnu').' ('.$td['cnt'].')';
+        else $kpis['top_department']['value'] = 'N/A';
+    } catch (Exception $e) {
+        $kpis['top_department']['value'] = 'N/A';
+    }
 }
 
 $objectives = [];
@@ -166,12 +186,12 @@ if (isset($_GET['export']) && $_GET['export']=='1') {
     exit;
 }
 
+/* chart data preparation */
 $pieLabels = array_column($userDistribution, 'label');
 $pieValues = array_map('intval', array_column($userDistribution, 'cnt'));
 
 $trendLabels = array_column($carbonTrend, 'period');
 $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend);
-
 ?>
 <!doctype html>
 <html lang="fr">
@@ -181,11 +201,13 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
   <title>Admin - Tableau de bord</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .rounded-full-xl { border-radius: 999px; }
     .card-radius { border-radius: 12px; }
   </style>
 </head>
+<body class="bg-gray-50 text-gray-900">
 <header class="bg-gray-200 h-16 relative">
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
      <a href="admin_dashboard.php">
@@ -232,7 +254,7 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
         </div>
         <h2 class="mt-6 text-2xl">Empreinte carbone - Tendance</h2>
         <div class="mt-6">
-          <a href="?export=1" class="block bg-gray-300 text-center py-4 rounded-full-xl text-xl shadow">Export des données</a>
+          <a href="?export=1" id="exportBtn" class="block bg-gray-300 hover:bg-gray-400 text-center py-4 rounded-full-xl text-xl shadow cursor-pointer transition-colors">Export des données</a>
         </div>
       </section>
 
@@ -289,13 +311,19 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
           </div>
 
           <div class="bg-white rounded p-4 shadow flex justify-between items-center">
-            <div class="text-lg">Total CO₂ rapporté</div>
+            <div class="text-lg">Total CO₂ économisé (kg)</div>
             <div class="text-gray-700 font-semibold">
               <?php
                 if ($pdo) {
-                    $stmt = $pdo->prepare("SELECT ROUND(SUM(cl.amount_co2),2) FROM carbon_logs cl JOIN users u ON cl.user_id = u.id WHERE ".($companyId ? "u.company_id = :company_id" : "1=1"));
-                    if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-                    echo e($stmt->fetchColumn() ?: '0');
+                    try {
+                        // Calculer via user_actions -> challenges.co2_kg
+                        $stmt = $pdo->prepare("SELECT ROUND(COALESCE(SUM(c.co2_kg),0),2) FROM user_actions ua JOIN users u ON ua.user_id = u.id JOIN challenges c ON ua.challenge_id = c.id WHERE ".($companyId ? "u.company_id = :company_id" : "1=1"));
+                        if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
+                        $val = $stmt->fetchColumn();
+                        echo e($val ?: '0.00');
+                    } catch (Exception $e) {
+                        echo '0.00';
+                    }
                 } else echo 'N/A';
               ?>
             </div>
@@ -369,7 +397,7 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
     data: {
       labels: trendLabels,
       datasets: [{
-        label: 'Empreinte carbone (kg CO₂)',
+        label: 'CO₂ Économisé (kg)',
         data: trendValues,
         fill: true,
         tension: 0.3,
@@ -388,6 +416,18 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
       }
     }
   });
-</script>
+
+  document.getElementById('exportBtn').addEventListener('click', function() {
+      setTimeout(() => {
+          Swal.fire({
+              title: 'Export réussi',
+              text: 'Les données ont bien été téléchargées au format CSV.',
+              icon: 'success',
+              confirmButtonColor: '#3b82f6',
+              confirmButtonText: 'OK'
+          });
+      }, 500);
+  });
+  </script>
 </body>
 </html>

@@ -1,8 +1,9 @@
-<?php 
+<?php
 session_start();
 require_once 'db_connect.php';
 
-if (isset($_GET['export']) && $_GET['export'] == '1') {
+// Export via server-side (fallback) is kept, JS will fetch it for nicer UX
+if (isset($_GET['export']) && $_GET['export'] == '1' && !isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     try {
         $stmt = $pdo->prepare("SELECT u.id, u.pseudo, u.email, u.last_activity, u.points_wallet, u.points_rank, d.nom AS department
                                FROM users u
@@ -21,6 +22,7 @@ if (isset($_GET['export']) && $_GET['export'] == '1') {
         fclose($out);
         exit;
     } catch (Exception $e) {
+        // ignore and continue to page display
     }
 }
 
@@ -42,15 +44,15 @@ try {
 } catch (Exception $e) {
     $users = [];
 }
-
 ?>
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin - Tableau de bord</title>
+  <title>Admin - Gestion utilisateurs</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     .rounded-full-xl { border-radius: 999px; }
     .card-radius { border-radius: 12px; }
@@ -58,20 +60,22 @@ try {
     .pill-export { background: #e9e9e9; } 
     .btn-pill { border-radius: 999px; padding-left: 0.9rem; padding-right: 0.9rem; }
     .action-pill { padding: 0.35rem 0.9rem; font-size: 0.85rem; }
+    /* Ensure search placeholder is readable */
+    input::placeholder { opacity: 0.8; color:#000; }
   </style>
 </head>
 
 <header class="bg-gray-200 h-16 relative">
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
     <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
-    <a href="admin_dashboard.php">
-    <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
-        <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
-              stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-        <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif"
-              fill="currentColor" style="font-weight:700">S</text>
-      </svg>
-</a>
+      <a href="admin_dashboard.php" aria-label="Aller au dashboard">
+        <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+          <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
+                stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+          <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif"
+                fill="currentColor" style="font-weight:700">S</text>
+        </svg>
+      </a>
     </div>
   </div>
 
@@ -86,7 +90,7 @@ try {
         </svg>
       </div>
     </nav>
- <button class="md:hidden ml-2 p-2 rounded bg-transparent" aria-label="Ouvrir le menu">
+    <button class="md:hidden ml-2 p-2 rounded bg-transparent" aria-label="Ouvrir le menu">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
       </svg>
@@ -99,14 +103,15 @@ try {
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-medium text-gray-800">Gestion utilisateur</h1>
       <div class="flex items-center gap-4">
-        <a href="?export=1" class="inline-flex items-center pill-export btn-pill text-gray-800 shadow-sm border border-gray-200">
+        <!-- exportBtn has href as fallback if JS disabled -->
+        <a id="exportBtn" href="?export=1" class="inline-flex items-center pill-export btn-pill text-gray-800 shadow-sm border border-gray-200">
           Export des données
         </a>
       </div>
     </div>
 
    <div class="bg-gray-200 p-6 card-radius">
-      <form method="get" class="mb-6">
+      <form id="searchForm" method="get" class="mb-6" action="admin_gestion.php">
         <div class="relative max-w-4xl mx-auto">
           <label for="q" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-900">
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
@@ -114,7 +119,9 @@ try {
               <path d="M21 21l-4.35-4.35"></path>
             </svg>
           </label>
-          <input id="q" name="q" value="<?php echo htmlspecialchars($q); ?>" placeholder="Rechercher une personne" class="w-full pill-search rounded-full-xl h-14 pl-14 pr-6 text-black placeholder-black/70 focus:outline-none" />
+          <!-- search input: instant filter as you type (client-side) and submit on Enter (server-side) -->
+          <input id="q" name="q" value="<?php echo htmlspecialchars($q); ?>" placeholder="Rechercher une personne" autocomplete="off"
+                 class="w-full pill-search rounded-full-xl h-14 pl-14 pr-6 text-black placeholder-black/70 focus:outline-none" />
         </div>
       </form>
 
@@ -129,17 +136,26 @@ try {
             <div class="col-span-1 text-right">Action</div>
           </div>
 
-          <?php if (count($users) === 0): ?>
-            <div class="px-4 py-12 text-center text-gray-500">Aucun utilisateur trouvé.</div>
-          <?php else: ?>
-            <?php foreach ($users as $u): 
+          <div id="usersList" class="space-y-0">
+            <?php if (count($users) === 0): ?>
+              <div id="noResults" class="px-4 py-12 text-center text-gray-500">Aucun utilisateur trouvé.</div>
+            <?php else: ?>
+              <?php foreach ($users as $u):
                 $last = $u['last_activity'] ? date('d/m/Y', strtotime($u['last_activity'])) : '-';
                 $department = $u['department'] ? $u['department'] : '—';
                 $points = (int)$u['points_wallet'];
                 $maxxp = 3000;
                 $pct = min(100, $maxxp ? intval($points / $maxxp * 100) : 0);
-            ?>
-<div class="grid grid-cols-1 md:grid-cols-7 items-center py-6 border-b last:border-b-0">
+                // Escaped values for data- attributes
+                $ds_pseudo = htmlspecialchars($u['pseudo'] ?: $u['email'], ENT_QUOTES);
+                $ds_email = htmlspecialchars($u['email'] ?? '', ENT_QUOTES);
+                $ds_dept = htmlspecialchars($department, ENT_QUOTES);
+              ?>
+<div class="grid grid-cols-1 md:grid-cols-7 items-center py-6 border-b last:border-b-0 user-row"
+     data-pseudo="<?php echo $ds_pseudo; ?>"
+     data-email="<?php echo $ds_email; ?>"
+     data-department="<?php echo $ds_dept; ?>">
+
   <div class="col-span-1 text-sm text-gray-800 px-4"><?php echo htmlspecialchars($u['id']); ?></div>
 
   <div class="col-span-2 px-4">
@@ -177,15 +193,130 @@ try {
     </div>
   </div>
 </div>
-            <?php endforeach; ?>
-          <?php endif; ?>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </div>
+
         </div>
       </div>
     </div>
   </main>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function(){});
+    (function(){
+      // Elements
+      const searchInput = document.getElementById('q');
+      const usersList = document.getElementById('usersList');
+      const userRows = usersList ? Array.from(usersList.querySelectorAll('.user-row')) : [];
+      const noResults = document.getElementById('noResults');
+      const searchForm = document.getElementById('searchForm');
+      const exportBtn = document.getElementById('exportBtn');
+
+      // Client-side instant filter
+      function filterUsersClientside(q) {
+        const ql = (q || '').trim().toLowerCase();
+        let visible = 0;
+        userRows.forEach(row => {
+          const pseudo = (row.dataset.pseudo || '').toLowerCase();
+          const email = (row.dataset.email || '').toLowerCase();
+          const dept = (row.dataset.department || '').toLowerCase();
+          const hay = `${pseudo} ${email} ${dept}`;
+          if (ql === '' || hay.includes(ql)) {
+            row.style.display = 'grid';
+            visible++;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+        if (noResults) {
+          if (visible === 0) {
+            noResults.style.display = 'block';
+          } else {
+            noResults.style.display = 'none';
+          }
+        }
+      }
+
+      // Listen to input: immediate filter for each keystroke
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          filterUsersClientside(e.target.value);
+        });
+        // If user presses Enter, submit to server to perform server-side search (full DB)
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            // allow normal form submit (no preventDefault)
+            // But ensure form action includes q param; form is method GET so it will send q
+            return;
+          }
+        });
+      }
+
+      // Initial filter on page load (in case q prefilled)
+      filterUsersClientside(searchInput ? searchInput.value : '');
+
+      // Export handler: fetch CSV, download and show success alert
+      if (exportBtn) {
+        exportBtn.addEventListener('click', function(e){
+          // If JS disabled, href fallback will do it; here intercept to provide fetch+Swal UI
+          e.preventDefault();
+          const url = this.getAttribute('href') || '?export=1';
+          // show loading
+          Swal.fire({
+            title: 'Préparation de l’export...',
+            didOpen: () => {
+              Swal.showLoading();
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            showConfirmButton: false
+          });
+
+          fetch(url, { method: 'GET', credentials: 'same-origin' })
+            .then(response => {
+              if (!response.ok) throw new Error('Erreur réseau ' + response.status);
+              // try to extract filename from header
+              const disposition = response.headers.get('Content-Disposition') || '';
+              let filename = 'export.csv';
+              const m = disposition.match(/filename\*=UTF-8''([^;]+)|filename="([^"]+)"|filename=([^;]+)/);
+              if (m) {
+                filename = decodeURIComponent(m[1] || m[2] || m[3]);
+              }
+              return response.blob().then(blob => ({ blob, filename }));
+            })
+            .then(({ blob, filename }) => {
+              // create link and trigger download
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = filename || 'users_export.csv';
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              window.URL.revokeObjectURL(url);
+
+              // Show success alert like in dashboard
+              Swal.fire({
+                title: 'Export réussi',
+                text: 'Les données ont bien été téléchargées au format CSV.',
+                icon: 'success',
+                confirmButtonColor: '#3b82f6',
+                confirmButtonText: 'OK'
+              });
+            })
+            .catch(err => {
+              console.error(err);
+              Swal.fire({
+                title: 'Erreur',
+                text: 'Impossible de télécharger le CSV. Le téléchargement direct est toujours disponible via le lien.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            });
+        });
+      }
+    })();
   </script>
 </body>
 </html>
