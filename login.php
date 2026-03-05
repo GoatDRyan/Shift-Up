@@ -11,8 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($email) && !empty($password)) {
         // 1. On cherche l'utilisateur par son email
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->execute(['email' => $email]);
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE mail = :mail");
+        $stmt->execute(['mail' => $email]);
         $user = $stmt->fetch();
 
         // 2. Vérification du mot de passe
