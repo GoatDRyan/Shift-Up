@@ -58,6 +58,7 @@ require_once 'includes/init.php';
             <div id="badge" class="absolute right-[-13%] top-2 w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-50 bg-brand-tertiary pl-20 grid gap-2 max-[375px]:gap-1 grid-cols-4  items-center justify-center text-brand-dark shadow-sm active:scale-95 transition" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
                 <h3>Solo</h3>
             </div>
+        </div>
     </main>
 
     <?php include 'includes/level_up_popup.php'; ?>
