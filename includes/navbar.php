@@ -1,6 +1,6 @@
 <nav class="fixed bottom-0 w-full bg-brand-primary border-t border-brand-border h-20 max-[375px]:h-16 flex justify-around items-center px-2 z-40 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
         
-    <a href="#" class="group flex flex-col items-center w-14 transition">
+    <a href="shop.php" class="group flex flex-col items-center w-14 transition">
         <img class="h-[24px] mb-1 group-hover:hidden <?= $current_page == 'shop.php' ? 'hidden' : 'block' ?>" src="img/icone/icone-boutique.svg" alt="Boutique">
         <img class="h-[24px] mb-1 hidden group-hover:block <?= $current_page == 'shop.php' ? '!block' : '' ?>" src="img/icone/icone-boutique-hover.svg" alt="Boutique">
         <span class="text-[10px] font-bold text-brand-tertiary group-hover:text-brand-dark transition-colors <?= $current_page == 'shop.php' ? '!text-brand-dark' : '' ?>"><?= $t['nav_shop'] ?></span>
