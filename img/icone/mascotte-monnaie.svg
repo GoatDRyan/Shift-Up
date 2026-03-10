@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_1" data-name="Calque 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23.16 20.72">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fab40f;
+      }
+
+      .cls-2 {
+        fill: #e94e1b;
+      }
+
+      .cls-3 {
+        fill: #dc9b0b;
+      }
+
+      .cls-4 {
+        fill: #f07e19;
+      }
+
+      .cls-5 {
+        font-size: 5.44px;
+      }
+
+      .cls-5, .cls-6 {
+        fill: #3d3d3d;
+      }
+
+      .cls-5, .cls-6, .cls-7 {
+        font-family: AlmostTextualRegular, 'Almost Textual';
+      }
+
+      .cls-6 {
+        font-size: 5.46px;
+      }
+
+      .cls-8 {
+        fill: #fff8e7;
+      }
+
+      .cls-7 {
+        fill: #bb7912;
+        font-size: 5.35px;
+      }
+    </style>
+  </defs>
+  <path class="cls-8" d="M3.08,10.37S.85,12.55.09,14.15c-.31.64.23,1.36.97,1.32.64-.03,1.53-.23,2.58-.83"/>
+  <path class="cls-2" d="M9.2,16.23s.5,2.42-.37,3.8c0,0-5.5,1.32-6.76-.36,0,0-.78-3.85,7.12-3.44Z"/>
+  <polygon class="cls-2" points="5.33 4.52 13.81 4.52 9.4 0 5.33 4.52"/>
+  <path class="cls-2" d="M10.01,16.2s-.57,2.38.21,3.81c0,0,5.19,1.61,6.44,0,0,0,.88-3.8-6.65-3.81Z"/>
+  <circle class="cls-8" cx="9.57" cy="11.76" r="7.05"/>
+  <rect class="cls-2" x="7.66" y="3.32" width="3.6" height="8.94"/>
+  <path class="cls-8" d="M16.18,13.79s2.36-2.04,3.21-3.59c.34-.62-.15-1.37-.89-1.38-.64,0-1.54.14-2.63.67"/>
+  <path class="cls-4" d="M2.1,18.92s2.4,1.04,7.07.29c0,0-.27.8-.34.82,0,0-5.49,1.34-6.76-.36,0,0-.06-.44.03-.75Z"/>
+  <path class="cls-4" d="M9.93,19.19s.16.66.29.81c0,0,5.05,1.62,6.44,0,0,0,.07-.65-.06-1.01,0,0-1.27,1.89-6.68.2Z"/>
+  <circle class="cls-1" cx="20.06" cy="7.42" r="3.1"/>
+  <circle class="cls-3" cx="20.1" cy="7.42" r="2.59"/>
+  <text class="cls-7" transform="translate(18.55 9.31)"><tspan x="0" y="0">$</tspan></text>
+  <text class="cls-6" transform="translate(3.64 14.53)"><tspan x="0" y="0">$</tspan></text>
+  <text class="cls-5" transform="translate(11.9 14.51)"><tspan x="0" y="0">$</tspan></text>
+  <path class="cls-2" d="M8.64,13.11h1.84c.75,0,1.17.69.72,1.17l-.9.96c-.36.38-1.07.39-1.43,0l-.93-.96c-.46-.48-.04-1.18.71-1.18Z"/>
+</svg>
