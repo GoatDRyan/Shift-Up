@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db_connect.php';
+require_once('../db_connect.php');
 if (!function_exists('e')) {
     function e($string) {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
