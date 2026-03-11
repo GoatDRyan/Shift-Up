@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : ven. 13 fév. 2026 à 11:02
+-- Généré le : mer. 04 mars 2026 à 09:11
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -85,32 +85,32 @@ CREATE TABLE `challenges` (
 --
 
 INSERT INTO `challenges` (`id`, `titre_fr`, `titre_en`, `descr_fr`, `descr_en`, `xp_gain`, `co2_kg`, `difficulty`, `domaine`, `categorie`, `duration_days`, `max_actions_day`, `company_id`) VALUES
-(1, 'venir à velo', 'commute in vélo', 'description en fr', 'description in english', 200, 2, 'difficile', 'ecologique', 'Général', 100, 50, NULL),
-(2, 'Le Roi du Pédalier', 'King of the Road', 'Je suis venu au travail en vélo (électrique ou mécanique) aujourd\'hui.', 'I commuted to work by bike (electric or mechanical) today.', 50, 2.5, 'difficile', 'ecologique', 'Général', 1, 1, NULL),
-(3, 'Covoiturage Convivial', 'Carpool Buddy', 'J\'ai partagé mon trajet avec au moins un collègue (conducteur ou passager).', 'I shared my ride with at least one colleague (driver or passenger).', 30, 1.8, 'moyen', 'ecologique', 'Général', 1, 10, NULL),
-(4, 'Transports en Commun', 'Public Transport Rider', 'J\'ai laissé la voiture au garage pour prendre le bus, le train ou le métro.', 'I left the car at home and took the bus, train, or subway.', 30, 1.2, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(5, 'Marche à Pied', 'Walk to Work', 'Je suis venu à pied (ou j\'ai descendu 2 arrêts plus tôt pour finir en marchant).', 'I walked to work (or got off 2 stops early to walk the rest of the way).', 40, 0.5, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(6, 'Déjeuner Végétarien', 'Veggie Lunch', 'J\'ai pris un repas 100% végétarien ce midi (sans viande ni poisson).', 'I ate a 100% vegetarian meal for lunch (no meat or fish).', 20, 1.5, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(7, 'Zéro Déchet', 'Zero Waste Lunch', 'J\'ai apporté mon propre repas dans une boîte réutilisable (Tupperware/Bento).', 'I brought my own lunch in a reusable container.', 15, 0.1, 'facile', 'ecologique', 'Général', 1, 1, NULL),
-(8, 'Gourde Attitude', 'Reusable Bottle', 'J\'ai utilisé ma gourde ou un verre toute la journée au lieu de gobelets jetables.', 'I used my reusable bottle or a glass all day instead of disposable cups.', 10, 0.05, 'facile', 'ecologique', 'Général', 1, 1, NULL),
-(9, 'Café Responsable', 'Responsible Coffee', 'J\'ai utilisé mon mug personnel à la machine à café (sans touillette en plastique).', 'I used my personal mug at the coffee machine (no plastic stirrer).', 5, 0.02, 'facile', 'ecologique', 'Général', 1, 3, NULL),
-(10, 'Nettoyage de Printemps', 'Mailbox Cleanup', 'J\'ai supprimé au moins 50 vieux emails ou désabonné de 3 newsletters inutiles.', 'I deleted at least 50 old emails or unsubscribed from 3 useless newsletters.', 15, 0.3, 'facile', 'ecologique', 'Général', 1, 1, NULL),
-(11, 'Réunion sans Caméra', 'Audio-Only Meeting', 'J\'ai coupé ma caméra pendant une réunion en visio pour économiser la bande passante.', 'I turned off my camera during a video meeting to save bandwidth.', 10, 0.1, 'facile', 'ecologique', 'Général', 1, 3, NULL),
-(12, 'Déconnexion Totale', 'Full Unplug', 'J\'ai complètement éteint mon ordinateur et mon écran en partant (pas juste en veille).', 'I completely turned off my computer and monitor before leaving (not just sleep mode).', 20, 0.2, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(13, 'Favoris Locaux', 'Bookmark Shortcut', 'J\'ai utilisé mes favoris pour accéder aux sites web au lieu de passer par une recherche Google.', 'I used bookmarks to access websites instead of searching on Google.', 5, 0.01, 'facile', 'ecologique', 'Général', 1, 5, NULL),
-(14, 'Cloud Detox', 'Cloud Detox', 'J\'ai supprimé des fichiers lourds et inutiles de mon stockage en ligne (Drive, OneDrive, iCloud).', 'I deleted large and useless files from my online storage (Drive, OneDrive, iCloud).', 25, 0.5, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(15, 'Typographie Éco', 'Eco-Font Warrior', 'J\'ai utilisé une police économe en encre (Century Gothic, Ecofont) ou le \"Mode Sombre\" pour travailler.', 'I used an ink-saving font (Century Gothic, Ecofont) or \"Dark Mode\" to work.', 10, 0.01, 'facile', 'ecologique', 'Général', 1, 1, NULL),
-(16, 'L\'Escalier Sportif', 'Take the Stairs', 'J\'ai pris les escaliers au lieu de l\'ascenseur (montée ou descente).', 'I took the stairs instead of the elevator (up or down).', 10, 0.05, 'facile', 'ecologique', 'Général', 1, 4, NULL),
-(17, 'Lumière Naturelle', 'Natural Light', 'J\'ai éteint la lumière dans mon bureau ou une salle de réunion inoccupée.', 'I turned off the lights in my office or an empty meeting room.', 10, 0.1, 'facile', 'ecologique', 'Général', 1, 2, NULL),
-(18, 'Zéro Papier', 'Paperless Day', 'Je n\'ai rien imprimé de la journée (ou j\'ai imprimé en R/V et Noir & Blanc strict).', 'I didn\'t print anything today (or used double-sided Black & White only).', 25, 0.2, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(19, 'Pull Over Chauffage', 'Sweater Weather', 'J\'ai mis un pull au lieu d\'augmenter le chauffage (ou j\'ai baissé le thermostat de 1°C).', 'I put on a sweater instead of turning up the heat (or lowered the thermostat by 1°C).', 30, 1, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(20, 'Chasse aux Courants d\'Air', 'Climate Control', 'J\'ai fermé les fenêtres et les portes car le chauffage ou la climatisation était allumé.', 'I closed windows and doors because the heating or air conditioning was on.', 15, 0.8, 'facile', 'ecologique', 'Général', 1, 2, NULL),
-(21, 'Maître du Brouillon', 'Draft Paper Master', 'J\'ai réutilisé le verso d\'une feuille imprimée pour prendre des notes au lieu d\'une feuille neuve.', 'I reused the back of a printed sheet for notes instead of a new one.', 10, 0.05, 'facile', 'ecologique', 'Général', 1, 3, NULL),
-(22, 'Parrainage Écologique', 'Eco-Sponsor', 'J\'ai convaincu un collègue de s\'inscrire sur Shift\'Up aujourd\'hui.', 'I convinced a colleague to sign up for Shift\'Up today.', 100, 0, 'difficile', 'ecologique', 'Général', 1, 1, NULL),
-(23, 'Partage de Réussite', 'Success Sharing', 'J\'ai posté une astuce ou une réussite sur le mur social de l\'entreprise.', 'I posted a tip or a success story on the company social wall.', 15, 0, 'facile', 'ecologique', 'Général', 1, 1, NULL),
-(24, 'Tri Sélectif', 'Recycling Pro', 'J\'ai correctement trié mes déchets (papier, plastique, verre) dans les bacs de l\'entreprise.', 'I correctly sorted my waste (paper, plastic, glass) in the company bins.', 10, 0.1, 'facile', 'ecologique', 'Général', 1, 2, NULL),
-(25, 'Seconde Main', 'Second Hand', 'J\'ai acheté ou apporté un vêtement/objet de seconde main au lieu du neuf.', 'I bought or brought a second-hand item instead of a new one.', 40, 2, 'moyen', 'ecologique', 'Général', 1, 1, NULL),
-(26, 'Main Verte : Sauver l\'Orchidée', 'Green Thumb: Save the Orchid', 'Arrosez la plante du bureau tous les jours pendant 2 semaines.', 'Water the office plant every day for 2 weeks.', 500, 0.5, 'moyen', 'ecologique', 'Général', 14, 1, NULL);
+(1, 'venir à velo', 'commute in vélo', 'description en fr', 'description in english', 200, 2, 'difficile', 'ecologique', 'Mobilité', 7, 1, NULL),
+(2, 'Le Roi du Pédalier', 'King of the Road', 'Je suis venu au travail en vélo (électrique ou mécanique) aujourd\'hui.', 'I commuted to work by bike (electric or mechanical) today.', 50, 2.5, 'difficile', 'ecologique', 'Mobilité', 1, 1, NULL),
+(3, 'Covoiturage Convivial', 'Carpool Buddy', 'J\'ai partagé mon trajet avec au moins un collègue (conducteur ou passager).', 'I shared my ride with at least one colleague (driver or passenger).', 30, 1.8, 'moyen', 'ecologique', 'Mobilité', 1, 10, NULL),
+(4, 'Transports en Commun', 'Public Transport Rider', 'J\'ai laissé la voiture au garage pour prendre le bus, le train ou le métro.', 'I left the car at home and took the bus, train, or subway.', 30, 1.2, 'moyen', 'ecologique', 'Mobilité', 1, 1, NULL),
+(5, 'Marche à Pied', 'Walk to Work', 'Je suis venu à pied (ou j\'ai descendu 2 arrêts plus tôt pour finir en marchant).', 'I walked to work (or got off 2 stops early to walk the rest of the way).', 40, 0.5, 'moyen', 'ecologique', 'Mobilité', 1, 1, NULL),
+(6, 'Déjeuner Végétarien', 'Veggie Lunch', 'J\'ai pris un repas 100% végétarien ce midi (sans viande ni poisson).', 'I ate a 100% vegetarian meal for lunch (no meat or fish).', 20, 1.5, 'moyen', 'ecologique', 'Autre', 1, 1, NULL),
+(7, 'Zéro Déchet', 'Zero Waste Lunch', 'J\'ai apporté mon propre repas dans une boîte réutilisable (Tupperware/Bento).', 'I brought my own lunch in a reusable container.', 15, 0.1, 'facile', 'ecologique', 'Recyclage', 1, 1, NULL),
+(8, 'Gourde Attitude', 'Reusable Bottle', 'J\'ai utilisé ma gourde ou un verre toute la journée au lieu de gobelets jetables.', 'I used my reusable bottle or a glass all day instead of disposable cups.', 10, 0.05, 'facile', 'ecologique', 'Bureau', 1, 1, NULL),
+(9, 'Café Responsable', 'Responsible Coffee', 'J\'ai utilisé mon mug personnel à la machine à café (sans touillette en plastique).', 'I used my personal mug at the coffee machine (no plastic stirrer).', 5, 0.02, 'facile', 'ecologique', 'Bureau', 1, 3, NULL),
+(10, 'Nettoyage de Printemps', 'Mailbox Cleanup', 'J\'ai supprimé au moins 50 vieux emails ou désabonné de 3 newsletters inutiles.', 'I deleted at least 50 old emails or unsubscribed from 3 useless newsletters.', 15, 0.3, 'facile', 'ecologique', 'Numérique', 1, 1, NULL),
+(11, 'Réunion sans Caméra', 'Audio-Only Meeting', 'J\'ai coupé ma caméra pendant une réunion en visio pour économiser la bande passante.', 'I turned off my camera during a video meeting to save bandwidth.', 10, 0.1, 'facile', 'ecologique', 'Numérique', 1, 3, NULL),
+(12, 'Déconnexion Totale', 'Full Unplug', 'J\'ai complètement éteint mon ordinateur et mon écran en partant (pas juste en veille).', 'I completely turned off my computer and monitor before leaving (not just sleep mode).', 20, 0.2, 'moyen', 'ecologique', 'Numérique', 1, 1, NULL),
+(13, 'Favoris Locaux', 'Bookmark Shortcut', 'J\'ai utilisé mes favoris pour accéder aux sites web au lieu de passer par une recherche Google.', 'I used bookmarks to access websites instead of searching on Google.', 5, 0.01, 'facile', 'ecologique', 'Numérique', 1, 5, NULL),
+(14, 'Cloud Detox', 'Cloud Detox', 'J\'ai supprimé des fichiers lourds et inutiles de mon stockage en ligne (Drive, OneDrive, iCloud).', 'I deleted large and useless files from my online storage (Drive, OneDrive, iCloud).', 25, 0.5, 'moyen', 'ecologique', 'Numérique', 1, 1, NULL),
+(15, 'Typographie Éco', 'Eco-Font Warrior', 'J\'ai utilisé une police économe en encre (Century Gothic, Ecofont) ou le \"Mode Sombre\" pour travailler.', 'I used an ink-saving font (Century Gothic, Ecofont) or \"Dark Mode\" to work.', 10, 0.01, 'facile', 'ecologique', 'Numérique', 1, 1, NULL),
+(16, 'L\'Escalier Sportif', 'Take the Stairs', 'J\'ai pris les escaliers au lieu de l\'ascenseur (montée ou descente).', 'I took the stairs instead of the elevator (up or down).', 10, 0.05, 'facile', 'ecologique', 'Bureau', 1, 4, NULL),
+(17, 'Lumière Naturelle', 'Natural Light', 'J\'ai éteint la lumière dans mon bureau ou une salle de réunion inoccupée.', 'I turned off the lights in my office or an empty meeting room.', 10, 0.1, 'facile', 'ecologique', 'Bureau', 1, 2, NULL),
+(18, 'Zéro Papier', 'Paperless Day', 'Je n\'ai rien imprimé de la journée (ou j\'ai imprimé en R/V et Noir & Blanc strict).', 'I didn\'t print anything today (or used double-sided Black & White only).', 25, 0.2, 'moyen', 'ecologique', 'Bureau', 1, 1, NULL),
+(19, 'Pull Over Chauffage', 'Sweater Weather', 'J\'ai mis un pull au lieu d\'augmenter le chauffage (ou j\'ai baissé le thermostat de 1°C).', 'I put on a sweater instead of turning up the heat (or lowered the thermostat by 1°C).', 30, 1, 'moyen', 'ecologique', 'Bureau', 1, 1, NULL),
+(20, 'Chasse aux Courants d\'Air', 'Climate Control', 'J\'ai fermé les fenêtres et les portes car le chauffage ou la climatisation était allumé.', 'I closed windows and doors because the heating or air conditioning was on.', 15, 0.8, 'facile', 'ecologique', 'Bureau', 1, 2, NULL),
+(21, 'Maître du Brouillon', 'Draft Paper Master', 'J\'ai réutilisé le verso d\'une feuille imprimée pour prendre des notes au lieu d\'une feuille neuve.', 'I reused the back of a printed sheet for notes instead of a new one.', 10, 0.05, 'facile', 'ecologique', 'Recyclage', 1, 3, NULL),
+(22, 'Parrainage Écologique', 'Eco-Sponsor', 'J\'ai convaincu un collègue de s\'inscrire sur Shift\'Up aujourd\'hui.', 'I convinced a colleague to sign up for Shift\'Up today.', 100, 0, 'difficile', 'ecologique', 'Autre', 1, 1, NULL),
+(23, 'Partage de Réussite', 'Success Sharing', 'J\'ai posté une astuce ou une réussite sur le mur social de l\'entreprise.', 'I posted a tip or a success story on the company social wall.', 15, 0, 'facile', 'ecologique', 'Autre', 1, 1, NULL),
+(24, 'Tri Sélectif', 'Recycling Pro', 'J\'ai correctement trié mes déchets (papier, plastique, verre) dans les bacs de l\'entreprise.', 'I correctly sorted my waste (paper, plastic, glass) in the company bins.', 10, 0.1, 'facile', 'ecologique', 'Recyclage', 1, 2, NULL),
+(25, 'Seconde Main', 'Second Hand', 'J\'ai acheté ou apporté un vêtement/objet de seconde main au lieu du neuf.', 'I bought or brought a second-hand item instead of a new one.', 40, 2, 'moyen', 'ecologique', 'Autre', 1, 1, NULL),
+(26, 'Main Verte : Sauver l\'Orchidée', 'Green Thumb: Save the Orchid', 'Arrosez la plante du bureau tous les jours pendant 2 semaines.', 'Water the office plant every day for 2 weeks.', 500, 0.5, 'moyen', 'ecologique', 'Bureau', 14, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -236,10 +236,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password_hash`, `pseudo`, `role`, `points_wallet`, `points_rank`, `initial_footprint_kg`, `total_carbon_saved`, `current_streak`, `last_activity`, `est_actif`, `language_pref`, `company_id`, `department_id`) VALUES
-(1, 'ryan@gmail.com', '$2y$10$HHaKIT3bmlJ8VZdS8U7xbe4a5Ym5zDqQ.c.MS0f4HQhhtBpN/BR.O', 'ryan', 'shifter', 10010669, 12170, 32.60, 123.49, 1, '2026-02-12', 1, 'en', 1, NULL),
+(1, 'ryan@gmail.com', '$2y$10$mU1GqaJJ4cJbFtMP0u86geUAVCgFNFXxsWYcQFokcFJe0Z6n6hKea', 'Ryanthebiggoat', 'shifter', 10010754, 20000, 999.99, 124.39, 2, '2026-03-03', 1, 'en', 1, NULL),
 (2, 'sophie@shiftup.com', '$2y$10$HHaKIT3bmlJ8VZdS8U7xbe4a5Ym5zDqQ.c.MS0f4HQhhtBpN/BR.O', 'Sophie RSE', 'shifter', 1280, 1280, 28.50, 48.9, 5, '2026-02-12', 1, 'fr', 1, NULL),
 (3, 'marc@shiftup.com', '$2y$10$HHaKIT3bmlJ8VZdS8U7xbe4a5Ym5zDqQ.c.MS0f4HQhhtBpN/BR.O', 'Marc Vitesse', 'shifter', 4800, 4800, 35.00, 150.5, 21, '2026-02-12', 1, 'fr', 1, NULL),
-(4, 'julie@shiftup.com', '$2y$10$HHaKIT3bmlJ8VZdS8U7xbe4a5Ym5zDqQ.c.MS0f4HQhhtBpN/BR.O', 'Julie Green', 'shifter', 15450, 15450, 18.20, 522.5, 43, '2026-02-13', 1, 'fr', 1, NULL),
+(4, 'julie@shiftup.com', '$2y$10$HHaKIT3bmlJ8VZdS8U7xbe4a5Ym5zDqQ.c.MS0f4HQhhtBpN/BR.O', 'Julie Green', 'shifter', 15505, 15505, 18.20, 524.7, 1, '2026-02-21', 1, 'en', 1, NULL),
 (5, 'thomas@shiftup.com', '$2y$10$HHaKIT3bmlJ8VZdS8U7xbe4a5Ym5zDqQ.c.MS0f4HQhhtBpN/BR.O', 'Thomas Novice', 'shifter', 50, 50, 32.60, 2.5, 0, '2026-02-07', 1, 'fr', 1, NULL);
 
 -- --------------------------------------------------------
@@ -346,7 +346,25 @@ INSERT INTO `user_actions` (`id`, `user_id`, `challenge_id`, `date_action`) VALU
 (84, 2, 1, '2026-02-12 10:52:45'),
 (85, 2, 2, '2026-02-12 10:52:47'),
 (86, 4, 2, '2026-02-12 10:53:37'),
-(87, 4, 1, '2026-02-13 08:46:00');
+(87, 4, 1, '2026-02-13 08:46:00'),
+(88, 1, 1, '2026-02-13 14:22:33'),
+(89, 4, 10, '2026-02-21 21:42:10'),
+(90, 4, 24, '2026-02-21 21:43:17'),
+(91, 4, 3, '2026-02-21 22:36:35'),
+(92, 1, 26, '2026-02-24 19:09:09'),
+(93, 1, 1, '2026-02-24 19:09:15'),
+(94, 1, 1, '2026-02-24 19:09:19'),
+(95, 1, 1, '2026-02-24 19:09:24'),
+(96, 1, 1, '2026-02-24 19:09:52'),
+(97, 1, 21, '2026-02-24 20:32:42'),
+(98, 1, 11, '2026-02-24 21:20:28'),
+(99, 1, 21, '2026-02-24 21:21:30'),
+(100, 1, 14, '2026-02-24 21:30:34'),
+(101, 1, 11, '2026-02-24 21:38:05'),
+(102, 1, 21, '2026-02-24 21:39:32'),
+(103, 1, 1, '2026-03-02 09:12:38'),
+(104, 1, 26, '2026-03-02 09:12:51'),
+(105, 1, 21, '2026-03-03 14:39:23');
 
 -- --------------------------------------------------------
 
@@ -538,7 +556,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `user_actions`
 --
 ALTER TABLE `user_actions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- Contraintes pour les tables déchargées

@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // 4. Redirection selon le rôle
             if ($user['role'] === 'admin' || $user['role'] === 'super_admin') {
-                header("Location: admin_dashboard.php"); // Page Admin (à créer)
+                header("Location: admin/admin_dashboard.php"); // Page Admin (à créer)
             } else {
                 header("Location: index.php"); // Page Joueur
             }
