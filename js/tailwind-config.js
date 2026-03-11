@@ -6,7 +6,7 @@ tailwind.config = {
                 brand: {
                     primary: 'var(--brand-primary)',
                     secondary: 'var(--brand-secondary)',
-                    tertiary: 'var(--brand-tertiary)',
+                    tertiary: 'var(--brand-primary)',
                     dark: 'var(--brand-dark)',
                     card: 'var(--brand-card)',
                     border: 'var(--brand-border)',

@@ -1,11 +1,10 @@
 /* --- THEME CLAIR --- */
 :root {
     --brand-primary: #ffffff;
-    --brand-secondary: #a0a0a0;
-    --brand-tertiary: #373737;
+    --brand-secondary: #FF4800;
     --brand-dark: #000000;
     --brand-card: #f9fafb;
-    --brand-border: #dbdbdb;
+    --brand-border: #009378;
     
     --brand-accent: #f97316;
     --brand-accentdark: #ea580c;
