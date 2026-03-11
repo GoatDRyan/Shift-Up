@@ -145,13 +145,18 @@ foreach ($allChallenges as $c) {
                     ?>
                     
                     <div class="challenge-card bg-brand-card border border-brand-border rounded-2xl p-2.5 flex relative mb-4 shadow-sm items-stretch cursor-pointer hover:border-brand-tertiary transition" 
-                         data-difficulty="<?= $diff ?>" 
-                         data-category="<?= htmlspecialchars($categoryName) ?>"
-                         data-domain="<?= htmlspecialchars($defi['domaine'] ?? 'ecologique') ?>"
-                         onclick="openModal('modal-<?= $defi['id'] ?>')">
+                        data-difficulty="<?= $diff ?>" 
+                        data-category="<?= htmlspecialchars($categoryName) ?>"
+                        data-domain="<?= htmlspecialchars($defi['domaine'] ?? 'ecologique') ?>"
+                        data-domain-2="<?= htmlspecialchars($defi['domaine_2'] ?? '') ?>"
+                        onclick="openModal('modal-<?= $defi['id'] ?>')">
                         
-                        <div class="w-[65px] min-h-[65px] bg-brand-secondary rounded-xl flex items-center justify-center shrink-0 relative">
-                            <i class="fa-solid fa-seedling text-2xl text-brand-dark"></i>
+                        <div class="w-[65px] min-h-[65px] bg-brand-secondary rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden">
+                            <?php if (!empty($defi['image_url'])): ?>
+                                <img src="<?= htmlspecialchars($defi['image_url']) ?>" alt="Image défi" class="w-full h-full object-cover absolute inset-0">
+                            <?php else: ?>
+                                <i class="fa-solid fa-seedling text-2xl text-brand-dark relative z-10"></i>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="ml-3 flex-1 flex flex-col justify-center py-1">
@@ -470,10 +475,11 @@ foreach ($allChallenges as $c) {
             cards.forEach(card => {
                 const cardDiff = card.getAttribute('data-difficulty');
                 const cardDomain = card.getAttribute('data-domain');
+                const cardDomain2 = card.getAttribute('data-domain-2');
                 const cardCat = card.getAttribute('data-category');
 
                 const matchDiff = (diff === 'all' || cardDiff === diff);
-                const matchDomain = (domain === 'all' || cardDomain === domain);
+                const matchDomain = (domain === 'all' || cardDomain === domain || cardDomain2 === domain);
                 const matchCat = (cat === 'all' || cardCat === cat);
 
                 if (matchDiff && matchDomain && matchCat) {
