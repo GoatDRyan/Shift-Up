@@ -58,7 +58,6 @@ try {
     .pill-export { background: #e9e9e9; } 
     .btn-pill { border-radius: 999px; padding-left: 0.9rem; padding-right: 0.9rem; }
     .action-pill { padding: 0.35rem 0.9rem; font-size: 0.85rem; }
-    /* Ensure search placeholder is readable */
     input::placeholder { opacity: 0.8; color:#000; }
   </style>
 </head>
@@ -66,7 +65,7 @@ try {
 <header class="bg-gray-200 h-16 relative">
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
     <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
-      <a href="admin/admin_dashboard.php" aria-label="Aller au dashboard">
+      <a href="admin_dashboard.php" aria-label="Aller au dashboard">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
           <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
                 stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
@@ -79,8 +78,8 @@ try {
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="admin/admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin/admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
@@ -108,7 +107,7 @@ try {
     </div>
 
    <div class="bg-gray-200 p-6 card-radius">
-      <form id="searchForm" method="get" class="mb-6" action="admin/admin_gestion.php">
+      <form id="searchForm" method="get" class="mb-6" action="admin_gestion.php">
         <div class="relative max-w-4xl mx-auto">
           <label for="q" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-900">
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
@@ -171,7 +170,7 @@ try {
 
   <div class="col-span-1 px-4 flex items-center justify-center">
     <div class="flex flex-col items-center gap-3">
-      <a href="admin/admin_ban.php?id=<?php echo $u['id']; ?>"
+      <a href="admin_ban.php?id=<?php echo $u['id']; ?>"
          title="Bannir <?php echo htmlspecialchars($u['pseudo'] ?: $u['email']); ?>"
          class="action-pill rounded-full-xl border border-gray-300 bg-gray-300 text-gray-800 text-sm inline-flex items-center justify-center w-28">
          Bannir
