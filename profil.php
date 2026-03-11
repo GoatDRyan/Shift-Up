@@ -51,8 +51,18 @@ $deptName = $user['department_name'] ?? "Sans département";
                     <p class="text-xl max-[375px]:text-lg max-[320px]:text-base font-semibold text-brand-dark leading-none"><?= htmlspecialchars($deptName) ?></p>
                 </div>
             </div>
-            <div class="absolute left-0 top-40 w-[68%] bg-brand-tertiary py-2 pl-8 pr-6 flex items-center shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
-                <span class="text-xl text-brand-primary"><i class="fa-solid fa-coins mr-2"></i><?= number_format($money, 0, '.', ' ') ?></span>
+            <div class="absolute left-0 top-40 w-[60%] h-30 bg-brand-tertiary pl-8 flex items-center justify-center text-brand-dark shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
+                 <div class="grid gap-5 max-[375px]:gap-5 grid-cols-4 items-center justify-center text-brand-dark shadow-sm">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
+                    </div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
+                    </div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
