@@ -29,39 +29,42 @@ $deptName = $user['department_name'] ?? "Sans département";
 </head>
 
 <body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24">
-    <header class="bg-brand-primary text-brand-light p-4 shadow-md relative z-40">
+    <header class="bg-brand-primary text-brand-card p-4 shadow-md relative z-40">
 
         <div class="absolute right-5 top-16 flex gap-2 max-[375px]:gap-1 z-50">
-            <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                <i class="fa-solid fa-newspaper text-xl max-[375px]:text-base"></i>
+            <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
+                <img src="img/icone/icone-notification.svg" alt="icone notification" class="w-5 max-[375px]:w-4"></img>
             </button>
-            <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                <i class="fa-solid fa-bars text-xl max-[375px]:text-base"></i>
+            <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
+                <img src="img/icone/icone-parametre-vide.svg" alt="icone parametre" class="w-5 max-[375px]:w-4"></img>
             </button>
         </div>
-        <button class="absolute right-11 top-[16.5%] w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition hidden">
-            <i class="fa-solid fa-newspaper text-xl max-[375px]:text-base"></i>
+        <button class="absolute right-12 top-[60%] w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
+            <img src="img/icone/icone-crayon-vide.svg" alt="icone crayon" class="w-5 max-[375px]:w-4"></img>
         </button>
 
-        <div class="relative h-[200px] top-[-35px] flex items-center justify-center -mx-4 overflow-hidden mt-2 z-10">
+        <div class="relative h-56 top-[-35px] flex items-center justify-center -mx-4 overflow-hidden mt-2 z-10">
             
             <div class="absolute left-[-10%] w-[68%] h-32 max-[375px]:h-28 max-[320px]:h-24 bg-brand-secondary skew-tile cursor-pointer flex items-center justify-end pr-8 max-[375px]:pr-4 transition-colors">
                 <div class="unskew text-right flex flex-col justify-center">
-                    <h2 class="font-display text-4xl max-[375px]:text-3xl max-[320px]:text-2xl font-bold text-brand-dark leading-none mb-1"><?= htmlspecialchars($pseudo) ?></h2>
-                    <p class="text-xl max-[375px]:text-lg max-[320px]:text-base font-semibold text-brand-dark leading-none"><?= htmlspecialchars($deptName) ?></p>
+                    <h2 class="font-display text-4xl max-[375px]:text-3xl max-[320px]:text-2xl font-bold text-brand-card leading-none mb-1"><?= htmlspecialchars($pseudo) ?></h2>
+                    <p class="text-xl max-[375px]:text-lg max-[320px]:text-base font-semibold text-brand-card leading-none"><?= htmlspecialchars($deptName) ?></p>
                 </div>
             </div>
             
-            <div class="absolute left-0 top-40 w-[60%] bg-brand-secondary p-2 pl-8 flex items-center justify-center text-brand-dark shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
-                 <div class="grid gap-5 max-[375px]:gap-5 grid-cols-4 items-center justify-center text-brand-dark shadow-sm">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+            <div class="absolute left-0 top-40 w-[65%]  bg-brand-dark p-2 pl-8 flex items-center justify-center text-brand-card shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
+                 <div class="grid gap-2 max-[375px]:gap-2 grid-cols-5 items-center justify-center text-brand-card shadow-sm">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
                         <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
                     </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
                         <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
                     </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
                         <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
+                    </div>
+                    <div class="ml-4 w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-full flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
+                        <p>1</p>
                     </div>
                 </div>
             </div>
@@ -71,16 +74,16 @@ $deptName = $user['department_name'] ?? "Sans département";
     <main class="p-4 mt-6 flex flex-col gap-10 z-10 relative">
         
         <div class="relative w-full">
-            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 flex items-center text-brand-dark shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
+            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-secondary pl-20 flex items-center text-brand-card shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
                 <h3 class="font-bold">Solo</h3>
             </div>
             
-            <div class="mt-8 w-full text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-dark shadow-sm">
-                <div class="flex flex-col items-center gap-1 bg-brand-secondary p-4 rounded-xl">
+            <div class="mt-8 w-full text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-card shadow-sm">
+                <div class="flex flex-col items-center gap-1 bg-brand-dark p-4 rounded-xl">
                     <h3 class="text-md font-bold underline">Total parties jouées</h3>
                     <span class="text-xl font-bold">123</span>
                 </div>
-                <div class="flex flex-col items-center gap-1 bg-brand-secondary p-4 rounded-xl">
+                <div class="flex flex-col items-center gap-1 bg-brand-dark p-4 rounded-xl">
                     <h3 class="text-md font-bold underline">Total victoires</h3>
                     <span class="text-xl font-bold">45</span>
                 </div>
@@ -88,16 +91,16 @@ $deptName = $user['department_name'] ?? "Sans département";
         </div>
 
         <div class="relative w-full">
-            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 flex items-center text-brand-dark shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
+            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-secondary pl-20 flex items-center text-brand-card shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
                 <h3 class="font-bold">Shift League</h3>
             </div>
             
-            <div class="mt-8 w-full text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-dark shadow-sm">
-                <div class="flex flex-col items-center gap-1 bg-brand-secondary p-4 rounded-xl">
+            <div class="mt-8 w-full text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-card shadow-sm">
+                <div class="flex flex-col items-center gap-1 bg-brand-dark p-4 rounded-xl">
                     <h3 class="text-md font-bold underline">Top score</h3>
                     <span class="text-xl font-bold">123</span>
                 </div>
-                <div class="flex flex-col items-center gap-1 bg-brand-secondary p-4 rounded-xl">
+                <div class="flex flex-col items-center gap-1 bg-brand-dark p-4 rounded-xl">
                     <h3 class="text-md font-bold underline">Top classement</h3>
                     <span class="text-xl font-bold">4</span>
                 </div>
@@ -105,7 +108,7 @@ $deptName = $user['department_name'] ?? "Sans département";
         </div>
 
         <div class="relative w-full">
-            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 flex items-center text-brand-dark shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
+            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-secondary pl-20 flex items-center text-brand-card shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
                 <h3 class="font-bold">Badge</h3>
             </div>
             
