@@ -1,26 +1,25 @@
 <?php
 session_start();
-require_once 'db_connect.php'; 
+require_once('../db_connect.php');
 
 if (!isset($_GET['id'])) {
-    header('Location: admin/admin_gestion.php?msg=missing_id');
+    header('Location:admin_gestion.php?msg=missing_id');
     exit;
 }
 
 $id = intval($_GET['id']);
 if ($id <= 0) {
-    header('Location: admin/admin_gestion.php?msg=invalid_id');
+    header('Location:admin_gestion.php?msg=invalid_id');
     exit;
 }
 
 try {
-    // Récupère l'état actuel
     $stmt = $pdo->prepare("SELECT est_actif FROM users WHERE id = :id LIMIT 1");
     $stmt->execute([':id' => $id]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$row) {
-        header('Location: admin/admin_gestion.php?msg=not_found');
+        header('Location: admin_gestion.php?msg=not_found');
         exit;
     }
 
@@ -32,10 +31,11 @@ try {
     $u->execute([':val' => $new, ':id' => $id]);
 
     $msg = $new ? 'unbanned' : 'banned';
-    header('Location: admin/admin_gestion.php?msg=' . $msg);
+    header('Location: admin_gestion.php?msg=' . $msg);
     exit;
 
 } catch (Exception $e) {
-    header('Location: admin/admin_gestion.php?msg=error');
+    header('Location: admin_gestion.php?msg=error');
     exit;
 }
+?>

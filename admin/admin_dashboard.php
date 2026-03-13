@@ -1,6 +1,6 @@
 <?php 
 session_start();
-require_once 'db_connect.php';
+require_once('../db_connect.php');
 
 if (!function_exists('e')) {
     function e($string) {
@@ -204,7 +204,7 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
 <body class="bg-gray-50 text-gray-900">
 <header class="bg-gray-200 h-16 relative">
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
-     <a href="admin/admin_dashboard.php">
+     <a href="admin_dashboard.php">
   <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
@@ -218,8 +218,8 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="admin/admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin/admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>

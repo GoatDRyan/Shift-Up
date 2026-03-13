@@ -1,6 +1,6 @@
 <?php 
 session_start();
-require_once 'db_connect.php';
+require_once('../db_connect.php');
 
 ?>
 <!doctype html>
@@ -28,7 +28,7 @@ require_once 'db_connect.php';
   
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
     <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
-      <a href="admin/admin_dashboard.php">
+      <a href="admin_dashboard.php">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
               stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
@@ -41,8 +41,8 @@ require_once 'db_connect.php';
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="admin/admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin/admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
@@ -373,7 +373,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
     paramsModal.classList.remove('flex');
   });
 
-  // Close modals when clicking backdrop (outside inner panel)
   [createModal, filterModal, paramsModal].forEach(modal => {
     modal.addEventListener('click', (ev) => {
       if (ev.target === modal) {
@@ -398,7 +397,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
     for (let i=0;i<leaves;i++) modalDifficultyPreview.innerHTML += leafSVG();
   }
   modalDifficulty.addEventListener('change', updateCreateDifficultyPreview);
-
  createValidate.addEventListener('click', ()=>{
   const titre = document.getElementById('modal_title').value.trim();
   const titre_en = document.getElementById('modal_title_en').value.trim();
@@ -413,7 +411,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
   if (!titre) { alert('Titre (FR) requis'); return; }
 
-  fetch('admin/admin_shift_manager_create.php', {
+  fetch('admin_shift_manager_create.php', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({
@@ -462,7 +460,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
   function toggleDisable(id, btn) {
     btn.disabled = true;
-    fetch('admin/admin_shift_manager_desactiver.php', {
+    fetch('admin_shift_manager_desactiver.php', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ challenge_id: id })
@@ -478,9 +476,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
     })
     .catch(err=> { btn.disabled = false; console.error(err); alert('Erreur réseau'); });
   }
-
   function openParams(id){
-  fetch('admin/admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
+  fetch('admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
     .then(r=>{
       if (!r.ok) throw new Error('HTTP '+r.status);
       return r.json();
@@ -500,6 +497,5 @@ if (isset($pdo) && $pdo instanceof PDO) {
     .catch(err=> { console.error(err); alert('Erreur réseau'); });
 }
 </script>
-
 </body>
 </html>
