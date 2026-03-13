@@ -29,7 +29,7 @@ $deptName = $user['department_name'] ?? "Sans département";
 </head>
 
 <body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24">
-    <header class="bg-brand-primary text-brand-light p-4 shadow-md">
+    <header class="bg-brand-primary text-brand-light p-4 shadow-md relative z-40">
 
         <div class="absolute right-5 top-16 flex gap-2 max-[375px]:gap-1 z-50">
             <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
@@ -39,7 +39,7 @@ $deptName = $user['department_name'] ?? "Sans département";
                 <i class="fa-solid fa-bars text-xl max-[375px]:text-base"></i>
             </button>
         </div>
-        <button class="absolute right-11 top-[16.5%] w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+        <button class="absolute right-11 top-[16.5%] w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition hidden">
             <i class="fa-solid fa-newspaper text-xl max-[375px]:text-base"></i>
         </button>
 
@@ -51,7 +51,8 @@ $deptName = $user['department_name'] ?? "Sans département";
                     <p class="text-xl max-[375px]:text-lg max-[320px]:text-base font-semibold text-brand-dark leading-none"><?= htmlspecialchars($deptName) ?></p>
                 </div>
             </div>
-            <div class="absolute left-0 top-40 w-[60%] h-30 bg-brand-tertiary pl-8 flex items-center justify-center text-brand-dark shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
+            
+            <div class="absolute left-0 top-40 w-[60%] bg-brand-secondary p-2 pl-8 flex items-center justify-center text-brand-dark shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
                  <div class="grid gap-5 max-[375px]:gap-5 grid-cols-4 items-center justify-center text-brand-dark shadow-sm">
                     <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
                         <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
@@ -67,12 +68,14 @@ $deptName = $user['department_name'] ?? "Sans département";
         </div>
     </header>
 
-    <main class="p-4 mt-4">
-        <div class="flex flex-col gap-2 max-[375px]:gap-1 mb-4 z-50 relative">
-            <div class="absolute right-[-13%] top-1 w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 grid gap-2 max-[375px]:gap-1 grid-cols-4 align-center items-center justify-center text-brand-dark shadow-sm active:scale-95 transition" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
-                <h3>Solo</h3>
+    <main class="p-4 mt-6 flex flex-col gap-10 z-10 relative">
+        
+        <div class="relative w-full">
+            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 flex items-center text-brand-dark shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
+                <h3 class="font-bold">Solo</h3>
             </div>
-            <div class="mt-20 w-full h-auto text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-dark shadow-sm">
+            
+            <div class="mt-8 w-full text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-dark shadow-sm">
                 <div class="flex flex-col items-center gap-1 bg-brand-secondary p-4 rounded-xl">
                     <h3 class="text-md font-bold underline">Total parties jouées</h3>
                     <span class="text-xl font-bold">123</span>
@@ -82,10 +85,14 @@ $deptName = $user['department_name'] ?? "Sans département";
                     <span class="text-xl font-bold">45</span>
                 </div>
             </div>
-            <div class="absolute right-[-13%] top-[25%] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 align-center items-center justify-center text-brand-dark shadow-sm active:scale-95 transition" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
-                <h3>Shift League</h3>
+        </div>
+
+        <div class="relative w-full">
+            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 flex items-center text-brand-dark shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
+                <h3 class="font-bold">Shift League</h3>
             </div>
-            <div class="mt-20 w-full h-auto text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-dark shadow-sm">
+            
+            <div class="mt-8 w-full text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-dark shadow-sm">
                 <div class="flex flex-col items-center gap-1 bg-brand-secondary p-4 rounded-xl">
                     <h3 class="text-md font-bold underline">Top score</h3>
                     <span class="text-xl font-bold">123</span>
@@ -95,97 +102,58 @@ $deptName = $user['department_name'] ?? "Sans département";
                     <span class="text-xl font-bold">4</span>
                 </div>
             </div>
-            <div class="absolute right-[-13%] top-[48%] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 align-center items-center justify-center text-brand-dark shadow-sm active:scale-95 transition" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
-                <h3>Badge</h3>
+        </div>
+
+        <div class="relative w-full">
+            <div class="absolute right-[-16px] top-[-20px] w-[75%] h-10 max-[375px]:h-10 max-[320px]:h-10 z-30 bg-brand-tertiary pl-20 flex items-center text-brand-dark shadow-sm" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
+                <h3 class="font-bold">Badge</h3>
             </div>
-            <div class="mt-20 flex flex-col items-center gap-5 bg-brand-secondary p-4 rounded-xl">
-                <div class="grid gap-5 max-[375px]:gap-5 grid-cols-5 items-center justify-center text-brand-dark shadow-sm">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
+            
+            <div class="mt-8 flex flex-col items-center gap-5 bg-brand-secondary p-4 rounded-xl w-full">
+                
+                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
                 </div>
-                <div class="grid gap-5 max-[375px]:gap-5 grid-cols-5 items-center justify-center text-brand-dark shadow-sm">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
+
+                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
                 </div>
-                <div class="grid gap-5 max-[375px]:gap-5 grid-cols-5 items-center justify-center text-brand-dark shadow-sm">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
+
+                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
                 </div>
-                <div class="grid gap-5 max-[375px]:gap-5 grid-cols-5 items-center justify-center text-brand-dark shadow-sm">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
+
+                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
                 </div>
-                <div class="grid gap-5 max-[375px]:gap-5 grid-cols-5 items-center justify-center text-brand-dark shadow-sm">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i>
-                    </div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                        <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
-                    </div>
+
+                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
+                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
                 </div>
+
             </div>
         </div>
+        
     </main>
     
     <?php include 'includes/navbar.php'; ?>
@@ -194,5 +162,3 @@ $deptName = $user['department_name'] ?? "Sans département";
 
 </body>
 </html>
-
-
