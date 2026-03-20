@@ -164,10 +164,10 @@ foreach ($allChallenges as $c) {
                                 <h3 class="font-bold text-[13px] text-brand-dark leading-tight line-clamp-2 pr-10">
                                     <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
                                 </h3>
-                                <div class="flex items-center gap-0.5 shrink-0 text-brand-tertiary mt-0.5">
-                                        <?php for($i=0; $i<$leafCount; $i++): ?>
-                                            <i class="fa-solid fa-leaf text-[10px]"></i>
-                                        <?php endfor; ?>
+                                <div class="flex items-center gap-0.5 shrink-0 text-black mt-0.5">
+                                <?php for($i=0; $i<$leafCount; $i++): ?>
+                                <i class="fa-solid fa-leaf text-[10px]"></i>
+                                <?php endfor; ?>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 mt-1.5">
