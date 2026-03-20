@@ -64,22 +64,22 @@ foreach ($allChallenges as $c) {
     <header class="top-0 w-full bg-brand-primary p-4 pb-0 relative z-40 shadow-sm">
         <div class="flex items-center gap-2 max-[375px]:gap-1 mb-4 z-50 relative">
             
-          <div class="flex items-center bg-brand-secondary rounded-full pr-4 max-[375px]:pr-2 h-10 max-[375px]:h-8 shadow-sm">
+          <div class="flex items-center bg-black rounded-full pr-4 max-[375px]:pr-2 h-10 max-[375px]:h-8 shadow-sm">
     <div class="relative w-10 h-10 max-[375px]:w-8 max-[375px]:h-8 rounded-full bg-brand-tertiary flex items-center justify-center text-brand-primary font-display font-bold border-2 border-brand-primary text-lg max-[375px]:text-sm overflow-hidden">
         <img src="../../img/level/icone-level-1.svg" class="absolute inset-0 w-full h-full object-contain" alt="">
         <span class="relative z-10"><?= $levelData['niveau_actuel'] ?? 1 ?></span>
     </div>
-    <span class="ml-2 text-xs max-[320px]:text-[10px] font-bold text-brand-dark whitespace-nowrap">
+    <span class="ml-2 text-xs max-[320px]:text-[10px] font-bold text-white whitespace-nowrap">
         <?= number_format($levelData['xp_actuel'] ?? 0) ?>/<?= number_format($levelData['xp_prochain'] ?? 2500) ?>
     </span>
 </div>
 
-<div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
+<div class="flex items-center bg-black w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
     <div class="flex items-center gap-2 max-[375px]:gap-1">
         <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0 overflow-hidden">
             <img src="../../img/icone/mascotte-monnaie.svg" class="w-full h-full object-contain" alt="Money">
         </div>
-        <span class="text-sm max-[376px]:text-xs font-bold text-brand-dark truncate">
+        <span class="text-sm max-[376px]:text-xs font-bold text-white truncate">
             <?= number_format($money ?? 0, 0, '.', ' ') ?>
         </span>
     </div>
@@ -111,9 +111,9 @@ foreach ($allChallenges as $c) {
                 </div>
             </div>
 
-            <div id="filter-btn" class="absolute left-[-10%] top-[180px] max-[375px]:top-[170px] max-[320px]:top-[134px] w-[60%] h-[36px] bg-brand-secondary skew-tile flex items-center justify-center cursor-pointer hover:bg-brand-secondary transition z-30 shadow-sm" onclick="openFilter()">
+            <div id="filter-btn" class="absolute left-[-10%] top-[180px] max-[375px]:top-[170px] max-[320px]:top-[134px] w-[60%] h-[36px] bg-black skew-tile flex items-center justify-center cursor-pointer hover:bg-gray-800 transition z-30 shadow-sm" onclick="openFilter()">
                 <div class="unskew pl-10 max-[375px]:pl-6 flex items-center justify-center">
-                    <span class="text-l text-brand-dark font-bold tracking-widest"><?= htmlspecialchars($t['btn_filter'] ?? 'Filtre') ?></span>
+                    <span class="text-l text-white font-bold tracking-widest"><?= htmlspecialchars($t['btn_filter'] ?? 'Filtre') ?></span>
                 </div>
             </div>
 
@@ -122,8 +122,8 @@ foreach ($allChallenges as $c) {
 
     <div class="px-4 space-y-6 mt-10" id="challenges-list">
         <?php foreach ($groupedChallenges as $categoryName => $challengesInCat): ?>
-            <div class="category-block bg-brand-primary rounded-[20px] p-4 pb-6 shadow-sm border border-brand-border" data-cat-name="<?= htmlspecialchars($categoryName) ?>">
-                <h2 class="text-left text-xs font-bold uppercase tracking-widest text-brand-tertiary mb-4 border-b border-brand-border pb-2">
+            <div class="category-block bg-brand-primary rounded-[20px] p-4 pb-6 shadow-lg border border-brand-border" data-cat-name="<?= htmlspecialchars($categoryName) ?>">
+                <h2 class="text-left text-xs font-bold uppercase tracking-widest text-[#E94E1B] mb-4 border-b border-brand-border pb-2">
                     <?= htmlspecialchars($t['cat_' . $categoryName] ?? $categoryName) ?>
                 </h2>
                 
@@ -145,7 +145,7 @@ foreach ($allChallenges as $c) {
                         $progress_percent = ($duration > 0) ? round(($days_done / $duration) * 100) : 0;
                     ?>
                     
-                    <div class="challenge-card bg-brand-card border border-brand-border rounded-2xl p-2.5 flex relative mb-4 shadow-sm items-stretch cursor-pointer hover:border-brand-tertiary transition" 
+                    <div class="challenge-card bg-[#E94E1B] border-transparent rounded-2xl p-2.5 flex relative mb-4 shadow-md items-stretch cursor-pointer hover:opacity-90 transition text-white" 
                         data-difficulty="<?= $diff ?>" 
                         data-category="<?= htmlspecialchars($categoryName) ?>"
                         data-domain="<?= htmlspecialchars($defi['domaine'] ?? 'ecologique') ?>"
@@ -162,28 +162,32 @@ foreach ($allChallenges as $c) {
                         
                         <div class="ml-3 flex-1 flex flex-col justify-center py-1">
                             <div class="flex justify-between items-start w-full gap-2">
-                                <h3 class="font-bold text-[13px] text-brand-dark leading-tight line-clamp-2 pr-10">
+                                <h3 class="font-bold text-[13px] text-white leading-tight line-clamp-2 pr-10">
                                     <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
                                 </h3>
-                                <div class="flex items-center gap-0.5 shrink-0 text-black mt-0.5">
+                                <div class="flex items-center gap-0.5 shrink-0 text-white mt-0.5">
                                 <?php for($i=0; $i<$leafCount; $i++): ?>
                                 <i class="fa-solid fa-leaf text-[10px]"></i>
                                 <?php endfor; ?>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 mt-1.5">
-                                <span class="text-[10px] font-bold text-brand-tertiary uppercase"><i class="fa-solid fa-clock mr-1"></i><?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                <span class="text-[10px] font-bold text-brand-success uppercase"><i class="fa-solid fa-star mr-1"></i><?= htmlspecialchars($defi['xp_gain']) ?> XP</span>
-                            </div>
+                           <div class="flex items-center gap-3 mt-1.5 bg-black px-3 py-1 rounded-full w-fit">
+    <span class="text-[10px] font-bold text-white uppercase">
+        <i class="fa-solid fa-clock mr-1"></i><?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?>
+    </span>
+    <span class="text-[10px] font-bold text-white uppercase">
+        <i class="fa-solid fa-star mr-1"></i><?= htmlspecialchars($defi['xp_gain']) ?> XP
+    </span>
+</div>
 
                             <?php if ($duration > 1): ?>
                             <div class="mt-2 pr-10">
-                                <div class="flex justify-between items-center text-[9px] font-bold text-brand-tertiary mb-1">
+                                <div class="flex justify-between items-center text-[9px] font-bold text-white mb-1">
                                     <span class="uppercase tracking-wider">Progression</span>
                                     <span><?= $days_done ?>/<?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
                                 </div>
-                                <div class="w-full h-1.5 bg-brand-border rounded-full overflow-hidden">
-                                    <div class="h-full bg-brand-dark transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
+                                <div class="w-full h-1.5 bg-white/30 rounded-full overflow-hidden">
+                                    <div class="h-full bg-white transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -200,51 +204,47 @@ foreach ($allChallenges as $c) {
                     </div>
 
                     <div id="modal-<?= $defi['id'] ?>" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-brand-dark/80 p-4 backdrop-blur-sm">
-                        <div class="relative w-full max-w-sm bg-brand-primary rounded-3xl p-6 shadow-2xl border border-brand-border">
-                            <button type="button" onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-4 w-8 h-8 bg-brand-border rounded-full flex items-center justify-center text-brand-dark hover:bg-brand-secondary transition">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                            
-                            <div class="flex items-center gap-1 text-brand-tertiary mb-3">
-                                <?php for ($i=0; $i < ($leafCount ?? 1); $i++): ?>
-                                    <i class="fa-solid fa-leaf text-xs"></i>
-                                <?php endfor; ?>
-                            </div>
-                            
-                            <h3 class="text-xl font-display font-bold text-brand-dark leading-tight mb-2"><?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?></h3>
-                            <p class="text-sm text-brand-tertiary mb-6 max-h-40 overflow-y-auto"><?= nl2br(htmlspecialchars($defi['descr_' . $lang] ?? $defi['descr_fr'])) ?></p>
-                            
-                            <div class="flex gap-3 mb-6">
-                                <div class="flex-1 text-center py-2 rounded-xl bg-brand-card border border-brand-border text-brand-dark text-xs font-bold shadow-sm flex flex-col justify-center">
-                                    <i class="fa-solid fa-calendar mb-1 text-brand-tertiary"></i>
-                                    <span><?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                </div>
-                                <div class="flex-1 text-center py-2 rounded-xl bg-brand-card border border-brand-border text-brand-dark text-xs font-bold shadow-sm flex flex-col justify-center">
-                                    <i class="fa-solid fa-cloud mb-1 text-brand-tertiary"></i>
-                                    <span><?= floatval($defi['co2_kg']) ?> kg CO2</span>
-                                </div>
-                            </div>
-                            
-                            <?php if ($duration > 1): ?>
-                            <div class="mb-6 bg-brand-card border border-brand-border p-3 rounded-xl">
-                                <div class="flex justify-between items-center text-[10px] font-bold text-brand-tertiary mb-2 uppercase tracking-widest">
-                                    <span>Avancement</span>
-                                    <span class="text-brand-dark"><?= $days_done ?> / <?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
-                                </div>
-                                <div class="w-full h-2 bg-brand-border rounded-full overflow-hidden shadow-inner">
-                                    <div class="h-full bg-brand-dark transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
-                                </div>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <form action="validate_mission.php" method="POST">
-                                <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-full py-4 rounded-xl bg-brand-dark text-brand-primary font-bold shadow-lg <?= $disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black' ?> transition">
-                                    <?= $disabled ? htmlspecialchars($t['already_done'] ?? "Déjà fait aujourd'hui") : htmlspecialchars($t['validate_challenge'] ?? 'Valider ce défi') ?>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+    <div class="relative w-full max-w-sm bg-brand-primary rounded-3xl p-6 shadow-2xl border border-brand-border">
+        
+        <button type="button" onclick="closeModal('modal-<?= $defi['id'] ?>')" class="absolute top-4 right-4 w-8 h-8 bg-[#FF4800] rounded-full flex items-center justify-center text-white hover:opacity-90 transition">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        
+        <h3 class="text-xl font-display font-bold text-[#FF4800] leading-tight mb-2 mt-4">
+            <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
+        </h3>
+        
+        <p class="text-sm text-brand-tertiary mb-6 max-h-40 overflow-y-auto">
+            <?= nl2br(htmlspecialchars($defi['descr_' . $lang] ?? $defi['descr_fr'])) ?>
+        </p>
+        
+        <div class="flex gap-3 mb-6">
+            <div class="flex-1 text-center py-2 rounded-xl bg-[#FF4800] text-white text-xs font-bold shadow-sm flex flex-col justify-center">
+                <i class="fa-solid fa-calendar mb-1 text-white"></i>
+                <span><?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
+            </div>
+            <div class="flex-1 text-center py-2 rounded-xl bg-[#FF4800] text-white text-xs font-bold shadow-sm flex flex-col justify-center">
+                <i class="fa-solid fa-cloud mb-1 text-white"></i>
+                <span><?= floatval($defi['co2_kg']) ?> kg CO2</span>
+            </div>
+        </div>
+        
+        <?php if ($duration > 1): ?>
+        <div class="mb-6 bg-brand-card border border-brand-border p-3 rounded-xl">
+            <div class="w-full h-2 bg-brand-border rounded-full overflow-hidden">
+                <div class="h-full bg-[#FF4800] transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
+            </div>
+        </div>
+        <?php endif; ?>
+        
+        <form action="validate_mission.php" method="POST">
+            <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
+            <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-full py-4 rounded-xl bg-[#FF4800] text-white font-bold shadow-lg <?= $disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90' ?> transition">
+                <?= $disabled ? "Déjà fait" : "Valider ce défi" ?>
+            </button>
+        </form>
+    </div>
+</div>
                 <?php endforeach; ?>
             </div>
         <?php endforeach; ?>
@@ -253,7 +253,7 @@ foreach ($allChallenges as $c) {
     <div class="px-4 space-y-8 mt-10 hidden" id="my-challenges-page">
         
         <div>
-            <h2 class="text-left text-xs font-bold uppercase tracking-widest text-brand-tertiary mb-4 border-b border-brand-border pb-2">
+            <h2 class="text-left text-xs font-bold uppercase tracking-widest text-[#E94E1B] mb-4 border-b border-brand-border pb-2">
                 <?= htmlspecialchars($t['in_progress'] ?? 'En cours') ?>
             </h2>
             
@@ -279,7 +279,7 @@ foreach ($allChallenges as $c) {
                             $progress_percent = round(($days_done / $duration) * 100);
                         ?>
                         
-                        <div class="challenge-card bg-brand-card border-2 border-brand-dark rounded-2xl p-2.5 flex relative shadow-sm items-stretch cursor-pointer hover:border-brand-tertiary transition" 
+                        <div class="challenge-card bg-[#E94E1B] border-transparent rounded-2xl p-2.5 flex relative shadow-md items-stretch cursor-pointer hover:opacity-90 transition text-white" 
                              onclick="openModal('modal-my-<?= $defi['id'] ?>')">
                             
                             <div class="w-[65px] min-h-[65px] bg-brand-secondary rounded-xl flex items-center justify-center shrink-0 relative">
@@ -287,17 +287,17 @@ foreach ($allChallenges as $c) {
                             </div>
                             
                             <div class="ml-3 flex-1 flex flex-col justify-center py-1">
-                                <h3 class="font-bold text-[13px] text-brand-dark leading-tight line-clamp-2 pr-10">
+                                <h3 class="font-bold text-[13px] text-white leading-tight line-clamp-2 pr-10">
                                     <?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?>
                                 </h3>
                                 
                                 <div class="mt-2 pr-10">
-                                    <div class="flex justify-between items-center text-[9px] font-bold text-brand-tertiary mb-1">
+                                    <div class="flex justify-between items-center text-[9px] font-bold text-white mb-1">
                                         <span class="uppercase tracking-wider">Progression</span>
                                         <span><?= $days_done ?>/<?= $duration ?> <?= htmlspecialchars($t['days_abbr'] ?? 'j') ?></span>
                                     </div>
-                                    <div class="w-full h-1.5 bg-brand-border rounded-full overflow-hidden">
-                                        <div class="h-full bg-brand-dark transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
+                                    <div class="w-full h-1.5 bg-white/30 rounded-full overflow-hidden">
+                                        <div class="h-full bg-white transition-all duration-500" style="width: <?= $progress_percent ?>%;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -314,11 +314,11 @@ foreach ($allChallenges as $c) {
 
                         <div id="modal-my-<?= $defi['id'] ?>" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-brand-dark/80 p-4 backdrop-blur-sm">
                             <div class="relative w-full max-w-sm bg-brand-primary rounded-3xl p-6 shadow-2xl border border-brand-border">
-                                <button type="button" onclick="closeModal('modal-my-<?= $defi['id'] ?>')" class="absolute top-4 right-4 w-8 h-8 bg-brand-border rounded-full flex items-center justify-center text-brand-dark hover:bg-brand-secondary transition">
+                                <button type="button" onclick="closeModal('modal-my-<?= $defi['id'] ?>')" class="absolute top-4 right-4 w-8 h-8 bg-brand-border rounded-full flex items-center justify-center text-[#FF4800] hover:bg-brand-secondary transition">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                                 
-                                <h3 class="text-xl font-display font-bold text-brand-dark leading-tight mb-2 mt-4"><?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?></h3>
+                                <h3 class="text-xl font-display font-bold text-[#FF4800] leading-tight mb-2 mt-4"><?= htmlspecialchars($defi['titre_' . $lang] ?? $defi['titre_fr']) ?></h3>
                                 <p class="text-sm text-brand-tertiary mb-6 max-h-40 overflow-y-auto"><?= nl2br(htmlspecialchars($defi['descr_' . $lang] ?? $defi['descr_fr'])) ?></p>
                                 
                                 <div class="mb-6 bg-brand-card border border-brand-border p-3 rounded-xl">
@@ -333,7 +333,7 @@ foreach ($allChallenges as $c) {
                                 
                                 <form action="validate_mission.php" method="POST">
                                     <input type="hidden" name="challenge_id" value="<?= $defi['id'] ?>">
-                                    <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-full py-4 rounded-xl bg-brand-dark text-brand-primary font-bold shadow-lg <?= $disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black' ?> transition">
+                                    <button type="submit" <?= $disabled ? 'disabled' : '' ?> class="w-full py-4 rounded-xl bg-[#FF4800] text-white font-bold shadow-lg <?= $disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90' ?> transition">
                                         <?= $disabled ? htmlspecialchars($t['already_done'] ?? "Déjà fait aujourd'hui") : htmlspecialchars($t['validate_challenge'] ?? 'Valider ce défi') ?>
                                     </button>
                                 </form>
@@ -345,7 +345,7 @@ foreach ($allChallenges as $c) {
         </div>
 
         <div>
-            <h2 class="text-left text-xs font-bold uppercase tracking-widest text-brand-tertiary mb-4 border-b border-brand-border pb-2">
+            <h2 class="text-left text-xs font-bold uppercase tracking-widest text-[#E94E1B] mb-4 border-b border-brand-border pb-2">
                 <?= htmlspecialchars($t['history'] ?? 'Historique') ?>
             </h2>
             
@@ -356,17 +356,17 @@ foreach ($allChallenges as $c) {
             <?php else: ?>
                 <div class="space-y-3 max-h-[300px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
                     <?php foreach($userHistory as $history): ?>
-                        <div class="bg-brand-primary border border-brand-border rounded-2xl p-4 flex flex-col relative shadow-sm shrink-0">
+                        <div class="bg-[#E94E1B] border-transparent text-white rounded-2xl p-4 flex flex-col relative shadow-md shrink-0">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-sm text-brand-dark pr-4">
+                                <h3 class="font-bold text-sm text-white pr-4">
                                     <?= htmlspecialchars($history['titre_' . $lang] ?? $history['titre_fr']) ?>
                                 </h3>
-                                <span class="bg-brand-success/20 text-brand-success px-2 py-1 rounded-md text-[10px] font-bold shrink-0">
+                                <span class="bg-white/20 text-white px-2 py-1 rounded-md text-[10px] font-bold shrink-0">
                                     +<?= htmlspecialchars($history['xp_gain']) ?> XP
                                 </span>
                             </div>
                             <div class="flex justify-between items-center mt-2 border-t border-brand-border pt-2">
-                                <span class="text-[10px] text-brand-tertiary"><i class="fa-regular fa-calendar mr-1"></i> <?= date('d/m/Y', strtotime($history['date_action'])) ?></span>
+                                <span class="text-[10px] text-white"><i class="fa-regular fa-calendar mr-1"></i> <?= date('d/m/Y', strtotime($history['date_action'])) ?></span>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -422,10 +422,23 @@ foreach ($allChallenges as $c) {
     <?php include '../../includes/navbar.php'; ?>
 
     <script>
+        // --- Fonctionnalité du bouton Menu Paramètres ---
+        function toggleMenu() {
+            const menu = document.getElementById('settings-menu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+                // Optionnel : empêcher le scroll quand le menu est ouvert
+                // document.body.classList.toggle('overflow-hidden');
+            } else {
+                console.warn("Le menu avec l'ID 'settings-menu' n'a pas été trouvé. Assurez-vous qu'il est bien généré par 'settings_menu.php'.");
+            }
+        }
+
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
         function openFilter() { document.getElementById('filter-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
         function closeFilter() { document.getElementById('filter-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+        
         function switchTab(tab) {
             const tabSearch = document.getElementById('tab-search');
             const tabMy = document.getElementById('tab-my');
@@ -436,8 +449,7 @@ foreach ($allChallenges as $c) {
             const textMy = tabMy.querySelector('span');
             const activeClasses = ['left-[-10%]', 'w-[68%]', 'h-32', 'max-[375px]:h-28', 'max-[320px]:h-24', 'bg-brand-secondary', 'justify-end', 'pr-8', 'z-20'];
             const inactiveClasses = ['right-[-5%]', 'left-auto', 'top-[45%]', 'w-[45%]', 'h-28', 'max-[375px]:h-24', 'max-[320px]:h-20', 'bg-brand-border', 'justify-center', 'pl-4', 'z-10', 'border-brand-primary'];
-            const textActive = ['text-3xl', 'max-[375px]:text-2xl', 'text-brand-dark'];
-            const textInactive = ['text-xl', 'max-[375px]:text-lg', 'text-brand-tertiary'];
+            
             if (tab === 'search') {
                 tabSearch.classList.remove(...inactiveClasses);
                 tabSearch.classList.add(...activeClasses);
