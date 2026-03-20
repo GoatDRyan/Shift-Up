@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD:admin/admin_shift_manager_params.php
 require_once('../db_connect.php');
+=======
+require_once '../../config/db_connect.php';
+>>>>>>> alexis:views/admin/admin_shift_manager_params.php
 header('Content-Type: application/json; charset=utf-8');
 
 $challenge_id = isset($_GET['challenge_id']) ? (int)$_GET['challenge_id'] : 0;

@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/init.php';
+require_once '../../includes/init.php';
 
 $sql = "SELECT * FROM challenges ORDER BY categorie DESC, titre_$lang";
 $stmt = $pdo->query($sql);
@@ -54,10 +54,10 @@ foreach ($allChallenges as $c) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?= htmlspecialchars(($t['nav_defs'] ?? 'Défis') . " - Shift'Up") ?></title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="js/tailwind-config.js"></script>
+    <script src="../../js/tailwind-config.js"></script>
 </head>
 <body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24"> 
 
@@ -416,9 +416,9 @@ foreach ($allChallenges as $c) {
             <button onclick="applyFilters()" class="w-full bg-brand-dark text-brand-primary font-bold py-4 rounded-xl mt-8 shadow-lg hover:bg-black transition"><?= htmlspecialchars($t['btn_apply_filters'] ?? 'Appliquer les filtres') ?></button>
         </div>
     </div>
-    <?php include 'includes/level_up_popup.php'; ?>
-    <?php include 'includes/settings_menu.php'; ?>
-    <?php include 'includes/navbar.php'; ?>
+    <?php include '../../includes/level_up_popup.php'; ?>
+    <?php include '../../includes/settings_menu.php'; ?>
+    <?php include '../../includes/navbar.php'; ?>
 
     <script>
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }

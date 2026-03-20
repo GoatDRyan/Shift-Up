@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD:superadmin/super_admin_shift_manager_create.php
 require_once('../db_connect.php');
+=======
+require_once '../../config/db_connect.php';
+>>>>>>> alexis:views/superadmin/super_admin_shift_manager_create.php
 header('Content-Type: application/json; charset=utf-8');
 
 $body = json_decode(file_get_contents('php://input'), true);

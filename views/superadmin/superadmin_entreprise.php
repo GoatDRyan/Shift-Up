@@ -4,7 +4,11 @@ session_start();
 $db_driver = '';
 $mysqli = null;
 
+<<<<<<< HEAD:superadmin/superadmin_entreprise.php
 require_once('../db_connect.php');
+=======
+require_once '../../config/db_connect.php';
+>>>>>>> alexis:views/superadmin/superadmin_entreprise.php
 
 if (isset($pdo) && $pdo instanceof PDO) {
     $db_driver = 'pdo';

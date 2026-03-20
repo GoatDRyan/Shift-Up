@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/init.php';
+require_once '../../includes/init.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $q1 = isset($_POST['q1']) ? (float)$_POST['q1'] : 0;
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $total_footprint = 2000 + $q1 + $q2 + $q3;
     $stmt = $pdo->prepare("UPDATE users SET initial_footprint_kg = ? WHERE id = ?");
     $stmt->execute([$total_footprint, $user_id]);
-    header("Location: index.php");
+    header("Location: ../../index.php");
     exit();
 }
 ?>
@@ -19,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $t['quiz_title'] ?? 'Bilan Carbone' ?> - Shift'Up</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="js/tailwind-config.js"></script>
+    <script src="../../js/tailwind-config.js"></script>
     <style>
         input[type="radio"] { display: none; }
         input[type="radio"]:checked + label {

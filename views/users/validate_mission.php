@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/init.php';
+require_once '../../includes/init.php';
 
 if (!isset($user_id) || !isset($_POST['challenge_id'])) {
     header("Location: defis.php");

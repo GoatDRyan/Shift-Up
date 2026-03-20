@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD:admin/admin_gestion.php
 require_once('../db_connect.php');
+=======
+require_once '../../config/db_connect.php';
+>>>>>>> alexis:views/admin/admin_gestion.php
 
 if (isset($_GET['export']) && $_GET['export'] == '1' && !isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     try {

@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/init.php';
+require_once '../../includes/init.php';
 
 // Streak des 7 jours
 $week_streak = [];
@@ -71,11 +71,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shift'Up</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/tailwind-config.js"></script>
+    <script src="../../js/tailwind-config.js"></script>
 </head>
 
 <body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24">
@@ -133,7 +133,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </header>
     
-    <?php include 'includes/settings_menu.php'; ?>
+    <?php include '../../includes/settings_menu.php'; ?>
 
     <main class="px-4 max-[375px]:px-2 pt-10">
 
@@ -332,7 +332,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     </main>
 
-    <?php include 'includes/navbar.php'; ?>
+    <?php include '../../includes/navbar.php'; ?>
     
     <script>
         function switchView(viewName) {
