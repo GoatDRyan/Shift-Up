@@ -63,7 +63,7 @@ session_start();
         <div class="error-description">
             Une erreur s'est produite. Réessaye plus tard.
         </div>
-        <a href="/cours/Shift-up/" class="btn-home">Retour à l'accueil</a>
+        <a href="../views/users/index.php" class="btn-home">Retour à l'accueil</a>
     </div>
 </body>
 </html>

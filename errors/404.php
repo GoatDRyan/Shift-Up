@@ -63,7 +63,7 @@ session_start();
         <div class="error-description">
             Désolé, la page que tu cherches n'existe pas ou a été supprimée.
         </div>
-        <a href="/cours/Shift-up/" class="btn-home">Retour à l'accueil</a>
+        <a href="../views/users/index.php" class="btn-home">Retour à l'accueil</a>
     </div>
 </body>
 </html>
