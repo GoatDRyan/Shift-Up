@@ -114,46 +114,21 @@ $deptName = $user['department_name'] ?? "Sans département";
                 <h3 class="font-bold">Badge</h3>
             </div>
             
-            <div class="mt-8 flex flex-col items-center gap-5 bg-brand-secondary p-4 rounded-xl w-full">
-                
-                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+            <div class="badge-slider mt-10 overflow-x-scroll flex gap-6 px-2 snap-x snap-mandatory scrollbar-hide overflow-y-hidden" style="scrollbar-width: none;">
+        
+                <!-- Badge 1 -->
+                <div class="badge-card snap-center shrink-0 w-[80%] bg-brand-secondary rounded-xl p-1 flex flex-col items-center justify-center">
+                    <img src="../../img/carte/carte-trier.svg" class="w-full h-full" />
                 </div>
 
-                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                <!-- Badge 2 -->
+                <div class="badge-card snap-center shrink-0 w-[80%] bg-brand-secondary rounded-xl p-1 flex flex-col items-center justify-center">
+                    <img src="../../img/carte/carte-covoiturage.svg" class="w-full h-full" />
                 </div>
 
-                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                </div>
-
-                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                </div>
-
-                <div class="grid gap-4 max-[375px]:gap-2 grid-cols-5 items-center justify-items-center w-full">
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
-                    <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
+                <!-- Badge 3 -->
+                <div class="badge-card snap-center shrink-0 w-[80%] bg-brand-secondary rounded-xl p-1 flex flex-col items-center justify-center">
+                    <img src="../../img/carte/carte-covoiturage2.svg" class="w-full h-full" />
                 </div>
             </div>
         </div>
@@ -163,5 +138,34 @@ $deptName = $user['department_name'] ?? "Sans département";
     <?php include '../../includes/settings_menu.php'; ?>
     <?php include '../../includes/navbar.php'; ?>
 
+    <script>
+        const slider = document.querySelector('.badge-slider');
+        const cards = document.querySelectorAll('.badge-card');
+
+        function updateCards() {
+            const center = slider.scrollLeft + slider.offsetWidth / 2;
+
+            cards.forEach(card => {
+                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                const distance = Math.abs(center - cardCenter);
+
+                const scale = Math.max(0.92, 1 - distance / 500);
+                const offset = Math.min(25, distance / 12);
+
+                card.style.transform = `translateY(${offset}px) scale(${scale})`;
+                card.style.opacity = scale;
+
+                if (distance < 80) {
+                    card.classList.add("active");
+                } else {
+                    card.classList.remove("active");
+                }
+            });
+        }
+
+        slider.addEventListener('scroll', updateCards);
+        updateCards();
+
+    </script>
 </body>
 </html>

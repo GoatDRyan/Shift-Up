@@ -1,0 +1,19 @@
+# Configuration générale
+ErrorDocument 404 http://localhost/cours/blog/error/404.html
+ErrorDocument 500 http://localhost/cours/blog/error/500.html
+ErrorDocument 403 http://localhost/cours/blog/error/403.html
+
+Options All -Indexes
+
+RewriteEngine On
+RewriteRule ^home$ accueil.php [NC,L]
+
+<FilesMatch "comptes\.php$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "upload\.php$">
+    Require all denied
+</FilesMatch>
+
+RewriteRule ^article/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([a-zA-Z0-9-]+)$ article.php?date=$1-$2-$3&slug=$4 [L,NC]
