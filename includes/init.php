@@ -2,7 +2,7 @@
 session_start();
 
 // 1. Connexion à la base de données
-require_once __DIR__ . '/../db_connect.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
 // 2. Vérification de l'authentification
 if (!isset($_SESSION['user_id'])) {
@@ -25,7 +25,7 @@ $user = $stmt->fetch();
 
 // Sécurité si l'utilisateur a été supprimé entre temps
 if (!$user) { 
-    header("Location: logout.php"); 
+    header("Location: views/users/logout.php"); 
     exit(); 
 }
 

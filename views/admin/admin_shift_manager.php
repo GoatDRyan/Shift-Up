@@ -1,7 +1,6 @@
 <?php 
 session_start();
-require_once 'db_connect.php';
-
+require_once '../../config/db_connect.php';
 
 ?>
 <!doctype html>
@@ -9,33 +8,41 @@ require_once 'db_connect.php';
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shift Manager - Tableau de bord (Super Admin)</title>
+  <title>Shift Manager - Tableau de bord</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .rounded-full-xl { border-radius: 999px; }
     .card-radius { border-radius: 12px; }
     .leaf { width:18px; height:18px; display:inline-block; margin-right:6px; vertical-align:middle; }
     .leaf svg { width:100%; height:100%; }
-    :root{ --bg:#ececec; --panel:#dcdcdc; --card:#bdbdbd; --accent:#9a9a9a; }
+    :root{
+      --bg:#ececec;
+      --panel:#dcdcdc;
+      --card:#bdbdbd;
+      --accent:#9a9a9a;
+    }
     body{ background: #fff; color:#111; }
   </style>
 </head>
 <header class="bg-gray-200 h-16 relative">
+  
   <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
     <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
+      <a href="admin/admin_dashboard.php">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
               stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
         <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif"
               fill="currentColor" style="font-weight:700">S</text>
       </svg>
+</a>
     </div>
   </div>
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="#" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="admin/admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="admin/admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
       <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
         <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
@@ -52,7 +59,6 @@ require_once 'db_connect.php';
   </div>
 </header>
 
-<body>
 <div class="max-w-screen-2xl mx-auto p-8">
   <h1 class="text-3xl font-light mb-4"> Shift Manager</h1>
 </div>
@@ -117,7 +123,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
           </div>
 
           <div class="flex justify-center mt-4">
-            <button id="openCreateBtn" class="bg-gray-400 px-6 py-2 rounded-full-xl">Crée la tâche</button>
+            <button id="openCreateBtn" class="bg-gray-400 px-6 py-3 rounded-full-xl text-lg shadow">Crée la tâche</button>
           </div>
         </div>
       </div>
@@ -153,8 +159,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
     <div class="lg:col-span-2 bg-gray-200 card-radius p-6">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl">Bibliothèque de défis :</h2>
-        <button id="openFilterBtn" class="bg-gray-400 px-4 py-2 rounded card-radius">Filtre</button>
+        <h2 class="text-2xl">Liste des taches :</h2>
+        <button id="openFilterBtn" class="bg-gray-400 px-6 py-3 rounded-full-xl text-lg shadow">Filtre</button>
       </div>
 
       <div class="mb-4">
@@ -167,9 +173,16 @@ if (isset($pdo) && $pdo instanceof PDO) {
               echo "<div class='text-red-600'>Impossible d'afficher les tâches : \$pdo introuvable.</div>";
           } else {
               try {
-                  $sql = "SELECT c.*,
+                  $pdo->exec("CREATE TABLE IF NOT EXISTS disabled_challenges (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    challenge_id INT NOT NULL UNIQUE,
+                    disabled_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+                  $sql = "SELECT c.*, IF(dc.challenge_id IS NOT NULL,1,0) as disabled,
                              (SELECT COUNT(DISTINCT ua.user_id) FROM user_actions ua WHERE ua.challenge_id=c.id) as users_count
                           FROM challenges c
+                          LEFT JOIN disabled_challenges dc ON dc.challenge_id = c.id
                           ORDER BY c.id DESC";
                   $stmt = $pdo->query($sql);
                   while($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -181,7 +194,8 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       $domaine = htmlspecialchars($r['domaine'] ?? '');
                       $categorie = htmlspecialchars($r['categorie'] ?? '');
                       $duration = (int)($r['duration_days'] ?? 0);
-                      $users_count = (int)($r['users_count'] ?? 0);
+                      $disabled = (int)$r['disabled'];
+                      $users_count = (int)$r['users_count'];
 
                       $dl = strtolower($difficulty);
                       $leafCount = 1;
@@ -199,7 +213,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                          .' data-duration="'.htmlspecialchars($duration, ENT_QUOTES).'"'
                          .' data-id="'.htmlspecialchars($id, ENT_QUOTES).'"'
                          .' data-users="'.htmlspecialchars($users_count, ENT_QUOTES).'"'
-                         .'>';
+                         .'>' ;
 
                       echo '<div class="flex items-center gap-3">';
                       echo '<div class="mr-3">'.$leaves_html.'</div>';
@@ -207,7 +221,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       echo '</div>';
 
                       echo '<div class="flex items-center gap-3">';
-                      // Bouton Désactiver retiré pour Super Admin (bibliothèque)
+                      echo '<button class="px-4 py-2 rounded bg-gray-100" onclick="toggleDisable('.$id.', this)">'.($disabled ? 'Réactiver' : 'Désactiver').'</button>';
                       echo '<button class="px-3 py-2 rounded bg-gray-100" onclick="openParams('.$id.')" title="Paramètres">
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="3" y="5" width="18" height="2" rx="1" fill="currentColor"/>
@@ -230,11 +244,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- Create modal -->
 <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
+  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3 max-h-[85vh] overflow-auto">
     <h3 class="text-xl mb-4">Créer une tâche</h3>
-    <div class="space-y-3">
+    <div class="space-y-3 pb-6">
       <input id="modal_title" placeholder="Titre de la tâche (FR)" class="w-full border p-2 rounded" />
       <input id="modal_title_en" placeholder="Titre de la tâche (EN)" class="w-full border p-2 rounded" />
       <textarea id="modal_descr_fr" placeholder="Description (FR)" class="w-full border p-2 rounded" rows="3"></textarea>
@@ -268,16 +281,15 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </div>
 
       <div class="flex justify-end gap-2 mt-4">
-        <button id="createCancel" class="px-4 py-2 rounded border">Annuler</button>
-        <button id="createValidate" class="px-4 py-2 rounded bg-blue-600 text-white">Valider</button>
+        <button id="createCancel" class="px-5 py-2 rounded border">Annuler</button>
+        <button id="createValidate" class="px-5 py-2 rounded bg-blue-600 text-white">Valider</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Filter modal -->
 <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-40">
-  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/4">
+  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/2 max-h-[80vh] overflow-auto">
     <h3 class="text-xl mb-4">Filtrer</h3>
     <div class="space-y-3">
       <select id="filter_type" class="w-full border p-2 rounded">
@@ -298,7 +310,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </div>
 
 <div id="paramsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
+  <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3 max-h-[80vh] overflow-auto">
     <h3 class="text-xl mb-4">Paramètres de la tâche</h3>
     <div id="paramsBody" class="space-y-2">
       <div><strong>Titre :</strong> <span id="p_title"></span></div>
@@ -330,19 +342,46 @@ if (isset($pdo) && $pdo instanceof PDO) {
   const paramsModal = document.getElementById('paramsModal');
   const paramsClose = document.getElementById('paramsClose');
 
-  openCreateBtn.addEventListener('click', ()=> createModal.classList.remove('hidden'));
-  createCancel.addEventListener('click', ()=> createModal.classList.add('hidden'));
+  openCreateBtn.addEventListener('click', ()=> {
+    createModal.classList.remove('hidden');
+    createModal.classList.add('flex');
+    updateCreateDifficultyPreview();
+  });
+  createCancel.addEventListener('click', ()=> {
+    createModal.classList.add('hidden');
+    createModal.classList.remove('flex');
+  });
 
-  openFilterBtn.addEventListener('click', ()=> filterModal.classList.remove('hidden'));
+  openFilterBtn.addEventListener('click', ()=> {
+    filterModal.classList.remove('hidden');
+    filterModal.classList.add('flex');
+  });
   filterReset.addEventListener('click', ()=> {
     document.getElementById('filter_type').value = '';
     document.getElementById('filter_difficulty').value = '';
     document.getElementById('filter_category').value = '';
     applyFilters();
   });
-  filterApply.addEventListener('click', ()=> { applyFilters(); filterModal.classList.add('hidden'); });
+  filterApply.addEventListener('click', ()=> {
+    applyFilters();
+    filterModal.classList.add('hidden');
+    filterModal.classList.remove('flex');
+  });
 
-  paramsClose.addEventListener('click', ()=> paramsModal.classList.add('hidden'));
+  paramsClose.addEventListener('click', ()=> {
+    paramsModal.classList.add('hidden');
+    paramsModal.classList.remove('flex');
+  });
+
+  // Close modals when clicking backdrop (outside inner panel)
+  [createModal, filterModal, paramsModal].forEach(modal => {
+    modal.addEventListener('click', (ev) => {
+      if (ev.target === modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    });
+  });
 
   const modalDifficulty = document.getElementById('modal_difficulty');
   const modalDifficultyPreview = document.getElementById('modal_difficulty_preview');
@@ -353,42 +392,49 @@ if (isset($pdo) && $pdo instanceof PDO) {
     return 1;
   }
   function updateCreateDifficultyPreview(){
-    if (!modalDifficulty) return;
     const val = modalDifficulty.value;
     const leaves = getLeafCountFromDifficulty(val);
     modalDifficultyPreview.innerHTML = '';
     for (let i=0;i<leaves;i++) modalDifficultyPreview.innerHTML += leafSVG();
   }
-  if (modalDifficulty) modalDifficulty.addEventListener('change', updateCreateDifficultyPreview);
+  modalDifficulty.addEventListener('change', updateCreateDifficultyPreview);
 
  createValidate.addEventListener('click', ()=>{
   const titre = document.getElementById('modal_title').value.trim();
+  const titre_en = document.getElementById('modal_title_en').value.trim();
+  const descr_fr = document.getElementById('modal_descr_fr').value.trim();
+  const descr_en = document.getElementById('modal_descr_en').value.trim();
+  const difficulty = document.getElementById('modal_difficulty').value;
+  const xp = document.getElementById('modal_xp').value;
+  const score = document.getElementById('modal_score').value;
+  const duration = document.getElementById('modal_duration').value;
+  const type = document.getElementById('modal_type').value;
+  const category = document.getElementById('modal_category').value;
+
   if (!titre) { alert('Titre (FR) requis'); return; }
 
-  const payload = {
-    titre_fr: document.getElementById('modal_title').value.trim(),
-    titre_en: document.getElementById('modal_title_en').value.trim(),
-    descr_fr: document.getElementById('modal_descr_fr').value.trim(),
-    descr_en: document.getElementById('modal_descr_en').value.trim(),
-    difficulty: document.getElementById('modal_difficulty').value,
-    xp_gain: document.getElementById('modal_xp').value,
-    score: document.getElementById('modal_score').value,
-    duration_days: document.getElementById('modal_duration').value,
-    domaine: document.getElementById('modal_type').value,
-    categorie: document.getElementById('modal_category').value
-  };
-
-  fetch('super_admin_shift_manager_create.php', {
+  fetch('admin/admin_shift_manager_create.php', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      titre_fr: titre,
+      titre_en: titre_en,
+      descr_fr: descr_fr,
+      descr_en: descr_en,
+      difficulty: difficulty,
+      xp_gain: xp,
+      score: score,
+      duration_days: duration,
+      domaine: type,
+      categorie: category
+    })
   })
   .then(r=>r.json())
   .then(data=>{
     if (data.success) location.reload();
     else alert('Erreur création: '+(data.error||''));
   })
-  .catch(()=> { alert('Erreur réseau'); });
+  .catch(err=> { console.error(err); alert('Erreur réseau'); });
 });
 
   function applyFilters(){
@@ -414,22 +460,45 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
   document.getElementById('task_search').addEventListener('input', applyFilters);
 
-  function openParams(id){
-    fetch('super_admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
-      .then(r=>{ if (!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(data=>{
-        if (data.success) {
-          document.getElementById('p_title').innerText = data.titre;
-          document.getElementById('p_xp').innerText = data.xp;
-          document.getElementById('p_score').innerText = (typeof data.score === 'number') ? data.score.toFixed(2) : data.score;
-          document.getElementById('p_users').innerText = data.users_count;
-          paramsModal.classList.remove('hidden');
-        } else {
-          alert('Erreur: ' + (data.error||''));
-        }
-      })
-      .catch(()=> { alert('Erreur réseau'); });
+  function toggleDisable(id, btn) {
+    btn.disabled = true;
+    fetch('admin/admin_shift_manager_desactiver.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ challenge_id: id })
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      btn.disabled = false;
+      if (data.success) {
+        btn.innerText = (data.action === 'disabled') ? 'Réactiver' : 'Désactiver';
+      } else {
+        alert('Erreur: ' + (data.error||''));
+      }
+    })
+    .catch(err=> { btn.disabled = false; console.error(err); alert('Erreur réseau'); });
   }
+
+  function openParams(id){
+  fetch('admin_shift_manager_params.php?challenge_id=' + encodeURIComponent(id), { method:'GET', headers:{ 'Accept':'application/json' } })
+    .then(r=>{
+      if (!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    })
+    .then(data=>{
+      if (data.success) {
+        document.getElementById('p_title').innerText = data.titre;
+        document.getElementById('p_xp').innerText = data.xp;
+        document.getElementById('p_score').innerText = (typeof data.score === 'number') ? data.score.toFixed(2) : data.score;
+        document.getElementById('p_users').innerText = data.users_count;
+        paramsModal.classList.remove('hidden');
+        paramsModal.classList.add('flex');
+      } else {
+        alert('Erreur: ' + (data.error||''));
+      }
+    })
+    .catch(err=> { console.error(err); alert('Erreur réseau'); });
+}
 </script>
 
 </body>

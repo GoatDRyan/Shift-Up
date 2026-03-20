@@ -4,7 +4,7 @@ session_start();
 $db_driver = '';
 $mysqli = null;
 
-require_once 'db_connect.php';
+require_once '../../config/db_connect.php';
 
 if (isset($pdo) && $pdo instanceof PDO) {
     $db_driver = 'pdo';

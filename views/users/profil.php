@@ -1,6 +1,8 @@
 <?php
 
-require_once 'includes/init.php';
+
+
+require_once '../../includes/init.php';
 
 $stmt = $pdo->prepare("
     SELECT u.*, d.nom as department_name 
@@ -21,11 +23,11 @@ $deptName = $user['department_name'] ?? "Sans département";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shift'Up</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/tailwind-config.js"></script>
+    <script src="../../js/tailwind-config.js"></script>
 </head>
 
 <body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24">
@@ -33,14 +35,14 @@ $deptName = $user['department_name'] ?? "Sans département";
 
         <div class="absolute right-5 top-16 flex gap-2 max-[375px]:gap-1 z-50">
             <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
-                <img src="img/icone/icone-notification.svg" alt="icone notification" class="w-5 max-[375px]:w-4"></img>
+                <img src="../../img/icone/icone-notification.svg" alt="icone notification" class="w-5 max-[375px]:w-4"></img>
             </button>
             <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
-                <img src="img/icone/icone-parametre-vide.svg" alt="icone parametre" class="w-5 max-[375px]:w-4"></img>
+                <img src="../../img/icone/icone-parametre-vide.svg" alt="icone parametre" class="w-5 max-[375px]:w-4"></img>
             </button>
         </div>
         <button class="absolute right-12 top-[60%] w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
-            <img src="img/icone/icone-crayon-vide.svg" alt="icone crayon" class="w-5 max-[375px]:w-4"></img>
+            <img src="../../img/icone/icone-crayon-vide.svg" alt="icone crayon" class="w-5 max-[375px]:w-4"></img>
         </button>
 
         <div class="relative h-56 top-[-35px] flex items-center justify-center -mx-4 overflow-hidden mt-2 z-10">
@@ -153,15 +155,13 @@ $deptName = $user['department_name'] ?? "Sans département";
                     <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-medal text-xl max-[375px]:text-base"></i></div>
                     <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm"><i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i></div>
                 </div>
-
             </div>
         </div>
-        
     </main>
     
-    <?php include 'includes/navbar.php'; ?>
-    <?php include 'includes/settings_menu.php'; ?>
-    <?php include 'includes/level_up_popup.php'; ?>
+    <?php include '../../includes/level_up_popup.php'; ?>
+    <?php include '../../includes/settings_menu.php'; ?>
+    <?php include '../../includes/navbar.php'; ?>
 
 </body>
 </html>
