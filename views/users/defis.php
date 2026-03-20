@@ -64,25 +64,26 @@ foreach ($allChallenges as $c) {
     <header class="top-0 w-full bg-brand-primary p-4 pb-0 relative z-40 shadow-sm">
         <div class="flex items-center gap-2 max-[375px]:gap-1 mb-4 z-50 relative">
             
-            <div class="flex items-center bg-brand-secondary rounded-full pr-4 max-[375px]:pr-2 h-10 max-[375px]:h-8 shadow-sm">
-                <div class="w-10 h-10 max-[375px]:w-8 max-[375px]:h-8 rounded-full bg-brand-tertiary flex items-center justify-center text-brand-primary font-display font-bold border-2 border-brand-primary text-lg max-[375px]:text-sm">
-                    <?= $levelData['niveau_actuel'] ?? 1 ?>
-                </div>
-                <span class="ml-2 text-xs max-[320px]:text-[10px] font-bold text-brand-dark whitespace-nowrap">
-                    <?= number_format($levelData['xp_actuel'] ?? 0) ?>/<?= number_format($levelData['xp_prochain'] ?? 2500) ?>
-                </span>
-            </div>
+          <div class="flex items-center bg-brand-secondary rounded-full pr-4 max-[375px]:pr-2 h-10 max-[375px]:h-8 shadow-sm">
+    <div class="relative w-10 h-10 max-[375px]:w-8 max-[375px]:h-8 rounded-full bg-brand-tertiary flex items-center justify-center text-brand-primary font-display font-bold border-2 border-brand-primary text-lg max-[375px]:text-sm overflow-hidden">
+        <img src="../../img/level/icone-level-1.svg" class="absolute inset-0 w-full h-full object-contain" alt="">
+        <span class="relative z-10"><?= $levelData['niveau_actuel'] ?? 1 ?></span>
+    </div>
+    <span class="ml-2 text-xs max-[320px]:text-[10px] font-bold text-brand-dark whitespace-nowrap">
+        <?= number_format($levelData['xp_actuel'] ?? 0) ?>/<?= number_format($levelData['xp_prochain'] ?? 2500) ?>
+    </span>
+</div>
 
-            <div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
-                <div class="flex items-center gap-2 max-[375px]:gap-1">
-                    <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0">
-                        <i class="fa-solid fa-leaf text-brand-tertiary text-[10px] max-[375px]:text-[8px]"></i>
-                    </div>
-                    <span class="text-sm max-[376px]:text-xs font-bold text-brand-dark truncate">
-                        <?= number_format($money ?? 0, 0, '.', ' ') ?>
-                    </span>
-                </div>
-            </div>
+<div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
+    <div class="flex items-center gap-2 max-[375px]:gap-1">
+        <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0 overflow-hidden">
+            <img src="../../img/icone/mascotte-monnaie.svg" class="w-full h-full object-contain" alt="Money">
+        </div>
+        <span class="text-sm max-[376px]:text-xs font-bold text-brand-dark truncate">
+            <?= number_format($money ?? 0, 0, '.', ' ') ?>
+        </span>
+    </div>
+</div>
 
             <div class="absolute right-0 top-12 flex gap-2 max-[375px]:gap-1 z-50">
                 <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
