@@ -15,6 +15,14 @@ $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 $deptName = $user['department_name'] ?? "Sans département";
 
+$stmtStreak = $pdo->prepare("SELECT max_streak FROM users WHERE id = ?");
+$stmtStreak->execute([$user_id]);
+$streak = $stmtStreak->fetch()['max_streak'];
+
+
+$stmtRank = $pdo->prepare("SELECT points_rank FROM users WHERE id = ?");
+$stmtRank->execute([$user_id]);
+$rank = $stmtRank->fetch()['points_rank'];
 ?>
 
 <!DOCTYPE html>
@@ -35,13 +43,13 @@ $deptName = $user['department_name'] ?? "Sans département";
 
         <div class="absolute right-5 top-16 flex gap-2 max-[375px]:gap-1 z-50">
             <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
-                <img src="../../img/icone/icone-notification.svg" alt="icone notification" class="w-5 max-[375px]:w-4"></img>
+                <img src="../../img/icone/icone-notification-blanc.svg" alt="icone notification" class="w-5 max-[375px]:w-4"></img>
             </button>
             <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
-                <img src="../../img/icone/icone-parametre-vide.svg" alt="icone parametre" class="w-5 max-[375px]:w-4"></img>
+                <img src="../../img/icone/icone-parametre-blanc.svg" alt="icone parametre" class="w-5 max-[375px]:w-4"></img>
             </button>
         </div>
-        <button class="absolute right-12 top-[60%] w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
+        <button class="absolute right-12 top-[60%] w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
             <img src="../../img/icone/icone-crayon-vide.svg" alt="icone crayon" class="w-5 max-[375px]:w-4"></img>
         </button>
 
@@ -65,9 +73,7 @@ $deptName = $user['department_name'] ?? "Sans département";
                     <div class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
                         <i class="fa-solid fa-trophy text-xl max-[375px]:text-base"></i>
                     </div>
-                    <div class="ml-4 w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-full flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition">
-                        <p>1</p>
-                    </div>
+                    <img src="../../img/level/icone-level-1.svg" alt="icone level 1" class="ml-4 w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 flex items-center justify-center text-brand-card shadow-sm active:scale-95 transition"></img>
                 </div>
             </div>
         </div>
@@ -86,8 +92,8 @@ $deptName = $user['department_name'] ?? "Sans département";
                     <span class="text-xl font-bold">123</span>
                 </div>
                 <div class="flex flex-col items-center gap-1 bg-brand-dark p-4 rounded-xl">
-                    <h3 class="text-md font-bold underline">Total victoires</h3>
-                    <span class="text-xl font-bold">45</span>
+                    <h3 class="text-md font-bold underline">Top streak</h3>
+                    <span class="text-xl font-bold"><?= number_format($streak, 0, ',', ' ') ?></span>
                 </div>
             </div>
         </div>
@@ -99,8 +105,8 @@ $deptName = $user['department_name'] ?? "Sans département";
             
             <div class="mt-8 w-full text-center grid gap-5 max-[375px]:gap-5 grid-cols-2 items-center justify-center text-brand-card shadow-sm">
                 <div class="flex flex-col items-center gap-1 bg-brand-dark p-4 rounded-xl">
-                    <h3 class="text-md font-bold underline">Top score</h3>
-                    <span class="text-xl font-bold">123</span>
+                    <h3 class="text-md font-bold underline">Total de score</h3>
+                    <span class="text-xl font-bold"><?= number_format($rank, 0, ',', ' ') ?></span>
                 </div>
                 <div class="flex flex-col items-center gap-1 bg-brand-dark p-4 rounded-xl">
                     <h3 class="text-md font-bold underline">Top classement</h3>
@@ -127,8 +133,13 @@ $deptName = $user['department_name'] ?? "Sans département";
                 </div>
 
                 <!-- Badge 3 -->
-                <div class="badge-card snap-center shrink-0 w-[80%] bg-brand-secondary rounded-xl p-1 flex flex-col items-center justify-center">
+                <div class="badge-card snap-center shrink-0 w-[80%] bg-brand-secondary rounded-xl p-3 flex flex-col items-center justify-center">
                     <img src="../../img/carte/carte-covoiturage2.svg" class="w-full h-full" />
+                </div>
+
+                <!-- Badge 4 -->
+                <div class="badge-card snap-center shrink-0 w-[80%] bg-brand-secondary rounded-xl p-1 flex flex-col items-center justify-center">
+                    <img src="../../img/carte/carte-mediateur.svg" class="w-full h-full" />
                 </div>
             </div>
         </div>
