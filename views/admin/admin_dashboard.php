@@ -1,10 +1,6 @@
 <?php 
 session_start();
-<<<<<<< HEAD:admin/admin_dashboard.php
-require_once('../db_connect.php');
-=======
 require_once '../../config/db_connect.php';
->>>>>>> alexis:views/admin/admin_dashboard.php
 
 if (!function_exists('e')) {
     function e($string) {
