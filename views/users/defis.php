@@ -74,15 +74,15 @@ foreach ($allChallenges as $c) {
 </div>
 <div class="flex items-center bg-black w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
     <div class="flex items-center gap-2 max-[375px]:gap-1">
-        <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0 overflow-hidden">
+        <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 flex items-center justify-center shrink-0">
             <img src="../../img/icone/mascotte-monnaie.svg" class="w-full h-full object-contain" alt="Money">
         </div>
+        
         <span class="text-sm max-[376px]:text-xs font-bold text-white truncate">
             <?= number_format($money ?? 0, 0, '.', ' ') ?>
         </span>
     </div>
 </div>
-
 
             <div class="absolute right-0 top-12 flex gap-2 max-[375px]:gap-1 z-50">
                 <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-border rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
@@ -142,6 +142,17 @@ foreach ($allChallenges as $c) {
                         $days_done = $userProgress[$defi['id']] ?? 0;
                         if ($days_done > $duration) $days_done = $duration;
                         $progress_percent = ($duration > 0) ? round(($days_done / $duration) * 100) : 0;
+                        
+                        $catStr = strtolower($categoryName);
+                        if (strpos($catStr, 'covoiturage') !== false) {
+                            $catIcon = '../../img/carte/carte-covoiturage.svg';
+                        } elseif (strpos($catStr, 'recyclage') !== false) {
+                            $catIcon = '../../img/carte/carte-trier.svg';
+                        } elseif (strpos($catStr, 'mobilit') !== false) {
+                            $catIcon = '../../img/carte/carte-mediateur.svg';
+                        } else {
+                            $catIcon = '../../img/carte/carte-covoiturage2.svg';
+                        }
                     ?>
                     
                     <div class="challenge-card bg-[#E94E1B] border-transparent rounded-2xl p-2.5 flex relative mb-4 shadow-md items-stretch cursor-pointer hover:opacity-90 transition text-white" 
@@ -151,11 +162,11 @@ foreach ($allChallenges as $c) {
                         data-domain-2="<?= htmlspecialchars($defi['domaine_2'] ?? '') ?>"
                         onclick="openModal('modal-<?= $defi['id'] ?>')">
                         
-                        <div class="w-[65px] min-h-[65px] bg-brand-secondary rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden">
+                        <div class="w-[65px] min-h-[65px] bg-transparent rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden">
                             <?php if (!empty($defi['image_url'])): ?>
                                 <img src="<?= htmlspecialchars($defi['image_url']) ?>" alt="Image défi" class="w-full h-full object-cover absolute inset-0">
                             <?php else: ?>
-                                <i class="fa-solid fa-seedling text-2xl text-brand-dark relative z-10"></i>
+                                <img src="<?= htmlspecialchars($catIcon) ?>" alt="Icone catégorie" class="w-full h-full scale-110 object-contain relative z-10">
                             <?php endif; ?>
                         </div>
                         
@@ -276,13 +287,28 @@ foreach ($allChallenges as $c) {
                             $duration = (int)($defi['duration_days'] ?? 1);
                             $days_done = $defi['days_done'];
                             $progress_percent = round(($days_done / $duration) * 100);
+
+                            $catStr = strtolower($defi['categorie'] ?? '');
+                            if (strpos($catStr, 'covoiturage') !== false) {
+                                $catIcon = '../../img/carte/carte-covoiturage.svg';
+                            } elseif (strpos($catStr, 'recyclage') !== false) {
+                                $catIcon = '../../img/carte/carte-trier.svg';
+                            } elseif (strpos($catStr, 'mobilit') !== false) {
+                                $catIcon = '../../img/carte/carte-mediateur.svg';
+                            } else {
+                                $catIcon = '../../img/carte/carte-covoiturage2.svg';
+                            }
                         ?>
                         
                         <div class="challenge-card bg-[#E94E1B] border-transparent rounded-2xl p-2.5 flex relative shadow-md items-stretch cursor-pointer hover:opacity-90 transition text-white" 
                              onclick="openModal('modal-my-<?= $defi['id'] ?>')">
                             
-                            <div class="w-[65px] min-h-[65px] bg-brand-secondary rounded-xl flex items-center justify-center shrink-0 relative">
-                                <i class="fa-solid fa-seedling text-2xl text-brand-dark"></i>
+                            <div class="w-[65px] min-h-[65px] bg-transparent rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden">
+                                <?php if (!empty($defi['image_url'])): ?>
+                                    <img src="<?= htmlspecialchars($defi['image_url']) ?>" alt="Image défi" class="w-full h-full object-cover absolute inset-0">
+                                <?php else: ?>
+                                    <img src="<?= htmlspecialchars($catIcon) ?>" alt="Icone catégorie" class="w-full h-full scale-110 object-contain relative z-10">
+                                <?php endif; ?>
                             </div>
                             
                             <div class="ml-3 flex-1 flex flex-col justify-center py-1">
@@ -421,13 +447,10 @@ foreach ($allChallenges as $c) {
     <?php include '../../includes/navbar.php'; ?>
 
     <script>
-        // --- Fonctionnalité du bouton Menu Paramètres ---
         function toggleMenu() {
             const menu = document.getElementById('settings-menu');
             if (menu) {
                 menu.classList.toggle('hidden');
-                // Optionnel : empêcher le scroll quand le menu est ouvert
-                // document.body.classList.toggle('overflow-hidden');
             } else {
                 console.warn("Le menu avec l'ID 'settings-menu' n'a pas été trouvé. Assurez-vous qu'il est bien généré par 'settings_menu.php'.");
             }
