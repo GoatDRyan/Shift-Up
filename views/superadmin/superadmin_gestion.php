@@ -1,10 +1,6 @@
 <?php 
 session_start();
-<<<<<<< HEAD:superadmin/superadmin_gestion.php
-require_once('../db_connect.php');
-=======
 require_once '../../config/db_connect.php';
->>>>>>> alexis:views/superadmin/superadmin_gestion.php
 
 if (isset($_GET['export']) && $_GET['export'] == '1') {
     try {
