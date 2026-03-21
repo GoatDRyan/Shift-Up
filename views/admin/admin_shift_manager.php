@@ -1,10 +1,6 @@
 <?php 
 session_start();
-<<<<<<< HEAD:admin/admin_shift_manager.php
-require_once('../db_connect.php');
-=======
 require_once '../../config/db_connect.php';
->>>>>>> alexis:views/admin/admin_shift_manager.php
 
 ?>
 <!doctype html>
