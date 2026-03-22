@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title> Super Admin - Tableau de bord</title>
+  <title> Super Admin - Entreprise</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .rounded-full-xl { border-radius: 999px; }
