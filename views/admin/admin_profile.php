@@ -335,12 +335,12 @@ $userEmailValue = (string)($user['email'] ?? '');
     <nav class="hidden md:flex items-center gap-10 text-[17px]">
       <a href="admin_shift_manager.php<?= e($linkLang) ?>" class="font-medium"><?= e($t['shift_manager']) ?></a>
       <a href="admin_gestion.php<?= e($linkLang) ?>"><?= e($t['management']) ?></a>
-      <button type="button" class="w-11 h-11 rounded-full border-2 border-gray-900 flex items-center justify-center" aria-label="Profil">
-        <svg class="w-7 h-7 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
-          <circle cx="12" cy="8" r="3"/>
-          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+     <a href="admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
+  <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+</a>
     </nav>
   </div>
 </header>
