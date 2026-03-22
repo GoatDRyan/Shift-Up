@@ -34,13 +34,13 @@ require_once '../../config/db_connect.php';
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
       <a href="super_admin_shift_manager_modif.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="super_admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
-      <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
-        <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
-          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-      </div>
+      <a href="superadmin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="super_admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
+  <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+</a>
     </nav>
 
     <button class="md:hidden ml-2 p-2 rounded bg-transparent" aria-label="Ouvrir le menu">
@@ -212,7 +212,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       echo '</div>';
 
                       echo '<div class="flex items-center gap-3">';
-                      // Bouton Désactiver retiré pour Super Admin (bibliothèque)
                       echo '<button class="px-3 py-2 rounded bg-gray-100" onclick="openParams('.$id.')" title="Paramètres">
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="3" y="5" width="18" height="2" rx="1" fill="currentColor"/>
@@ -235,7 +234,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- Create modal -->
 <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
     <h3 class="text-xl mb-4">Créer une tâche</h3>

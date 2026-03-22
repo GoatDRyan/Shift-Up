@@ -15,7 +15,6 @@ if ($pdo) {
     if (!empty($companies)) $companyId = (int)$companies[0]['id'];
 }
 
-
 $userDistribution = [];
 if ($pdo) {
     $sql = "
@@ -183,141 +182,87 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .rounded-full-xl { border-radius: 999px; }
-    .card-radius { border-radius: 12px; }
+    .card-radius { border-radius: 16px; }
   </style>
 </head>
-<header class="bg-gray-200 h-16 relative">
-  <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
-    <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
-            <a href="superadmin_dashboard.php">
-      <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
-        <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z"
-              stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-        <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif"
-              fill="currentColor" style="font-weight:700">S</text>
-      </svg>
-</a>
-    </div>
-  </div>
-
-  <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
-    <nav class="hidden md:flex items-center gap-8">
-      <a href="super_admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="superadmin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
-      <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
-        <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
-          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
+<body class="bg-white min-h-screen">
+  <header class="bg-gray-200 h-16 relative">
+    <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-gray-400 flex items-center justify-center">
+      <div class="w-10 h-10 flex items-center justify-center" aria-hidden="true">
+        <a href="superadmin_dashboard.php">
+          <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Shift-Up">
+            <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+            <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif" fill="currentColor" style="font-weight:700">S</text>
+          </svg>
+        </a>
       </div>
-    </nav>
+    </div>
 
-    <button class="md:hidden ml-2 p-2 rounded bg-transparent" aria-label="Ouvrir le menu">
-      <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-    </button>
-  </div>
-</header>
+    <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="super_admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+        <a href="superadmin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+        <a href="super_admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
+          <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+            <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </a>
+      </nav>
+
+      <button class="md:hidden ml-2 p-2 rounded bg-transparent" aria-label="Ouvrir le menu">
+        <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
 
   <div class="max-w-screen-2xl mx-auto p-8">
-    <h1 class="text-3xl font-light mb-4">Bienvenue Super Admin</h1>
+    <h1 class="text-3xl font-light text-gray-800">Bienvenue Super-admin</h1>
   </div>
 
-  <main class="max-w-screen-2xl mx-auto p-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <section class="bg-gray-200 card-radius p-6">
-        <div class="bg-gray-400 card-radius h-64 md:h-96 p-4">
-          <canvas id="trendChart" class="w-full h-full"></canvas>
-        </div>
-        <h2 class="mt-6 text-2xl">Empreinte carbone - Tendance</h2>
-        <div class="mt-6">
-          <a href="?export=1" class="block bg-gray-300 text-center py-4 rounded-full-xl text-xl shadow">Export des données</a>
-        </div>
-        <div class="mt-6">
-          <a href="superadmin_entreprise.php" class="block bg-gray-300 text-center py-4 rounded-full-xl text-xl shadow">Créer une entreprise</a>
-        </div>
-      </section>
+  <main class="max-w-screen-2xl mx-auto px-8 pb-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+      
+      <div class="flex flex-col gap-6">
+        <section class="bg-gray-200 card-radius p-6 flex flex-col items-center">
+          <div class="bg-gray-400 card-radius w-full h-64 md:h-[22rem] p-4">
+            <canvas id="trendChart" class="w-full h-full"></canvas>
+          </div>
+          <h2 class="mt-6 text-2xl text-gray-800">Empreinte carbone - Tendance</h2>
+        </section>
 
-      <aside class="bg-gray-200 card-radius p-6 flex flex-col md:justify-between">
-        <div class="flex items-center gap-6">
-          <div class="w-44 h-44 rounded-full bg-white flex items-center justify-center shadow">
-            <canvas id="pieChartLarge" width="220" height="220"></canvas>
+        <a href="?export=1" id="exportBtn" onclick="animateExport(event, this)" class="block bg-gray-200 text-gray-800 text-center py-4 rounded-full-xl text-xl shadow hover:bg-gray-300 transition-all duration-300 cursor-pointer">
+            Export des données
+        </a>
+        <a href="superadmin_entreprise.php" class="block bg-gray-200 text-gray-800 text-center py-4 rounded-full-xl text-xl shadow hover:bg-gray-300 transition-all duration-300">
+            Créer une entreprise
+        </a>
+      </div>
+
+      <div class="flex flex-col gap-6">
+        <aside class="bg-gray-200 card-radius p-6 flex flex-col md:flex-row items-center md:items-start gap-8">
+          <div class="w-52 h-52 rounded-full bg-gray-400 flex items-center justify-center shadow flex-shrink-0">
+            <canvas id="pieChartLarge" width="200" height="200"></canvas>
           </div>
 
-          <div class="flex-1 space-y-4">
-            <div class="bg-gray-400 rounded-full px-6 py-3 text-right" id="kpi_shifter_moyen"><?= e($kpis['shifter_moyen']['name']).' : '.e($kpis['shifter_moyen']['value']) ?></div>
-            <div class="bg-gray-400 rounded-full px-6 py-3 text-right" id="kpi_top_shifter"><?= e($kpis['top_shifter']['name']).' : '.e($kpis['top_shifter']['value']) ?></div>
-            <div class="bg-gray-400 rounded-full px-6 py-3 text-right" id="kpi_top_department"><?= e($kpis['top_department']['name']).' : '.e($kpis['top_department']['value']) ?></div>
+          <div class="flex-1 space-y-4 w-full flex flex-col justify-center mt-4 md:mt-0">
+            <div class="bg-gray-400 rounded-full px-6 py-3 text-right text-gray-800 shadow truncate" id="kpi_shifter_moyen"><?= e($kpis['shifter_moyen']['name']).' : '.e($kpis['shifter_moyen']['value']) ?></div>
+            <div class="bg-gray-400 rounded-full px-6 py-3 text-right text-gray-800 shadow truncate" id="kpi_top_shifter"><?= e($kpis['top_shifter']['name']).' : '.e($kpis['top_shifter']['value']) ?></div>
+            <div class="bg-gray-400 rounded-full px-6 py-3 text-right text-gray-800 shadow truncate h-12" id="kpi_top_department"><?= e($kpis['top_department']['name']).' : '.e($kpis['top_department']['value']) ?></div>
           </div>
-        </div>
+        </aside>
 
-        <div class="mt-8 space-y-4">
+        <div class="space-y-4">
           <?php foreach($objectives as $obj): ?>
-            <div class="bg-gray-400 rounded-full px-6 py-3 text-center"><?= e($obj) ?></div>
+            <div class="bg-gray-400 rounded-full px-6 py-4 text-center text-gray-800 shadow text-lg hover:bg-gray-500 transition-colors duration-300 cursor-default">
+              <?= e($obj) ?>
+            </div>
           <?php endforeach; ?>
         </div>
-      </aside>
-    </div>
-
-    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div class="bg-gray-200 card-radius p-6">
-        <h3 class="text-xl mb-4">Répartition des utilisateurs (par département)</h3>
-        <div class="bg-gray-400 p-6 rounded-md">
-          <ul class="space-y-2 text-white">
-            <?php foreach($userDistribution as $row): ?>
-              <li class="flex justify-between">
-                <span><?= e($row['label']) ?></span>
-                <span><?= (int)$row['cnt'] ?></span>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
       </div>
 
-      <div class="bg-gray-200 card-radius p-6">
-        <h3 class="text-xl mb-4">KPIs</h3>
-        <div class="space-y-4">
-          <div class="bg-white rounded p-4 shadow flex justify-between items-center">
-            <div class="text-lg">Nombre d'utilisateurs</div>
-            <div class="text-gray-700 font-semibold">
-              <?php
-                if ($pdo) {
-                  $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE ".($companyId ? "company_id = :company_id" : "1=1"));
-                  if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-                  echo e($stmt->fetchColumn());
-                } else echo 'N/A';
-              ?>
-            </div>
-          </div>
-
-          <div class="bg-white rounded p-4 shadow flex justify-between items-center">
-            <div class="text-lg">Total CO₂ rapporté</div>
-            <div class="text-gray-700 font-semibold">
-              <?php
-                if ($pdo) {
-                    $stmt = $pdo->prepare("SELECT ROUND(SUM(cl.amount_co2),2) FROM carbon_logs cl JOIN users u ON cl.user_id = u.id WHERE ".($companyId ? "u.company_id = :company_id" : "1=1"));
-                    if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-                    echo e($stmt->fetchColumn() ?: '0');
-                } else echo 'N/A';
-              ?>
-            </div>
-          </div>
-
-          <div class="bg-white rounded p-4 shadow flex justify-between items-center">
-            <div class="text-lg">Total actions</div>
-            <div class="text-gray-700 font-semibold">
-              <?php
-                if ($pdo) {
-                  $stmt = $pdo->prepare("SELECT COUNT(ua.id) FROM user_actions ua JOIN users u ON ua.user_id = u.id WHERE ".($companyId ? "u.company_id = :company_id" : "1=1"));
-                  if ($companyId) $stmt->execute([':company_id'=>$companyId]); else $stmt->execute();
-                  echo e($stmt->fetchColumn() ?: '0');
-                } else echo 'N/A';
-              ?>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <?php if ($dbError): ?>
@@ -329,6 +274,23 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
   </main>
 
   <script>
+  function animateExport(e, btn) {
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⏳ Export en cours...';
+      btn.classList.add('bg-gray-400', 'scale-95'); 
+      
+      setTimeout(() => {
+          btn.innerHTML = 'Téléchargement lancé';
+          btn.classList.remove('bg-gray-400', 'scale-95');
+          btn.classList.add('bg-green-200'); 
+          
+          setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.classList.remove('bg-green-200');
+          }, 3000); 
+      }, 1000);
+  }
+
   const pieLabels = <?= json_encode($pieLabels, JSON_UNESCAPED_UNICODE) ?>;
   const pieValues = <?= json_encode($pieValues) ?>;
   const trendLabels = <?= json_encode($trendLabels) ?>;
@@ -337,8 +299,8 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
   function grayPalette(n) {
     const out = [];
     if (n <= 0) return out;
-    const minL = 20;
-    const maxL = 78;
+    const minL = 30; 
+    const maxL = 80;
     for (let i = 0; i < n; i++) {
       const t = (n === 1) ? 0.5 : (i / (n - 1)); 
       const L = Math.round(minL + t * (maxL - minL));
@@ -355,8 +317,8 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
       datasets: [{
         data: pieValues,
         backgroundColor: grayPalette(pieValues.length),
-        borderColor: '#ffffff',
-        borderWidth: 1
+        borderColor: '#9ca3af', 
+        borderWidth: 2
       }]
     },
     options: {
@@ -377,20 +339,23 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
         fill: true,
         tension: 0.3,
         pointRadius: 3,
-        backgroundColor: 'rgba(59,130,246,0.15)',
-        borderColor: 'rgba(59,130,246,1)',
+        backgroundColor: 'rgba(75, 85, 99, 0.2)', 
+        borderColor: 'rgba(55, 65, 81, 1)',
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
+      plugins: {
+          legend: { display: false }
+      },
       scales: {
         x: { display: true },
         y: { display: true, beginAtZero: true }
       }
     }
   });
-</script>
+  </script>
 </body>
 </html>

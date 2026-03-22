@@ -197,13 +197,13 @@ $firstTask = $tasks[0] ?? null;
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-24 md:pl-72 pr-6">
     <nav class="hidden md:flex items-center gap-10 text-[17px]">
       <a href="super_admin_shift_manager.php" class="font-medium">Shift manager</a>
-      <a href="super_admin_gestion.php">Gestion</a>
-      <div class="w-11 h-11 rounded-full border-2 border-gray-900 flex items-center justify-center">
-        <svg class="w-7 h-7 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
-          <circle cx="12" cy="8" r="3"/>
-          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
+      <a href="superadmin_gestion.php">Gestion</a>
+      <a href="super_admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
+  <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+</a>
     </nav>
   </div>
 </header>

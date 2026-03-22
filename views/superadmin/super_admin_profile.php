@@ -140,9 +140,9 @@ $t = [
 $t = $t[$lang] ?? $t['fr'];
 $linkLang = '?lang=' . $lang;
 $toggleLangLink = '?lang=' . ($lang === 'fr' ? 'en' : 'fr');
-$homeLink = 'super_admin_dashboard.php' . $linkLang;
+$homeLink = 'superadmin_dashboard.php' . $linkLang;
 $shiftLink = 'super_admin_shift_manager.php' . $linkLang;
-$gestionLink = 'super_admin_gestion.php' . $linkLang;
+$gestionLink = 'superadmin_gestion.php' . $linkLang;
 
 $message = '';
 $messageType = '';
