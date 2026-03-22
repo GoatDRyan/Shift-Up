@@ -80,12 +80,12 @@ try {
     <nav class="hidden md:flex items-center gap-8">
       <a href="admin_shift_manager.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
       <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
-      <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
-        <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
-          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-      </div>
+     <a href="admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
+  <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+</a>
     </nav>
     <button class="md:hidden ml-2 p-2 rounded bg-transparent" aria-label="Ouvrir le menu">
       <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

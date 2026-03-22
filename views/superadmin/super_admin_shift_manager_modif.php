@@ -2,8 +2,6 @@
 session_start();
 require_once '../../config/db_connect.php';
 
-$companyId = (int)($_SESSION['company_id'] ?? 1);
-
 function h($value): string {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
@@ -32,7 +30,6 @@ function ensureChallengeActiveColumn(PDO $pdo): void {
             $pdo->exec("ALTER TABLE challenges ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1 AFTER company_id");
         }
     } catch (Throwable $e) {
-        // ignore
     }
 }
 
@@ -44,6 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
     header('Content-Type: application/json; charset=utf-8');
 
     try {
+        if (!isset($pdo) || !($pdo instanceof PDO)) {
+            echo json_encode(['success' => false, 'error' => 'Connexion DB indisponible']);
+            exit;
+        }
+
         $action = (string)$_POST['ajax_action'];
         $id = (int)($_POST['challenge_id'] ?? 0);
 
@@ -98,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
                 'INSERT INTO challenges
                 (titre_fr, titre_en, descr_fr, descr_en, image_url, xp_gain, co2_kg, difficulty, domaine, domaine_2, categorie, duration_days, max_actions_day, company_id, is_active)
                 VALUES
-                (?, ?, ?, ?, NULL, ?, ?, ?, ?, NULL, ?, ?, ?, ?, 1)'
+                (?, ?, ?, ?, NULL, ?, ?, ?, ?, NULL, ?, ?, ?, NULL, 1)'
             );
             $stmt->execute([
                 $titreFr,
@@ -112,7 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
                 $categorie,
                 $duration,
                 $maxActions,
-                $companyId,
             ]);
 
             echo json_encode(['success' => true]);
@@ -134,39 +135,33 @@ $tasks = [];
 
 if (isset($pdo) && $pdo instanceof PDO) {
     try {
-        $types = $pdo->query("SELECT DISTINCT domaine FROM challenges WHERE domaine IS NOT NULL AND domaine <> '' ORDER BY domaine")->fetchAll(PDO::FETCH_COLUMN);
-        $categories = $pdo->query("SELECT DISTINCT categorie FROM challenges WHERE categorie IS NOT NULL AND categorie <> '' ORDER BY categorie")->fetchAll(PDO::FETCH_COLUMN);
-        $difficulties = $pdo->query("SELECT DISTINCT difficulty FROM challenges WHERE difficulty IS NOT NULL AND difficulty <> '' ORDER BY difficulty")->fetchAll(PDO::FETCH_COLUMN);
+        $types = $pdo->query("SELECT DISTINCT domaine FROM challenges WHERE domaine IS NOT NULL AND domaine<>'' ORDER BY domaine")->fetchAll(PDO::FETCH_COLUMN);
+        $categories = $pdo->query("SELECT DISTINCT categorie FROM challenges WHERE categorie IS NOT NULL AND categorie<>'' ORDER BY categorie")->fetchAll(PDO::FETCH_COLUMN);
+        $difficulties = $pdo->query("SELECT DISTINCT difficulty FROM challenges WHERE difficulty IS NOT NULL AND difficulty<>'' ORDER BY difficulty")->fetchAll(PDO::FETCH_COLUMN);
     } catch (Throwable $e) {
         // ignore
     }
 
     try {
-        $stmt = $pdo->prepare(
-            'SELECT d.nom, SUM(COALESCE(u.points_rank, u.points_wallet, 0)) AS total_points
+        $stmt = $pdo->query(
+            'SELECT d.id, d.nom, d.total_xp
              FROM departments d
-             LEFT JOIN users u ON u.department_id = d.id
-             WHERE d.company_id = ?
-             GROUP BY d.id, d.nom
-             ORDER BY total_points DESC, d.nom ASC
-             LIMIT 5'
+             ORDER BY d.total_xp DESC, d.nom ASC
+             LIMIT 3'
         );
-        $stmt->execute([$companyId]);
         $ranking = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Throwable $e) {
         $ranking = [];
     }
 
     try {
-        $stmt = $pdo->prepare(
+        $stmt = $pdo->query(
             'SELECT c.id, c.titre_fr, c.xp_gain, c.co2_kg, c.difficulty, c.domaine, c.categorie, c.duration_days,
                     COALESCE(c.is_active,1) AS is_active,
                     (SELECT COUNT(DISTINCT ua.user_id) FROM user_actions ua WHERE ua.challenge_id = c.id) AS users_count
              FROM challenges c
-             WHERE c.company_id IS NULL OR c.company_id = ?
              ORDER BY c.id DESC'
         );
-        $stmt->execute([$companyId]);
         $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Throwable $e) {
         $tasks = [];
@@ -180,11 +175,11 @@ $firstTask = $tasks[0] ?? null;
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shift Manager</title>
+  <title>Shift Manager - Tableau de bord (Super Admin)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background:#fff; color:#111; }
-    .rounded-full-xl { border-radius:9999px; }
+    .rounded-full-xl { border-radius:999px; }
     .card-radius { border-radius:14px; }
     .soft-shadow { box-shadow:0 8px 24px rgba(0,0,0,.08); }
   </style>
@@ -192,7 +187,7 @@ $firstTask = $tasks[0] ?? null;
 <body class="min-h-screen">
 <header class="bg-gray-200 h-24 relative">
   <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-gray-400 flex items-center justify-center">
-    <a href="admin_dashboard.php" aria-label="Accueil" class="w-12 h-12 flex items-center justify-center">
+    <a href="superadmin_dashboard.php" aria-label="Accueil" class="w-12 h-12 flex items-center justify-center">
       <svg class="w-8 h-8 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke-linejoin="round" stroke-linecap="round"/>
         <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif" fill="currentColor" style="font-weight:700">S</text>
@@ -201,8 +196,8 @@ $firstTask = $tasks[0] ?? null;
   </div>
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-24 md:pl-72 pr-6">
     <nav class="hidden md:flex items-center gap-10 text-[17px]">
-      <a href="admin_shift_manager.php" class="font-medium">Shift manager</a>
-      <a href="admin_gestion.php">Gestion</a>
+      <a href="super_admin_shift_manager.php" class="font-medium">Shift manager</a>
+      <a href="super_admin_gestion.php">Gestion</a>
       <div class="w-11 h-11 rounded-full border-2 border-gray-900 flex items-center justify-center">
         <svg class="w-7 h-7 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
           <circle cx="12" cy="8" r="3"/>
@@ -241,7 +236,7 @@ $firstTask = $tasks[0] ?? null;
               <div class="flex items-center gap-4 bg-gray-300 rounded-full-xl p-3">
                 <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-semibold"><?php echo $rank; ?></div>
                 <div class="flex-1 font-medium"><?php echo h($row['nom']); ?></div>
-                <div class="text-sm font-bold"><?php echo number_format((float)$row['total_points'], 0, ',', ' '); ?> pts</div>
+                <div class="text-sm font-bold"><?php echo number_format((float)$row['total_xp'], 0, ',', ' '); ?> XP</div>
               </div>
             <?php $rank++; endforeach; ?>
           <?php else: ?>
@@ -291,6 +286,7 @@ $firstTask = $tasks[0] ?? null;
               data-status="<?php echo $isActive ? 'Actif' : 'Désactivé'; ?>"
               data-domaine="<?php echo h($task['domaine']); ?>"
               data-difficulty="<?php echo h($task['difficulty']); ?>"
+              data-users="<?php echo (int)$task['users_count']; ?>"
             >
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-3 flex-wrap">
@@ -322,7 +318,6 @@ $firstTask = $tasks[0] ?? null;
   </div>
 </main>
 
-<!-- Modal création -->
 <div id="createModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
   <div class="bg-white p-6 card-radius w-full max-w-2xl shadow-xl max-h-[90vh] overflow-auto">
     <div class="flex items-center justify-between mb-4">
@@ -364,7 +359,6 @@ $firstTask = $tasks[0] ?? null;
   </div>
 </div>
 
-<!-- Modal filtre -->
 <div id="filterModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-40 p-4">
   <div class="bg-white p-6 card-radius w-full max-w-lg shadow-xl">
     <div class="flex items-center justify-between mb-4">
@@ -392,7 +386,6 @@ $firstTask = $tasks[0] ?? null;
   </div>
 </div>
 
-<!-- Modal paramètres -->
 <div id="paramsModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
   <div class="bg-white p-6 rounded-2xl w-full max-w-md shadow-xl relative">
     <button id="paramsClose" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
@@ -603,7 +596,7 @@ $firstTask = $tasks[0] ?? null;
 
   document.getElementById('editBtn').addEventListener('click', () => {
     if (!currentId) return;
-    window.location.href = 'admin_shift_manager_edit.php?id=' + encodeURIComponent(currentId);
+    window.location.href = 'super_admin_shift_manager_edit.php?id=' + encodeURIComponent(currentId);
   });
 
   document.getElementById('toggleBtn').addEventListener('click', async () => {

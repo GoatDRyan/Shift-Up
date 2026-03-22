@@ -5,7 +5,7 @@ require_once '../../config/db_connect.php';
 $id = $_GET['id'] ?? null;
 
 if (!$id) {
-    header('Location: admin_shift_manager.php');
+    header('Location: super_admin_shift_manager.php');
     exit;
 }
 
@@ -59,7 +59,7 @@ if (!$task) {
 
 <header class="bg-gray-200 h-16 relative mb-8">
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-between px-6">
-    <a href="admin_shift_manager.php" class="flex items-center gap-2 text-gray-700 hover:text-black transition">
+    <a href="super_admin_shift_manager.php" class="flex items-center gap-2 text-gray-700 hover:text-black transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
       Retour à la liste
     </a>
@@ -121,7 +121,7 @@ if (!$task) {
     </div>
 
     <div class="flex items-center justify-end gap-4 pt-4">
-      <a href="admin_shift_manager.php" class="px-6 py-3 text-gray-600 hover:underline">Annuler</a>
+      <a href="super_admin_shift_manager.php" class="px-6 py-3 text-gray-600 hover:underline">Annuler</a>
       <button type="submit" class="bg-gray-800 text-white px-10 py-3 rounded-full font-bold shadow-lg hover:bg-black transition">
         Enregistrer les modifications
       </button>
