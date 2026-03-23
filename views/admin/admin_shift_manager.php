@@ -357,12 +357,10 @@ if (isset($pdo) && $pdo instanceof PDO) {
 </div>
 
 <script>
-  // Fonctions de support visuel
   function leafSVG(){
     return '<span class="leaf" title="feuille"><svg xmlns="http://www.w3.org/2000/svg" class="text-[#FF4800]" viewBox="0 0 24 24" fill="currentColor"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10ZM2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg></span>';
   }
 
-  // Modales
   const createModal = document.getElementById('createModal');
   const openCreateBtn = document.getElementById('openCreateBtn');
   const createCancel = document.getElementById('createCancel');
@@ -376,7 +374,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   const paramsModal = document.getElementById('paramsModal');
   const paramsClose = document.getElementById('paramsClose');
 
-  // Event Listeners (Logique préservée à 100%)
   openCreateBtn.addEventListener('click', ()=> {
     createModal.classList.remove('hidden');
     createModal.classList.add('flex');
@@ -408,7 +405,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
     paramsModal.classList.remove('flex');
   });
 
-  // Fermeture au clic extérieur
   [createModal, filterModal, paramsModal].forEach(modal => {
     modal.addEventListener('click', (ev) => {
       if (ev.target === modal) {
@@ -418,7 +414,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
     });
   });
 
-  // Aperçu difficulté
   const modalDifficulty = document.getElementById('modal_difficulty');
   const modalDifficultyPreview = document.getElementById('modal_difficulty_preview');
   function getLeafCountFromDifficulty(value) {
@@ -435,7 +430,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
   modalDifficulty.addEventListener('change', updateCreateDifficultyPreview);
 
-  // Validation Création (Logique préservée)
   createValidate.addEventListener('click', ()=>{
     const titre = document.getElementById('modal_title').value.trim();
     const titre_en = document.getElementById('modal_title_en').value.trim();
@@ -467,7 +461,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
     .catch(err=> { console.error(err); alert('Erreur réseau'); });
   });
 
-  // Filtres (Logique préservée)
   function applyFilters(){
     const t = document.getElementById('filter_type').value;
     const d = document.getElementById('filter_difficulty').value;
@@ -491,7 +484,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   }
   document.getElementById('task_search').addEventListener('input', applyFilters);
 
-  // Actions (Désactiver / Params) (Logique préservée)
   function toggleDisable(id, btn) {
     btn.disabled = true;
     fetch('admin_shift_manager_desactiver.php', {
@@ -503,7 +495,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
     .then(data=>{
       btn.disabled = false;
       if (data.success) {
-        location.reload(); // Rechargement pour mettre à jour les styles
+        location.reload(); 
       } else {
         alert('Erreur: ' + (data.error||''));
       }

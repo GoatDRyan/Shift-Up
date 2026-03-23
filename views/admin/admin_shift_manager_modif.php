@@ -16,7 +16,7 @@ function difficultyLeaves(?string $difficulty): int {
 }
 
 function leafSVG(): string {
-    return '<svg class="w-5 h-5 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10ZM2 21c0-3 1.8-5.4 5.1-6C9.5 14.5 12 13 13 12" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    return '<svg class="w-5 h-5 text-[#FF4800]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10ZM2 21c0-3 1.8-5.4 5.1-6C9.5 14.5 12 13 13 12" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 }
 
 function renderLeaves(int $n): string {
@@ -32,7 +32,6 @@ function ensureChallengeActiveColumn(PDO $pdo): void {
             $pdo->exec("ALTER TABLE challenges ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1 AFTER company_id");
         }
     } catch (Throwable $e) {
-        // ignore
     }
 }
 
@@ -138,7 +137,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
         $categories = $pdo->query("SELECT DISTINCT categorie FROM challenges WHERE categorie IS NOT NULL AND categorie <> '' ORDER BY categorie")->fetchAll(PDO::FETCH_COLUMN);
         $difficulties = $pdo->query("SELECT DISTINCT difficulty FROM challenges WHERE difficulty IS NOT NULL AND difficulty <> '' ORDER BY difficulty")->fetchAll(PDO::FETCH_COLUMN);
     } catch (Throwable $e) {
-        // ignore
     }
 
     try {
@@ -183,96 +181,125 @@ $firstTask = $tasks[0] ?? null;
   <title>Shift Manager</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background:#fff; color:#111; }
+    body { background:#f9fafb; color:#111; font-family: 'Inter', system-ui, sans-serif; }
     .rounded-full-xl { border-radius:9999px; }
-    .card-radius { border-radius:14px; }
-    .soft-shadow { box-shadow:0 8px 24px rgba(0,0,0,.08); }
+    .card-radius { border-radius:16px; }
+    .soft-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .bg-orange-brand { background-color: #FF4800; }
+    .text-orange-brand { color: #FF4800; }
+    .border-orange-brand { border-color: #FF4800; }
+    
+    /* Custom scrollbar pour la liste */
+    #tasksList::-webkit-scrollbar { width: 4px; }
+    #tasksList::-webkit-scrollbar-thumb { background: #FF4800; border-radius: 10px; }
   </style>
 </head>
 <body class="min-h-screen">
-<header class="bg-gray-200 h-24 relative">
-  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-gray-400 flex items-center justify-center">
+
+<header class="bg-orange-brand h-24 relative shadow-lg">
+  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center">
     <a href="admin_dashboard.php" aria-label="Accueil" class="w-12 h-12 flex items-center justify-center">
-      <svg class="w-8 h-8 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+      <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke-linejoin="round" stroke-linecap="round"/>
-        <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif" fill="currentColor" style="font-weight:700">S</text>
+        <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Arial" fill="currentColor" style="font-weight:700">S</text>
       </svg>
     </a>
   </div>
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-24 md:pl-72 pr-6">
     <nav class="hidden md:flex items-center gap-10 text-[17px]">
-      <a href="admin_shift_manager.php" class="font-medium">Shift manager</a>
-      <a href="admin_gestion.php">Gestion</a>
-      <a href="admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
-  <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
-    <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  </svg>
-</a>
+      <a href="admin_shift_manager.php" class="font-bold text-white hover:opacity-80 transition">Shift manager</a>
+      <a href="admin_gestion.php" class="text-white hover:opacity-80 transition">Gestion</a>
+      <a href="admin_profile.php" class="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center hover:bg-white/10 transition">
+        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </a>
     </nav>
   </div>
 </header>
 
 <main class="max-w-screen-2xl mx-auto px-4 md:px-8 py-8">
-  <h1 class="text-4xl font-light mb-6">Shift Manager</h1>
+  <h1 class="text-4xl font-bold mb-8 text-gray-800">Shift Manager</h1>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <section class="space-y-6">
-      <div class="bg-gray-200 card-radius p-6 soft-shadow">
-        <h2 class="text-3xl font-light" id="previewTitle"><?php echo $firstTask ? h($firstTask['titre_fr']) : 'Titre'; ?></h2>
-        <div class="mt-4 space-y-4 text-[15px]">
-          <div class="flex items-center justify-between gap-4"><span>Expérience de la tâche :</span><span id="previewXp" class="font-medium"><?php echo $firstTask ? h($firstTask['xp_gain']) : 'XP'; ?></span></div>
-          <div class="flex items-center justify-between gap-4"><span>Récompense de la tâche :</span><span id="previewScore" class="font-medium"><?php echo $firstTask ? h($firstTask['co2_kg']) : 'Score'; ?></span></div>
-          <div class="flex items-center justify-between gap-4"><span>Difficulté :</span><span id="previewLeaves" class="inline-flex items-center gap-1"><?php echo $firstTask ? renderLeaves(difficultyLeaves($firstTask['difficulty'])) : renderLeaves(1); ?></span></div>
-          <div class="flex items-center justify-between gap-4"><span>Catégorie :</span><span id="previewCategory" class="font-medium"><?php echo $firstTask ? h($firstTask['categorie']) : '—'; ?></span></div>
-          <div class="flex items-center justify-between gap-4"><span>Durée :</span><span id="previewDuration" class="font-medium"><?php echo $firstTask ? h($firstTask['duration_days']) . ' jour(s)' : '—'; ?></span></div>
-          <div class="flex items-center justify-between gap-4"><span>Statut :</span><span id="previewStatus" class="font-medium"><?php echo $firstTask ? (((int)$firstTask['is_active'] === 1) ? 'Actif' : 'Désactivé') : '—'; ?></span></div>
+      <div class="bg-white card-radius p-6 soft-shadow border-t-4 border-orange-brand">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4" id="previewTitle"><?php echo $firstTask ? h($firstTask['titre_fr']) : 'Titre'; ?></h2>
+        <div class="space-y-4 text-[15px]">
+          <div class="flex items-center justify-between gap-4 border-b border-gray-50 pb-2">
+            <span class="text-gray-500">Expérience :</span>
+            <span id="previewXp" class="font-bold text-orange-brand"><?php echo $firstTask ? h($firstTask['xp_gain']) : 'XP'; ?> XP</span>
+          </div>
+          <div class="flex items-center justify-between gap-4 border-b border-gray-50 pb-2">
+            <span class="text-gray-500">Récompense CO2 :</span>
+            <span id="previewScore" class="font-bold text-green-600"><?php echo $firstTask ? h($firstTask['co2_kg']) : 'Score'; ?> kg</span>
+          </div>
+          <div class="flex items-center justify-between gap-4 border-b border-gray-50 pb-2">
+            <span class="text-gray-500">Difficulté :</span>
+            <span id="previewLeaves" class="inline-flex items-center gap-1"><?php echo $firstTask ? renderLeaves(difficultyLeaves($firstTask['difficulty'])) : renderLeaves(1); ?></span>
+          </div>
+          <div class="flex items-center justify-between gap-4 border-b border-gray-50 pb-2">
+            <span class="text-gray-500">Catégorie :</span>
+            <span id="previewCategory" class="font-medium text-gray-700"><?php echo $firstTask ? h($firstTask['categorie']) : '—'; ?></span>
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-gray-500">Statut :</span>
+            <span id="previewStatus" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider <?php echo $firstTask && (int)$firstTask['is_active'] === 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'; ?>">
+                <?php echo $firstTask ? (((int)$firstTask['is_active'] === 1) ? 'Actif' : 'Désactivé') : '—'; ?>
+            </span>
+          </div>
         </div>
       </div>
 
-      <div class="bg-gray-200 card-radius p-6 soft-shadow">
-        <div class="flex items-center justify-between gap-3 mb-4">
-          <h2 class="text-3xl font-light">Classement</h2>
-          <span class="bg-gray-300 px-5 py-2 rounded-full-xl">Département</span>
+      <div class="bg-white card-radius p-6 soft-shadow">
+        <div class="flex items-center justify-between gap-3 mb-6">
+          <h2 class="text-xl font-bold">Classement</h2>
+          <span class="text-xs font-bold uppercase text-gray-400">Top Départements</span>
         </div>
         <div class="space-y-3">
           <?php if (!empty($ranking)): ?>
             <?php $rank = 1; foreach ($ranking as $row): ?>
-              <div class="flex items-center gap-4 bg-gray-300 rounded-full-xl p-3">
-                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-semibold"><?php echo $rank; ?></div>
-                <div class="flex-1 font-medium"><?php echo h($row['nom']); ?></div>
-                <div class="text-sm font-bold"><?php echo number_format((float)$row['total_points'], 0, ',', ' '); ?> pts</div>
+              <div class="flex items-center gap-4 bg-gray-50 hover:bg-orange-50 transition rounded-xl p-3 border border-gray-100">
+                <div class="w-8 h-8 rounded-lg bg-orange-brand text-white flex items-center justify-center font-bold text-sm"><?php echo $rank; ?></div>
+                <div class="flex-1 font-semibold text-gray-700"><?php echo h($row['nom']); ?></div>
+                <div class="text-orange-brand font-bold"><?php echo number_format((float)$row['total_points'], 0, ',', ' '); ?> <span class="text-[10px]">PTS</span></div>
               </div>
             <?php $rank++; endforeach; ?>
           <?php else: ?>
-            <div class="text-gray-500 text-center py-4">Aucune donnée de classement.</div>
+            <div class="text-gray-400 text-center py-4">Aucune donnée.</div>
           <?php endif; ?>
         </div>
       </div>
 
-      <div class="bg-gray-200 card-radius p-6 soft-shadow">
-        <h2 class="text-2xl mb-4">Créer une tâche</h2>
-        <button id="openCreateBtn" class="w-full bg-gray-400 px-6 py-3 rounded-full-xl text-lg">Créer la tâche</button>
+      <div class="bg-white card-radius p-6 soft-shadow">
+        <h2 class="text-lg font-bold mb-4">Nouvel objectif ?</h2>
+        <button id="openCreateBtn" class="w-full bg-orange-brand hover:bg-orange-600 text-white font-bold px-6 py-4 rounded-xl transition shadow-md shadow-orange-200 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Créer la tâche
+        </button>
       </div>
     </section>
 
-    <section class="lg:col-span-2 bg-gray-200 card-radius p-6 soft-shadow">
-      <div class="flex items-center justify-between gap-3 mb-4">
-        <h2 class="text-3xl font-light">Liste des tâches</h2>
-        <button id="openFilterBtn" class="bg-gray-400 px-6 py-3 rounded-full-xl text-lg">Filtre</button>
+    <section class="lg:col-span-2 bg-white card-radius p-6 soft-shadow border border-gray-100">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Catalogue des défis</h2>
+        <button id="openFilterBtn" class="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-xl transition font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.5a1 1 0 01-.293.707L12 14.5V19a1 1 0 01-.447.894l-3 2A1 1 0 017 21v-6.5L3.293 7.207A1 1 0 013 6.5V4z"/></svg>
+            Filtrer
+        </button>
       </div>
 
-      <div class="mb-4">
-        <div class="relative">
-          <svg class="w-6 h-6 absolute left-5 top-1/2 -translate-y-1/2 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"/>
-            <path d="M20 20l-3.5-3.5" stroke-linecap="round"/>
+      <div class="mb-6">
+        <div class="relative group">
+          <svg class="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-brand transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5" stroke-linecap="round"/>
           </svg>
-          <input id="taskSearch" placeholder="Rechercher une tâche" class="w-full bg-gray-400/80 placeholder-gray-800 px-16 py-4 rounded-full-xl outline-none text-lg" />
+          <input id="taskSearch" placeholder="Rechercher une tâche par nom ou catégorie..." class="w-full bg-gray-50 border border-gray-100 focus:border-orange-brand focus:bg-white placeholder-gray-400 px-14 py-4 rounded-xl outline-none transition text-gray-700 shadow-sm" />
         </div>
       </div>
 
-      <div id="tasksList" class="space-y-4 max-h-[70vh] overflow-auto pr-1">
+      <div id="tasksList" class="space-y-4 max-h-[75vh] overflow-auto pr-2">
         <?php if (!empty($tasks)): ?>
           <?php foreach ($tasks as $task): ?>
             <?php
@@ -280,7 +307,7 @@ $firstTask = $tasks[0] ?? null;
               $leaves = difficultyLeaves($task['difficulty']);
             ?>
             <article
-              class="task-card bg-gray-300 p-4 md:p-5 flex items-center justify-between gap-4 cursor-pointer"
+              class="task-card bg-white border border-gray-100 hover:border-orange-brand/30 hover:shadow-md p-5 flex items-center justify-between gap-4 cursor-pointer transition rounded-2xl"
               data-id="<?php echo (int)$task['id']; ?>"
               data-title="<?php echo h($task['titre_fr']); ?>"
               data-xp="<?php echo h($task['xp_gain']); ?>"
@@ -291,132 +318,120 @@ $firstTask = $tasks[0] ?? null;
               data-status="<?php echo $isActive ? 'Actif' : 'Désactivé'; ?>"
               data-domaine="<?php echo h($task['domaine']); ?>"
               data-difficulty="<?php echo h($task['difficulty']); ?>"
+              data-users="<?php echo (int)$task['users_count']; ?>"
             >
               <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-3 flex-wrap">
+                <div class="flex items-center gap-3 flex-wrap mb-2">
                   <div class="flex items-center shrink-0"><?php echo renderLeaves($leaves); ?></div>
-                  <h3 class="text-2xl md:text-[28px] font-light truncate"><?php echo h($task['titre_fr']); ?></h3>
-                  <span class="text-xs px-3 py-1 rounded-full-xl <?php echo $isActive ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; ?>"><?php echo $isActive ? 'Actif' : 'Désactivé'; ?></span>
+                  <h3 class="text-xl font-bold text-gray-800 truncate"><?php echo h($task['titre_fr']); ?></h3>
+                  <span class="text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-widest <?php echo $isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'; ?>"><?php echo $isActive ? 'Actif' : 'Off'; ?></span>
                 </div>
-                <div class="mt-2 flex flex-wrap gap-2 text-xs">
-                  <span class="bg-gray-100 px-3 py-1 rounded-full-xl"><?php echo h($task['categorie']); ?></span>
-                  <span class="bg-gray-100 px-3 py-1 rounded-full-xl"><?php echo h($task['domaine']); ?></span>
-                  <span class="bg-gray-100 px-3 py-1 rounded-full-xl"><?php echo h($task['duration_days']); ?> j</span>
-                  <span class="bg-gray-100 px-3 py-1 rounded-full-xl"><?php echo (int)$task['users_count']; ?> users</span>
+                <div class="flex flex-wrap gap-2">
+                  <span class="bg-gray-50 text-gray-500 text-[11px] px-3 py-1 rounded-full border border-gray-100"><?php echo h($task['categorie']); ?></span>
+                  <span class="bg-gray-50 text-gray-500 text-[11px] px-3 py-1 rounded-full border border-gray-100"><?php echo h($task['duration_days']); ?> jours</span>
+                  <span class="bg-orange-50 text-orange-brand text-[11px] px-3 py-1 rounded-full border border-orange-100 font-bold"><?php echo (int)$task['users_count']; ?> participants</span>
                 </div>
               </div>
 
-              <div class="flex items-center gap-3 shrink-0">
-                <button class="btn-toggle bg-gray-100 hover:bg-white transition px-5 py-3 rounded-full-xl" data-id="<?php echo (int)$task['id']; ?>" data-active="<?php echo $isActive ? '1' : '0'; ?>"><?php echo $isActive ? 'Désactiver' : 'Réactiver'; ?></button>
-                <button class="btn-params w-14 h-14 rounded-full-xl bg-gray-100 hover:bg-white transition flex items-center justify-center" data-id="<?php echo (int)$task['id']; ?>" aria-label="Paramètres">
-                  <svg class="w-7 h-7 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v.01M12 12v.01M12 19v.01" stroke-linecap="round"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              <div class="flex items-center gap-2 shrink-0">
+                <button class="btn-toggle bg-gray-50 hover:bg-orange-brand hover:text-white text-gray-600 transition-all font-bold px-4 py-2 rounded-xl text-xs border border-gray-100" data-id="<?php echo (int)$task['id']; ?>" data-active="<?php echo $isActive ? '1' : '0'; ?>">
+                    <?php echo $isActive ? 'Désactiver' : 'Activer'; ?>
+                </button>
+                <button class="btn-params w-10 h-10 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition flex items-center justify-center border border-gray-100" data-id="<?php echo (int)$task['id']; ?>">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v.01M12 12v.01M12 19v.01" stroke-linecap="round"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                 </button>
               </div>
             </article>
           <?php endforeach; ?>
         <?php else: ?>
-          <div class="text-center text-gray-600 py-16">Aucune tâche trouvée.</div>
+          <div class="text-center text-gray-400 py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">Aucune tâche disponible.</div>
         <?php endif; ?>
       </div>
     </section>
   </div>
 </main>
 
-<!-- Modal création -->
-<div id="createModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-  <div class="bg-white p-6 card-radius w-full max-w-2xl shadow-xl max-h-[90vh] overflow-auto">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-2xl font-light">Créer une tâche</h3>
-      <button class="close-modal text-3xl leading-none">&times;</button>
+<div id="createModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+  <div class="bg-white p-8 card-radius w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-auto border-t-8 border-orange-brand">
+    <div class="flex items-center justify-between mb-8">
+      <h3 class="text-2xl font-bold text-gray-800">Nouvelle tâche</h3>
+      <button class="close-modal text-gray-400 hover:text-orange-brand text-3xl leading-none">&times;</button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      <input id="modal_title" class="border p-3 rounded-xl" placeholder="Titre FR *" />
-      <input id="modal_title_en" class="border p-3 rounded-xl" placeholder="Titre EN" />
-      <textarea id="modal_descr_fr" class="border p-3 rounded-xl md:col-span-2" rows="3" placeholder="Description FR"></textarea>
-      <textarea id="modal_descr_en" class="border p-3 rounded-xl md:col-span-2" rows="2" placeholder="Description EN"></textarea>
-      <select id="modal_difficulty" class="border p-3 rounded-xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input id="modal_title" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Titre FR *" />
+      <input id="modal_title_en" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Titre EN" />
+      <textarea id="modal_descr_fr" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl md:col-span-2 outline-none focus:border-orange-brand transition" rows="3" placeholder="Description FR"></textarea>
+      <select id="modal_difficulty" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition">
         <?php if (!empty($difficulties)): foreach ($difficulties as $d): ?>
           <option><?php echo h($d); ?></option>
         <?php endforeach; else: ?>
           <option>facile</option><option>moyen</option><option>difficile</option>
         <?php endif; ?>
       </select>
-      <div id="modal_leaves_preview" class="flex items-center gap-1 border p-3 rounded-xl bg-gray-50"></div>
-      <input id="modal_xp" type="number" min="0" value="10" class="border p-3 rounded-xl" placeholder="XP" />
-      <input id="modal_score" type="number" step="0.01" value="0.1" class="border p-3 rounded-xl" placeholder="Score CO2" />
-      <input id="modal_duration" type="number" min="1" value="1" class="border p-3 rounded-xl" placeholder="Durée (jours)" />
-      <input id="modal_max_actions" type="number" min="1" value="1" class="border p-3 rounded-xl" placeholder="Max actions/jour" />
-      <select id="modal_type" class="border p-3 rounded-xl">
-        <?php if (!empty($types)): foreach ($types as $t): ?>
-          <option><?php echo h($t); ?></option>
-        <?php endforeach; else: ?>
-          <option>ecologique</option><option>social</option>
-        <?php endif; ?>
+      <div id="modal_leaves_preview" class="flex items-center justify-center gap-1 bg-orange-50/50 border border-orange-100 p-3.5 rounded-xl"></div>
+      <input id="modal_xp" type="number" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="XP" />
+      <input id="modal_score" type="number" step="0.01" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Score CO2" />
+      <select id="modal_type" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition">
+        <?php foreach ($types as $t): ?><option><?php echo h($t); ?></option><?php endforeach; ?>
       </select>
-      <input id="modal_category" class="border p-3 rounded-xl" placeholder="Catégorie" />
+      <input id="modal_category" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Catégorie" />
     </div>
 
-    <div class="flex justify-end gap-2 mt-5">
-      <button class="close-modal px-5 py-3 rounded-xl border">Annuler</button>
-      <button id="createBtn" class="px-5 py-3 rounded-xl bg-gray-900 text-white">Valider</button>
+    <div class="flex justify-end gap-3 mt-8">
+      <button class="close-modal px-8 py-3 rounded-xl border border-gray-200 font-bold text-gray-500 hover:bg-gray-50 transition">Annuler</button>
+      <button id="createBtn" class="px-8 py-3 rounded-xl bg-orange-brand text-white font-bold hover:bg-orange-600 shadow-lg shadow-orange-200 transition">Créer</button>
     </div>
   </div>
 </div>
 
-<!-- Modal filtre -->
-<div id="filterModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-40 p-4">
-  <div class="bg-white p-6 card-radius w-full max-w-lg shadow-xl">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-2xl font-light">Filtrer</h3>
-      <button class="close-modal text-3xl leading-none">&times;</button>
+<div id="filterModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-40 p-4 backdrop-blur-sm">
+  <div class="bg-white p-8 card-radius w-full max-w-lg shadow-2xl border-t-8 border-orange-brand">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-xl font-bold">Options de tri</h3>
+      <button class="close-modal text-gray-400 hover:text-orange-brand text-3xl leading-none">&times;</button>
     </div>
-    <div class="space-y-3">
-      <select id="filter_type" class="w-full border p-3 rounded-xl">
-        <option value="">Type / domaine</option>
+    <div class="space-y-4">
+      <select id="filter_type" class="w-full bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand">
+        <option value="">Tous les domaines</option>
         <?php foreach ($types as $t): ?><option><?php echo h($t); ?></option><?php endforeach; ?>
       </select>
-      <select id="filter_difficulty" class="w-full border p-3 rounded-xl">
-        <option value="">Difficulté</option>
+      <select id="filter_difficulty" class="w-full bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand">
+        <option value="">Toutes les difficultés</option>
         <?php foreach ($difficulties as $d): ?><option><?php echo h($d); ?></option><?php endforeach; ?>
       </select>
-      <select id="filter_category" class="w-full border p-3 rounded-xl">
-        <option value="">Catégorie</option>
-        <?php foreach ($categories as $c): ?><option><?php echo h($c); ?></option><?php endforeach; ?>
-      </select>
-      <div class="flex justify-end gap-2 pt-2">
-        <button id="filterReset" class="px-4 py-3 rounded-xl border">Réinitialiser</button>
-        <button id="filterApply" class="px-4 py-3 rounded-xl bg-gray-900 text-white">Appliquer</button>
+      <div class="flex justify-end gap-3 pt-4">
+        <button id="filterReset" class="px-6 py-3 rounded-xl border border-gray-200 font-bold text-gray-400">Reset</button>
+        <button id="filterApply" class="px-6 py-3 rounded-xl bg-orange-brand text-white font-bold shadow-lg shadow-orange-100">Appliquer</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal paramètres -->
-<div id="paramsModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-  <div class="bg-white p-6 rounded-2xl w-full max-w-md shadow-xl relative">
-    <button id="paramsClose" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
-    <h3 class="text-2xl font-light mb-4">Gestion de la tâche</h3>
+<div id="paramsModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+  <div class="bg-white p-6 rounded-3xl w-full max-w-md shadow-2xl relative">
+    <button id="paramsClose" class="absolute top-5 right-5 text-gray-400 hover:text-orange-brand text-3xl leading-none">&times;</button>
+    <h3 class="text-xl font-bold mb-6 text-gray-800">Action rapide</h3>
 
     <div class="space-y-3">
-      <button id="editBtn" class="w-full flex items-center justify-between p-4 bg-gray-100 hover:bg-gray-200 rounded-xl text-left">
-        <span class="font-medium">Modifier la tâche</span>
-        <span>✎</span>
-      </button>
-      <button id="toggleBtn" class="w-full flex items-center justify-between p-4 bg-gray-100 hover:bg-yellow-50 rounded-xl text-left">
-        <span id="toggleText" class="font-medium">Désactiver</span>
-        <span>⟲</span>
-      </button>
-      <button id="deleteBtn" class="w-full flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 rounded-xl text-left">
-        <span class="font-medium text-red-700">Supprimer</span>
-        <span class="text-red-600">🗑</span>
+    <button id="editBtn" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-200 rounded-2xl group transition-all duration-300 border border-transparent hover:border-gray-300">
+  <span class="font-bold text-gray-700 group-hover:text-black transition-colors">Modifier les détails</span>
+  <span class="text-[#FF4800] group-hover:scale-110 transition-transform duration-300">✎</span>
+</button>
+    <button id="toggleBtn" class="w-full flex items-center justify-between p-4 bg-orange-50 hover:bg-[#FF4800] text-[#FF4800] hover:text-white rounded-2xl group transition-all duration-300 border border-orange-100 hover:border-transparent">
+  <span id="toggleText" class="font-bold">Désactiver</span>
+  <span class="transition-transform group-hover:rotate-180 duration-500">⟲</span>
+</button>
+      <button id="deleteBtn" class="w-full flex items-center justify-between p-4 bg-red-50 hover:bg-red-600 hover:text-white rounded-2xl group transition border border-transparent">
+        <span class="font-bold transition">Supprimer définitivement</span>
+        <span>🗑</span>
       </button>
     </div>
 
-    <div class="mt-6 pt-4 border-t text-sm text-gray-500 flex justify-between gap-3">
-      <span>XP: <strong id="paramsXp"></strong></span>
-      <span>CO2: <strong id="paramsScore"></strong></span>
-      <span>Users: <strong id="paramsUsers"></strong></span>
+    <div class="mt-8 pt-6 border-t border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-widest flex justify-between gap-3">
+      <span>XP: <strong id="paramsXp" class="text-orange-brand"></strong></span>
+      <span>CO2: <strong id="paramsScore" class="text-orange-brand"></strong></span>
+      <span>Users: <strong id="paramsUsers" class="text-orange-brand"></strong></span>
     </div>
   </div>
 </div>
@@ -431,7 +446,7 @@ $firstTask = $tasks[0] ?? null;
   let currentActive = 1;
 
   function leafSVG() {
-    return '<svg class="w-5 h-5 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10ZM2 21c0-3 1.8-5.4 5.1-6C9.5 14.5 12 13 13 12" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    return '<svg class="w-5 h-5 text-[#FF4800]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10ZM2 21c0-3 1.8-5.4 5.1-6C9.5 14.5 12 13 13 12" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   }
 
   function renderLeaves(n) {
@@ -451,12 +466,13 @@ $firstTask = $tasks[0] ?? null;
   function setPreview(card) {
     if (!card) return;
     document.getElementById('previewTitle').textContent = card.dataset.title || 'Titre';
-    document.getElementById('previewXp').textContent = card.dataset.xp || 'XP';
-    document.getElementById('previewScore').textContent = card.dataset.score || 'Score';
+    document.getElementById('previewXp').textContent = card.dataset.xp + ' XP' || 'XP';
+    document.getElementById('previewScore').textContent = card.dataset.score + ' kg' || 'Score';
     document.getElementById('previewLeaves').innerHTML = renderLeaves(parseInt(card.dataset.leaves || '1', 10));
     document.getElementById('previewCategory').textContent = card.dataset.category || '—';
-    document.getElementById('previewDuration').textContent = (card.dataset.duration || '—') + ' jour(s)';
-    document.getElementById('previewStatus').textContent = card.dataset.status || '—';
+    const statusEl = document.getElementById('previewStatus');
+    statusEl.textContent = card.dataset.status || '—';
+    statusEl.className = `px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${card.dataset.status === 'Actif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
   }
 
   function updateCreateLeaves() {
@@ -500,12 +516,9 @@ $firstTask = $tasks[0] ?? null;
     form.append('titre_fr', titre);
     form.append('titre_en', document.getElementById('modal_title_en').value.trim());
     form.append('descr_fr', document.getElementById('modal_descr_fr').value.trim());
-    form.append('descr_en', document.getElementById('modal_descr_en').value.trim());
     form.append('difficulty', document.getElementById('modal_difficulty').value);
     form.append('xp_gain', document.getElementById('modal_xp').value);
     form.append('co2_kg', document.getElementById('modal_score').value);
-    form.append('duration_days', document.getElementById('modal_duration').value);
-    form.append('max_actions_day', document.getElementById('modal_max_actions').value);
     form.append('domaine', document.getElementById('modal_type').value);
     form.append('categorie', document.getElementById('modal_category').value);
 
@@ -518,7 +531,6 @@ $firstTask = $tasks[0] ?? null;
   function applyFilters() {
     const type = document.getElementById('filter_type').value.toLowerCase();
     const diff = document.getElementById('filter_difficulty').value.toLowerCase();
-    const cat = document.getElementById('filter_category').value.toLowerCase();
     const search = document.getElementById('taskSearch').value.toLowerCase();
 
     tasks.forEach(card => {
@@ -530,23 +542,10 @@ $firstTask = $tasks[0] ?? null;
       const visible =
         (!type || domaine === type) &&
         (!diff || difficulty === diff) &&
-        (!cat || category === cat) &&
         (!search || title.includes(search) || category.includes(search));
 
       card.style.display = visible ? 'flex' : 'none';
     });
-
-    const visibleTasks = tasks.filter(card => card.style.display !== 'none');
-    const existing = document.getElementById('emptyState');
-    if (!visibleTasks.length && !existing) {
-      const div = document.createElement('div');
-      div.id = 'emptyState';
-      div.className = 'text-center text-gray-600 py-16';
-      div.textContent = 'Aucune tâche trouvée.';
-      document.getElementById('tasksList').appendChild(div);
-    } else if (visibleTasks.length && existing) {
-      existing.remove();
-    }
   }
 
   document.getElementById('taskSearch').addEventListener('input', applyFilters);
@@ -557,7 +556,6 @@ $firstTask = $tasks[0] ?? null;
   document.getElementById('filterReset').addEventListener('click', () => {
     document.getElementById('filter_type').value = '';
     document.getElementById('filter_difficulty').value = '';
-    document.getElementById('filter_category').value = '';
     document.getElementById('taskSearch').value = '';
     applyFilters();
   });
@@ -591,7 +589,7 @@ $firstTask = $tasks[0] ?? null;
       e.stopPropagation();
       const card = btn.closest('.task-card');
       currentId = btn.dataset.id;
-      currentActive = parseInt(card.dataset.status === 'Actif' ? '1' : '0', 10);
+      currentActive = card.dataset.status === 'Actif' ? 1 : 0;
 
       document.getElementById('paramsXp').textContent = card.dataset.xp || '';
       document.getElementById('paramsScore').textContent = card.dataset.score || '';
@@ -610,14 +608,12 @@ $firstTask = $tasks[0] ?? null;
     if (!currentId) return;
     const data = await postAction('toggle', currentId);
     if (data.success) location.reload();
-    else alert(data.error || 'Erreur');
   });
 
   document.getElementById('deleteBtn').addEventListener('click', async () => {
-    if (!currentId || !confirm('Voulez-vous vraiment supprimer cette tâche ?')) return;
+    if (!currentId || !confirm('Supprimer définitivement cette tâche ?')) return;
     const data = await postAction('delete', currentId);
     if (data.success) location.reload();
-    else alert(data.error || 'Erreur');
   });
 </script>
 </body>
