@@ -18,9 +18,7 @@ require_once '../../config/db_connect.php';
     .leaf { width:18px; height:18px; display:inline-block; margin-right:4px; vertical-align:middle; }
     .leaf svg { width:100%; height:100%; }
     .card-shadow { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
-    
-    /* Custom Scrollbar pour les modales */
-    ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: #FF4800; border-radius: 10px; }
   </style>
 </head>
@@ -51,7 +49,6 @@ require_once '../../config/db_connect.php';
 
 <div class="max-w-screen-2xl mx-auto px-8 pt-8">
   <h1 class="text-4xl font-black text-gray-900 tracking-tight italic uppercase">Shift <span class="text-[#FF4800]">Manager</span></h1>
-  <p class="text-gray-500 mt-1 font-medium">Créez et gérez les défis de votre communauté</p>
 </div>
 
 <?php
