@@ -57,12 +57,12 @@ $companyId = (int)($company['id'] ?? 0);
 $translations = [
     'fr' => [
         'title' => 'Profil entreprise',
-        'badges' => 'Vitrine à succes',
+        'badges' => 'Vitrine à succès',
         'ranking' => 'Classement entreprise',
         'rank' => 'Rang',
         'points' => 'points',
         'you' => 'Vous',
-        'settings' => 'Paramètre',
+        'settings' => 'Paramètres',
         'language' => 'Langue',
         'shift_manager' => 'Shift manager',
         'management' => 'Gestion',
@@ -279,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $stmt = $pdo->prepare("
     SELECT b.id, b.nom_fr, b.nom_en, b.descr_fr, b.descr_en, b.icon_url, b.xp_threshold,
-           CASE WHEN ub.badge_id IS NULL THEN 0 ELSE 1 END AS obtained
+            CASE WHEN ub.badge_id IS NULL THEN 0 ELSE 1 END AS obtained
     FROM badges b
     LEFT JOIN user_badges ub
       ON ub.badge_id = b.id AND ub.user_id = :user_id
@@ -311,66 +311,74 @@ $userEmailValue = (string)($user['email'] ?? '');
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Profil</title>
+  <title>Admin Profil | ShiftUp</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background:#fff; color:#111; }
-    .rounded-full-xl { border-radius:9999px; }
-    .card-radius { border-radius:14px; }
-    .soft-shadow { box-shadow:0 8px 24px rgba(0,0,0,.08); }
-    .badge-square { aspect-ratio:1/1; }
+    :root { --primary: #FF4800; }
+    body { background-color: #ffffff; color: #111; font-family: 'Inter', system-ui, sans-serif; }
+    .bg-primary { background-color: var(--primary); }
+    .text-primary { color: var(--primary); }
+    .border-primary { border-color: var(--primary); }
+    .rounded-full-xl { border-radius: 9999px; }
+    .card-radius { border-radius: 20px; }
+    .soft-shadow { box-shadow: 0 10px 30px rgba(255, 72, 0, 0.08); }
+    .badge-square { aspect-ratio: 1/1; transition: transform 0.2s; }
+    .badge-square:hover { transform: scale(1.05); }
+    .settings-tab.active { background-color: var(--primary); color: white; }
   </style>
 </head>
 <body class="min-h-screen">
-<header class="bg-gray-200 h-24 relative">
-  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-gray-400 flex items-center justify-center">
+
+<header class="bg-[#FF4800] h-24 relative shadow-lg">
+  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center border-r border-white/10">
     <a href="admin_dashboard.php<?= e($linkLang) ?>" aria-label="Accueil" class="w-12 h-12 flex items-center justify-center">
-      <svg class="w-8 h-8 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+      <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke-linejoin="round" stroke-linecap="round"/>
-        <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif" fill="currentColor" style="font-weight:700">S</text>
+        <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Arial" fill="currentColor" style="font-weight:900">S</text>
       </svg>
     </a>
   </div>
+  
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-24 md:pl-72 pr-6">
-    <nav class="hidden md:flex items-center gap-10 text-[17px]">
-      <a href="admin_shift_manager.php<?= e($linkLang) ?>" class="font-medium"><?= e($t['shift_manager']) ?></a>
-      <a href="admin_gestion.php<?= e($linkLang) ?>"><?= e($t['management']) ?></a>
-     <a href="admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
-  <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
-    <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  </svg>
-</a>
+    <nav class="flex items-center gap-8 text-[17px]">
+      <a href="admin_shift_manager.php<?= e($linkLang) ?>" class="font-bold text-white hover:opacity-80 transition-opacity"><?= e($t['shift_manager']) ?></a>
+      <a href="admin_gestion.php<?= e($linkLang) ?>" class="font-medium text-white hover:opacity-80 transition-opacity"><?= e($t['management']) ?></a>
+      <a href="admin_profile.php" class="w-11 h-11 rounded-full border-2 border-white flex items-center justify-center hover:bg-white/10 transition">
+        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </a>
     </nav>
   </div>
 </header>
 
-<main class="max-w-[1500px] mx-auto px-4 md:px-6 py-10">
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
-    <h1 class="text-3xl md:text-[34px] font-normal"><?= e($t['title']) ?></h1>
+<main class="max-w-[1500px] mx-auto px-4 md:px-6 py-12">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
+    <h1 class="text-4xl font-extrabold tracking-tight text-gray-900"><?= e($t['title']) ?></h1>
     <div class="flex items-center gap-4">
-      <a href="admin_profile.php<?= e($linkLang) ?>&settings=1" class="bg-gray-300 hover:bg-gray-400 transition-colors text-gray-900 px-6 md:px-8 py-4 rounded-full-xl text-lg md:text-xl min-w-[160px] text-center">
+      <a href="admin_profile.php<?= e($linkLang) ?>&settings=1" class="bg-[#FF4800] hover:bg-[#e64100] transition-all text-white font-bold px-8 py-4 rounded-full-xl text-lg shadow-md hover:shadow-lg">
         <?= e($t['settings']) ?>
       </a>
-      <a href="admin_profile.php<?= e($toggleLangLink) ?>" class="bg-gray-300 hover:bg-gray-400 transition-colors text-gray-900 px-6 md:px-8 py-4 rounded-full-xl text-lg md:text-xl min-w-[160px] text-center">
+      <a href="admin_profile.php<?= e($toggleLangLink) ?>" class="bg-gray-100 hover:bg-gray-200 transition-colors text-gray-700 font-semibold px-8 py-4 rounded-full-xl text-lg">
         <?= e($t['language']) ?>
       </a>
     </div>
   </div>
 
   <?php if ($message !== ''): ?>
-    <div class="mb-6 px-4 py-3 rounded-xl <?= $messageType === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
+    <div class="mb-8 px-6 py-4 rounded-2xl shadow-sm border-l-4 <?= $messageType === 'error' ? 'bg-red-50 border-red-500 text-red-800' : 'bg-green-50 border-green-500 text-green-800' ?>">
       <?= e($message) ?>
     </div>
   <?php endif; ?>
 
-  <div class="grid grid-cols-1 lg:grid-cols-[0.95fr_1.25fr] gap-6">
-    <section class="bg-gray-200 p-4 md:p-6 card-radius soft-shadow">
+  <div class="grid grid-cols-1 lg:grid-cols-[0.95fr_1.25fr] gap-10">
+    <section class="bg-white p-8 card-radius soft-shadow border border-gray-100">
       <div class="flex items-center justify-center mb-10">
-        <h2 class="text-3xl font-normal"><?= e($t['badges']) ?></h2>
+        <h2 class="text-2xl font-bold text-gray-800"><?= e($t['badges']) ?></h2>
       </div>
 
-      <div class="grid grid-cols-5 gap-5 md:gap-6">
+      <div class="grid grid-cols-5 gap-4 md:gap-6">
         <?php foreach ($badges as $badge): ?>
           <?php
             $obtained = (int)$badge['obtained'] === 1;
@@ -378,18 +386,18 @@ $userEmailValue = (string)($user['email'] ?? '');
             $desc = $lang === 'en' ? $badge['descr_en'] : $badge['descr_fr'];
             $title = trim($name . ' - ' . $desc);
           ?>
-          <div class="badge-square w-full max-w-[86px] mx-auto rounded-xl relative overflow-hidden flex items-center justify-center <?= $obtained ? 'bg-gray-400 ring-2 ring-emerald-500 ring-offset-2 ring-offset-gray-200' : 'bg-gray-400 opacity-45' ?>" title="<?= e($title) ?>">
+          <div class="badge-square w-full max-w-[86px] mx-auto rounded-2xl relative overflow-hidden flex items-center justify-center <?= $obtained ? 'bg-orange-50 border-2 border-[#FF4800]' : 'bg-gray-50 border border-gray-200 grayscale opacity-40' ?>" title="<?= e($title) ?>">
             <?php if (!empty($badge['icon_url'])): ?>
-              <img src="<?= e($badge['icon_url']) ?>" alt="<?= e($name) ?>" class="w-10 h-10 object-contain">
+              <img src="<?= e($badge['icon_url']) ?>" alt="<?= e($name) ?>" class="w-12 h-12 object-contain">
             <?php else: ?>
               <?php if ($obtained): ?>
-                <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg class="w-8 h-8 text-[#FF4800]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               <?php else: ?>
-                <svg class="w-7 h-7 text-white opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M7 11V8a5 5 0 0110 0v3" stroke-linecap="round" stroke-linejoin="round"/>
-                  <rect x="5" y="11" width="14" height="9" rx="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <rect x="5" y="11" width="14" height="9" rx="2" />
                 </svg>
               <?php endif; ?>
             <?php endif; ?>
@@ -398,28 +406,28 @@ $userEmailValue = (string)($user['email'] ?? '');
       </div>
     </section>
 
-    <section class="bg-gray-200 p-4 md:p-6 card-radius soft-shadow min-h-[760px]">
-      <div class="flex items-start justify-between gap-4 mb-10">
-        <h2 class="text-3xl font-normal"><?= e($t['ranking']) ?></h2>
-        <div class="text-3xl font-normal whitespace-nowrap">
-          <?= e($t['rank']) ?> : <?= e($currentRank) ?>
+    <section class="bg-white p-8 card-radius soft-shadow border border-gray-100 min-h-[600px]">
+      <div class="flex items-start justify-between gap-4 mb-12">
+        <h2 class="text-2xl font-bold text-gray-800"><?= e($t['ranking']) ?></h2>
+        <div class="bg-orange-100 text-[#FF4800] px-4 py-2 rounded-full font-bold text-lg">
+          <?= e($t['rank']) ?> #<?= e($currentRank) ?>
         </div>
       </div>
 
-      <div class="space-y-8">
+      <div class="space-y-6">
         <?php foreach ($topCompanies as $index => $row): ?>
           <?php $isCurrent = (int)$row['id'] === $companyId; ?>
-          <div class="relative">
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#d9d9d9] flex items-center justify-center text-gray-800 text-sm z-10 shadow-sm">
+          <div class="flex items-center gap-4 group">
+            <div class="w-12 h-12 flex-shrink-0 rounded-full <?= $isCurrent ? 'bg-[#FF4800] text-white' : 'bg-gray-100 text-gray-500' ?> flex items-center justify-center font-black text-lg shadow-sm">
               <?= e($index + 1) ?>
             </div>
 
-            <div class="ml-8 bg-[#a8a8a8] rounded-[22px] h-20 md:h-24 flex items-center px-8 md:px-12 <?= $isCurrent ? 'ring-2 ring-emerald-500' : '' ?>">
-              <div class="flex-1 text-center text-xl md:text-3xl font-normal">
+            <div class="flex-1 rounded-[24px] h-20 flex items-center px-8 border-2 transition-all <?= $isCurrent ? 'border-[#FF4800] bg-orange-50/30 shadow-md' : 'border-gray-100 bg-white group-hover:border-gray-200' ?>">
+              <div class="flex-1 text-xl font-bold text-gray-800">
                 <?= e($isCurrent ? $t['you'] : $row['nom']) ?>
               </div>
-              <div class="min-w-[150px] text-right text-xl md:text-3xl font-normal">
-                <?= e(fmtNumber($row['total_xp'], $lang)) ?> <?= e($t['points']) ?>
+              <div class="text-xl font-black <?= $isCurrent ? 'text-[#FF4800]' : 'text-gray-400' ?>">
+                <?= e(fmtNumber($row['total_xp'], $lang)) ?> <span class="text-xs uppercase tracking-widest ml-1"><?= e($t['points']) ?></span>
               </div>
             </div>
           </div>
@@ -430,143 +438,99 @@ $userEmailValue = (string)($user['email'] ?? '');
 </main>
 
 <?php if ($openSettings): ?>
-<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-  <div class="bg-gray-300 w-full max-w-[1180px] rounded-[18px] shadow-2xl relative px-6 md:px-10 py-8 md:py-10">
-    <a href="admin_profile.php<?= e($linkLang) ?>" class="absolute top-5 right-5 w-16 h-16 rounded-full bg-gray-400 flex items-center justify-center" aria-label="<?= e($t['close']) ?>">
-      <svg class="w-10 h-10 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-        <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
-      </svg>
-    </a>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 mt-10">
-      <div class="text-center">
-        <div class="mb-3 text-lg"><?= e($t['company_name']) ?></div>
-        <button type="button" data-tab="name" class="settings-tab w-full max-w-[300px] mx-auto bg-gray-100 hover:bg-gray-200 transition px-4 py-4 rounded-full text-xl">
-          <?= e($t['change_company_name']) ?>
-        </button>
-      </div>
-
-      <div class="text-center">
-        <div class="mb-3 text-lg"><?= e($t['company_mail']) ?></div>
-        <button type="button" data-tab="email" class="settings-tab w-full max-w-[300px] mx-auto bg-gray-100 hover:bg-gray-200 transition px-4 py-4 rounded-full text-xl">
-          <?= e($t['change_mail']) ?>
-        </button>
-      </div>
-
-      <div class="text-center">
-        <div class="mb-3 text-lg"><?= e($t['company_code']) ?></div>
-        <button type="button" data-tab="code" class="settings-tab w-full max-w-[300px] mx-auto bg-gray-100 hover:bg-gray-200 transition px-4 py-4 rounded-full text-xl">
-          <?= e($t['change_company_code']) ?>
-        </button>
-      </div>
-
-      <div class="text-center">
-        <div class="mb-3 text-lg"><?= e($t['company_logo']) ?></div>
-        <button type="button" data-tab="logo" class="settings-tab w-full max-w-[300px] mx-auto bg-gray-100 hover:bg-gray-200 transition px-4 py-4 rounded-full text-xl">
-          <?= e($t['change_company_logo']) ?>
-        </button>
-      </div>
-
-      <div class="text-center">
-        <div class="mb-3 text-lg"><?= e($t['company_password']) ?></div>
-        <button type="button" data-tab="password" class="settings-tab w-full max-w-[300px] mx-auto bg-gray-100 hover:bg-gray-200 transition px-4 py-4 rounded-full text-xl">
-          <?= e($t['change_password']) ?>
-        </button>
-      </div>
+<div class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+  <div class="bg-white w-full max-w-[1100px] rounded-[30px] shadow-2xl relative overflow-hidden">
+    <div class="bg-gray-50 px-10 py-6 border-b flex items-center justify-between">
+        <h3 class="text-2xl font-bold"><?= e($t['settings']) ?></h3>
+        <a href="admin_profile.php<?= e($linkLang) ?>" class="w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors">
+          <svg class="w-6 h-6 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </a>
     </div>
 
-    <div class="mt-10 bg-gray-200 rounded-[18px] p-5 md:p-8">
-      <div id="panel-name" class="settings-panel <?= $activeTab === 'name' ? '' : 'hidden' ?>">
-        <form method="post" class="space-y-4">
-          <input type="hidden" name="action" value="update_company_name">
-          <div>
-            <label class="block mb-2 text-sm"><?= e($t['company_name']) ?></label>
-            <input name="company_name" value="<?= e($companyNameValue) ?>" class="w-full rounded-full px-5 py-4 text-lg bg-gray-100 outline-none" />
+    <div class="p-8 md:p-12">
+        <div class="flex flex-wrap justify-center gap-4 mb-10">
+          <?php 
+            $tabs = [
+                'name' => $t['company_name'], 
+                'email' => $t['company_mail'], 
+                'code' => $t['company_code'], 
+                'logo' => $t['company_logo'], 
+                'password' => $t['company_password']
+            ];
+            foreach($tabs as $key => $label): 
+          ?>
+            <button type="button" data-tab="<?= $key ?>" class="settings-tab px-6 py-3 rounded-full font-bold transition-all border-2 <?= $activeTab === $key ? 'bg-[#FF4800] border-[#FF4800] text-white' : 'border-gray-200 text-gray-600 hover:border-[#FF4800] hover:text-[#FF4800]' ?>">
+                <?= e($label) ?>
+            </button>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100">
+          <div id="panel-name" class="settings-panel <?= $activeTab === 'name' ? '' : 'hidden' ?>">
+            <form method="post" class="max-w-md mx-auto space-y-4">
+              <input type="hidden" name="action" value="update_company_name">
+              <label class="block font-bold text-gray-700"><?= e($t['change_company_name']) ?></label>
+              <input name="company_name" value="<?= e($companyNameValue) ?>" class="w-full rounded-2xl px-6 py-4 border-2 border-gray-200 focus:border-[#FF4800] outline-none transition-all" />
+              <button class="w-full bg-[#FF4800] text-white font-bold px-6 py-4 rounded-2xl shadow-lg"><?= e($t['save']) ?></button>
+            </form>
           </div>
-          <button class="bg-gray-900 text-white px-6 py-3 rounded-full"><?= e($t['save']) ?></button>
-        </form>
-      </div>
 
-      <div id="panel-email" class="settings-panel <?= $activeTab === 'email' ? '' : 'hidden' ?>">
-        <form method="post" class="space-y-4">
-          <input type="hidden" name="action" value="update_email">
-          <div>
-            <label class="block mb-2 text-sm"><?= e($t['company_mail']) ?></label>
-            <input type="email" name="email" value="<?= e($userEmailValue) ?>" class="w-full rounded-full px-5 py-4 text-lg bg-gray-100 outline-none" />
+          <div id="panel-email" class="settings-panel <?= $activeTab === 'email' ? '' : 'hidden' ?>">
+            <form method="post" class="max-w-md mx-auto space-y-4">
+              <input type="hidden" name="action" value="update_email">
+              <label class="block font-bold text-gray-700"><?= e($t['change_mail']) ?></label>
+              <input type="email" name="email" value="<?= e($userEmailValue) ?>" class="w-full rounded-2xl px-6 py-4 border-2 border-gray-200 focus:border-[#FF4800] outline-none transition-all" />
+              <button class="w-full bg-[#FF4800] text-white font-bold px-6 py-4 rounded-2xl shadow-lg"><?= e($t['save']) ?></button>
+            </form>
           </div>
-          <button class="bg-gray-900 text-white px-6 py-3 rounded-full"><?= e($t['save']) ?></button>
-        </form>
-      </div>
 
-      <div id="panel-code" class="settings-panel <?= $activeTab === 'code' ? '' : 'hidden' ?>">
-        <form method="post" class="space-y-4">
-          <input type="hidden" name="action" value="update_company_code">
-          <div>
-            <label class="block mb-2 text-sm"><?= e($t['company_code']) ?></label>
-            <input name="company_code" value="<?= e($companyCodeValue) ?>" class="w-full rounded-full px-5 py-4 text-lg bg-gray-100 outline-none" />
+          <div id="panel-code" class="settings-panel <?= $activeTab === 'code' ? '' : 'hidden' ?>">
+            <form method="post" class="max-w-md mx-auto space-y-4">
+              <input type="hidden" name="action" value="update_company_code">
+              <label class="block font-bold text-gray-700"><?= e($t['change_company_code']) ?></label>
+              <input name="company_code" value="<?= e($companyCodeValue) ?>" class="w-full rounded-2xl px-6 py-4 border-2 border-gray-200 focus:border-[#FF4800] outline-none transition-all" />
+              <button class="w-full bg-[#FF4800] text-white font-bold px-6 py-4 rounded-2xl shadow-lg"><?= e($t['save']) ?></button>
+            </form>
           </div>
-          <button class="bg-gray-900 text-white px-6 py-3 rounded-full"><?= e($t['save']) ?></button>
-        </form>
-      </div>
 
-      <div id="panel-logo" class="settings-panel <?= $activeTab === 'logo' ? '' : 'hidden' ?>">
-        <form method="post" enctype="multipart/form-data" class="space-y-5">
-          <input type="hidden" name="action" value="update_company_logo">
-          <div class="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-center">
-            <div class="flex flex-col items-center">
-              <div class="mb-3 text-sm"><?= e($t['current_logo']) ?></div>
-              <div class="w-[210px] h-[170px] rounded-[20px] bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-300">
-                <?php if (!empty($companyLogoValue) && (preg_match('/^https?:\/\//i', $companyLogoValue) || str_starts_with($companyLogoValue, 'uploads/'))): ?>
-                  <img src="<?= e($companyLogoValue) ?>" alt="<?= e($company['nom'] ?? $t['company_logo']) ?>" class="w-full h-full object-contain p-4">
-                <?php else: ?>
-                  <svg class="w-16 h-16 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path d="M4 17V7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke-linejoin="round"/>
-                    <path d="M8 13l2.5-2.5 2.5 2.5 2-2 3 3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="9" cy="9" r="1.25" fill="currentColor" stroke="none"/>
-                  </svg>
-                <?php endif; ?>
-              </div>
-            </div>
-
-            <div class="space-y-4">
-              <label class="block text-sm"><?= e($t['upload_logo']) ?></label>
-              <label for="company_logo" class="block w-full cursor-pointer rounded-[18px] border-2 border-dashed border-gray-500 bg-gray-100 px-6 py-10 text-center hover:bg-gray-50 transition">
-                <div class="flex flex-col items-center gap-3">
-                  <svg class="w-14 h-14 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path d="M12 16V4" stroke-linecap="round"/>
-                    <path d="M7 9l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M5 20h14a2 2 0 002-2v-4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M3 14v4a2 2 0 002 2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <span class="text-lg font-medium"><?= e($t['change_company_logo']) ?></span>
-                  <span class="text-sm text-gray-700"><?= e($t['logo_help']) ?></span>
+          <div id="panel-logo" class="settings-panel <?= $activeTab === 'logo' ? '' : 'hidden' ?>">
+            <form method="post" enctype="multipart/form-data">
+              <input type="hidden" name="action" value="update_company_logo">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                <div class="text-center">
+                  <span class="block mb-4 font-bold text-gray-500 uppercase text-xs"><?= e($t['current_logo']) ?></span>
+                  <div class="w-48 h-48 mx-auto rounded-3xl bg-white flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300">
+                    <?php if (!empty($companyLogoValue)): ?>
+                      <img src="<?= e($companyLogoValue) ?>" class="w-full h-full object-contain p-4">
+                    <?php else: ?>
+                      <div class="text-gray-300">Aucun logo</div>
+                    <?php endif; ?>
+                  </div>
                 </div>
-              </label>
-              <input id="company_logo" name="company_logo" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" class="hidden">
-              <button class="bg-gray-900 text-white px-6 py-3 rounded-full"><?= e($t['save']) ?></button>
-            </div>
+                <div class="space-y-4">
+                  <label for="company_logo" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-[#FF4800] bg-orange-50 rounded-3xl cursor-pointer hover:bg-orange-100 transition-colors">
+                    <svg class="w-10 h-10 text-[#FF4800] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v12m8-8l-8-8-8 8m16 12H4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="text-sm font-bold text-[#FF4800]"><?= e($t['upload_logo']) ?></span>
+                  </label>
+                  <input id="company_logo" name="company_logo" type="file" class="hidden">
+                  <button class="w-full bg-[#FF4800] text-white font-bold px-6 py-4 rounded-2xl"><?= e($t['save']) ?></button>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
 
-      <div id="panel-password" class="settings-panel <?= $activeTab === 'password' ? '' : 'hidden' ?>">
-        <form method="post" class="space-y-4">
-          <input type="hidden" name="action" value="update_password">
-          <div>
-            <label class="block mb-2 text-sm"><?= e($t['current_password']) ?></label>
-            <input type="password" name="current_password" class="w-full rounded-full px-5 py-4 text-lg bg-gray-100 outline-none" />
+          <div id="panel-password" class="settings-panel <?= $activeTab === 'password' ? '' : 'hidden' ?>">
+            <form method="post" class="max-w-md mx-auto space-y-4">
+              <input type="hidden" name="action" value="update_password">
+              <input type="password" name="current_password" placeholder="<?= e($t['current_password']) ?>" class="w-full rounded-2xl px-6 py-4 border-2 border-gray-200 focus:border-[#FF4800] outline-none" />
+              <input type="password" name="new_password" placeholder="<?= e($t['new_password']) ?>" class="w-full rounded-2xl px-6 py-4 border-2 border-gray-200 focus:border-[#FF4800] outline-none" />
+              <input type="password" name="confirm_password" placeholder="<?= e($t['confirm_password']) ?>" class="w-full rounded-2xl px-6 py-4 border-2 border-gray-200 focus:border-[#FF4800] outline-none" />
+              <button class="w-full bg-[#FF4800] text-white font-bold px-6 py-4 rounded-2xl shadow-lg"><?= e($t['save']) ?></button>
+            </form>
           </div>
-          <div>
-            <label class="block mb-2 text-sm"><?= e($t['new_password']) ?></label>
-            <input type="password" name="new_password" class="w-full rounded-full px-5 py-4 text-lg bg-gray-100 outline-none" />
-          </div>
-          <div>
-            <label class="block mb-2 text-sm"><?= e($t['confirm_password']) ?></label>
-            <input type="password" name="confirm_password" class="w-full rounded-full px-5 py-4 text-lg bg-gray-100 outline-none" />
-          </div>
-          <button class="bg-gray-900 text-white px-6 py-3 rounded-full"><?= e($t['save']) ?></button>
-        </form>
-      </div>
+        </div>
     </div>
   </div>
 </div>
@@ -576,6 +540,14 @@ $userEmailValue = (string)($user['email'] ?? '');
 document.querySelectorAll('.settings-tab').forEach(function(btn) {
     btn.addEventListener('click', function() {
         const tab = this.getAttribute('data-tab');
+        
+        document.querySelectorAll('.settings-tab').forEach(b => {
+            b.classList.remove('bg-[#FF4800]', 'text-white', 'border-[#FF4800]');
+            b.classList.add('border-gray-200', 'text-gray-600');
+        });
+        this.classList.add('bg-[#FF4800]', 'text-white', 'border-[#FF4800]');
+        this.classList.remove('border-gray-200', 'text-gray-600');
+
         document.querySelectorAll('.settings-panel').forEach(function(panel) {
             panel.classList.add('hidden');
         });
