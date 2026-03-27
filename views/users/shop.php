@@ -40,10 +40,10 @@ if ($company_id) {
         <!-- Boutons d'action -->
         <div class="absolute right-5 top-16 flex gap-2 max-[375px]:gap-1 z-50">
             <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                <img class="w-6 h-6" src="../../img/icone/icone-notification-blanc.svg" alt="Notifications">
+                <img class="w-8 h-8" src="../../img/icone/icone-notification-blanc.svg" alt="Notifications">
             </button>
             <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                <img class="w-6 h-6" src="../../img/icone/icone-parametre-blanc.svg" alt="Paramètres">
+                <img class="w-8 h-8" src="../../img/icone/icone-parametre-blanc.svg" alt="Paramètres">
             </button>
         </div>
 
@@ -95,7 +95,7 @@ if ($company_id) {
                             </div>
 
                             <button class="w-40 flex items-center justify-center gap-2 bg-brand-dark text-brand-primary font-bold py-2 rounded-3xl hover:bg-brand-secondary hover:text-brand-dark transition-all group shadow-lg active:scale-95">
-                                <img class="w-5 h-5 group-hover:brightness-0 transition" src="img/icone/mascotte-monnaie.svg" alt="monnaie">
+                                <img class="w-5 h-5 group-hover:brightness-0 transition" src="../../img/icone/mascotte-monnaie.svg" alt="monnaie">
                                 <?= number_format($item['cost'], 0, '.', ' ') ?>
                             </button>
                             

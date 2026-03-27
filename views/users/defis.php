@@ -75,7 +75,7 @@ foreach ($allChallenges as $c) {
 
             <div class="flex items-center bg-brand-secondary w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
                 <div class="flex items-center gap-2 max-[375px]:gap-1">
-                    <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0">
+                    <div class="w-8 h-8 max-[375px]:w-5 max-[375px]:h-5 rounded-full bg-brand-primary flex items-center justify-center border border-brand-tertiary shrink-0">
                         <i class="fa-solid fa-leaf text-brand-tertiary text-[10px] max-[375px]:text-[8px]"></i>
                     </div>
                     <span class="text-sm max-[376px]:text-xs font-bold text-brand-dark truncate">
