@@ -36,6 +36,7 @@ return [
     'stat_title' => 'Mes Stats',
     'niv_title' => 'Niveau Actuel',
     'carbon_title' => 'Total Économisé',
+    'my_company' => 'Nous',
 
     // Navigation Bas
     'nav_shop' => 'Boutique',

@@ -1,26 +1,15 @@
 <?php
 session_start();
-<<<<<<< HEAD:admin/admin_ban.php
-require_once('../db_connect.php');
-
-if (!isset($_GET['id'])) {
-    header('Location:admin_gestion.php?msg=missing_id');
-=======
 require_once '../../config/db_connect.php'; 
 
 if (!isset($_GET['id'])) {
     header('Location: admin_gestion.php?msg=missing_id');
->>>>>>> alexis:views/admin/admin_ban.php
     exit;
 }
 
 $id = intval($_GET['id']);
 if ($id <= 0) {
-<<<<<<< HEAD:admin/admin_ban.php
-    header('Location:admin_gestion.php?msg=invalid_id');
-=======
     header('Location: admin_gestion.php?msg=invalid_id');
->>>>>>> alexis:views/admin/admin_ban.php
     exit;
 }
 

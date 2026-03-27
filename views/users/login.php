@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($user['role'] === 'admin' || $user['role'] === 'super_admin') {
                 header("Location: admin/admin_dashboard.php"); // Page Admin (à créer)
             } else {
-                header("Location: ../../index.php"); // Page Joueur
+                header("Location: ../../views/users/index.php"); // Page Joueur
             }
             exit();
 

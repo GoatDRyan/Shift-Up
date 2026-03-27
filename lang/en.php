@@ -108,4 +108,5 @@ return [
     'company_rank' => 'Company',
     'mode_dark' => 'Dark',
     'mode_light' => 'Light',
+    'my_company' => 'Us',
 ];
