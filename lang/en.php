@@ -109,4 +109,38 @@ return [
     'mode_dark' => 'Dark',
     'mode_light' => 'Light',
     'my_company' => 'Us',
+    
+    // --- PAGE DE CONNEXION ---
+    'err_invalid_credentials' => "Incorrect email or password.",
+    'err_empty_fields'        => "Please fill in all fields.",
+    'login_page_title'        => "Login - Shift'Up",
+    'login_subtitle'          => "Log in to reduce your footprint.",
+    'email_label'             => "Professional Email",
+    'email_placeholder'       => "name@company.com",
+    'password_label'          => "Password",
+    'forgot_password'         => "Forgot password?",
+    'btn_login'               => "Log in",
+    'or'                      => "Or",
+    'btn_register'            => "Create an account",
+
+    // --- PAGE DE RÉINITIALISATION DE MOT DE PASSE ---
+    'reset_page_title'        => "New Password - Shift'Up",
+    'reset_title'             => "Security",
+    'reset_subtitle'          => "Create your new password.",
+    'err_invalid_token'       => "This reset link is invalid or has expired.",
+    'err_passwords_match'     => "Passwords do not match.",
+    'err_password_length'     => "Password must be at least 8 characters long.",
+    'success_password_reset'  => "Your password has been successfully reset!",
+    'new_password_label'      => "New Password",
+    'confirm_password_label'  => "Confirm Password",
+    'btn_save_password'       => "Save",
+    'btn_back_login'          => "Back to login",
+    'btn_try_again'           => "Generate a new link",
+
+    // --- MOT DE PASSE OUBLIÉ ---
+    'forgot_page_title'       => "Forgot Password - Shift'Up",
+    'forgot_title'            => "Oops...",
+    'forgot_subtitle'         => "Enter your email to reset your password.",
+    'btn_generate_link'       => "Generate link",
+    'success_link_sent'       => "A reset link has been generated.",
 ];

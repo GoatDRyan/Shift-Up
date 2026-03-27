@@ -1,5 +1,39 @@
 <?php
 return [
+    // --- PAGE DE CONNEXION ---
+    'err_invalid_credentials' => "Email ou mot de passe incorrect.",
+    'err_empty_fields'        => "Veuillez remplir tous les champs.",
+    'login_page_title'        => "Connexion - Shift'Up",
+    'login_subtitle'          => "Connectez-vous pour réduire votre empreinte.",
+    'email_label'             => "Email Professionnel",
+    'email_placeholder'       => "nom@entreprise.com",
+    'password_label'          => "Mot de passe",
+    'forgot_password'         => "Mot de passe oublié ?",
+    'btn_login'               => "Se connecter",
+    'or'                      => "Ou",
+    'btn_register'            => "Créer un compte",
+
+    // --- PAGE DE RÉINITIALISATION DE MOT DE PASSE ---
+    'reset_page_title'        => "Nouveau mot de passe - Shift'Up",
+    'reset_title'             => "Sécurité",
+    'reset_subtitle'          => "Créez votre nouveau mot de passe.",
+    'err_invalid_token'       => "Ce lien de réinitialisation est invalide ou a expiré.",
+    'err_passwords_match'     => "Les mots de passe ne correspondent pas.",
+    'err_password_length'     => "Le mot de passe doit faire au moins 8 caractères.",
+    'success_password_reset'  => "Votre mot de passe a été réinitialisé avec succès !",
+    'new_password_label'      => "Nouveau mot de passe",
+    'confirm_password_label'  => "Confirmer le mot de passe",
+    'btn_save_password'       => "Enregistrer",
+    'btn_back_login'          => "Retour à la connexion",
+    'btn_try_again'           => "Générer un nouveau lien",
+
+    // --- MOT DE PASSE OUBLIÉ ---
+    'forgot_page_title'       => "Mot de passe oublié - Shift'Up",
+    'forgot_title'            => "Oups...",
+    'forgot_subtitle'         => "Entrez votre email pour réinitialiser votre mot de passe.",
+    'btn_generate_link'       => "Générer le lien",
+    'success_link_sent'       => "Un lien de réinitialisation a été généré.",
+
     // Header
     'pts' => 'Mes Points',
     'niv' => 'Niv',
