@@ -1,11 +1,6 @@
 <?php 
 session_start();
-<<<<<<< HEAD:superadmin/super_admin_shift_manager.php
-require_once('../db_connect.php');
-
-=======
 require_once '../../config/db_connect.php';
->>>>>>> alexis:views/superadmin/super_admin_shift_manager.php
 
 ?>
 <!doctype html>
@@ -38,14 +33,14 @@ require_once '../../config/db_connect.php';
 
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
-      <a href="#" class="text-gray-700 hover:text-gray-900">Shift manager</a>
-      <a href="admin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
-      <div class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
-        <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
-          <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-      </div>
+      <a href="super_admin_shift_manager_modif.php" class="text-gray-700 hover:text-gray-900">Shift manager</a>
+      <a href="superadmin_gestion.php" class="text-gray-700 hover:text-gray-900">Gestion</a>
+      <a href="super_admin_profile.php" class="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center">
+  <svg class="w-6 h-6 text-gray-800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+    <path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+</a>
     </nav>
 
     <button class="md:hidden ml-2 p-2 rounded bg-transparent" aria-label="Ouvrir le menu">
@@ -127,31 +122,37 @@ if (isset($pdo) && $pdo instanceof PDO) {
       </div>
 
       <div>
-        <h2 class="text-2xl mb-4">Classement Solo</h2>
-        <div class="bg-gray-200 card-radius p-4 space-y-3">
-          <?php
-            if (!isset($pdo) || !($pdo instanceof PDO)) {
-                echo "<div class='text-sm text-red-600'>La connexion DB (\$pdo) n'est pas définie dans db_connect.php</div>";
-            } else {
-                try {
-                    $sql = "SELECT u.id, u.pseudo, COUNT(ua.id) as actions FROM users u LEFT JOIN user_actions ua ON ua.user_id = u.id GROUP BY u.id ORDER BY actions DESC LIMIT 3";
-                    $stmt = $pdo->query($sql);
-                    $pos = 1;
-                    while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        $pseudo = htmlspecialchars($row['pseudo'] ?? 'user'.$row['id']);
-                        echo "<div class='flex items-center gap-4 bg-gray-300 rounded p-3'>
-                                <div class='w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center'>$pos</div>
-                                <div class='flex-1'>$pseudo</div>
-                              </div>";
-                        $pos++;
-                    }
-                } catch (Exception $e) {
-                    echo "<div class='text-red-500'>Erreur classement</div>";
-                }
-            }
-          ?>
-        </div>
-      </div>
+  <h2 class="text-2xl mb-4">Classement Entreprise</h2>
+  <div class="bg-gray-200 card-radius p-4 space-y-3">
+    <?php
+      if (!isset($pdo) || !($pdo instanceof PDO)) {
+          echo "<div class='text-sm text-red-600'>La connexion DB (\$pdo) n'est pas définie dans db_connect.php</div>";
+      } else {
+          try {
+              $sql = "SELECT id, nom, total_xp
+                      FROM companies
+                      ORDER BY total_xp DESC, id ASC
+                      LIMIT 3";
+              $stmt = $pdo->query($sql);
+              $pos = 1;
+
+              while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                  $nom = htmlspecialchars($row['nom'] ?? 'Entreprise ' . $row['id']);
+                  $xp = number_format((int)($row['total_xp'] ?? 0), 0, ',', ' ');
+                  echo "<div class='flex items-center gap-4 bg-gray-300 rounded p-3'>
+                          <div class='w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center'>$pos</div>
+                          <div class='flex-1'>$nom</div>
+                          <div class='font-medium'>{$xp} XP</div>
+                        </div>";
+                  $pos++;
+              }
+          } catch (Exception $e) {
+              echo "<div class='text-red-500'>Erreur classement</div>";
+          }
+      }
+    ?>
+  </div>
+</div>
 
     </div>
 
@@ -211,7 +212,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
                       echo '</div>';
 
                       echo '<div class="flex items-center gap-3">';
-                      // Bouton Désactiver retiré pour Super Admin (bibliothèque)
                       echo '<button class="px-3 py-2 rounded bg-gray-100" onclick="openParams('.$id.')" title="Paramètres">
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="3" y="5" width="18" height="2" rx="1" fill="currentColor"/>
@@ -234,7 +234,6 @@ if (isset($pdo) && $pdo instanceof PDO) {
   </div>
 </div>
 
-<!-- Create modal -->
 <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white p-6 rounded card-radius w-11/12 md:w-1/3">
     <h3 class="text-xl mb-4">Créer une tâche</h3>

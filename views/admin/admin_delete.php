@@ -1,10 +1,6 @@
 <?php
 session_start();
-<<<<<<< HEAD:admin/admin_delete.php
-require_once('../db_connect.php');
-=======
 require_once '../../config/db_connect.php'; 
->>>>>>> alexis:views/admin/admin_delete.php
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: admin_gestion.php?msg=invalid_method');
