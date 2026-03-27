@@ -74,7 +74,7 @@ foreach ($allChallenges as $c) {
 </div>
 <div class="flex items-center bg-black w-[105px] max-[375px]:w-[115px] min-[414px]:w-[130px] h-10 max-[375px]:h-8 px-3 max-[375px]:px-2 shadow-sm rounded-l-3xl shrink-0" style="clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);">
     <div class="flex items-center gap-2 max-[375px]:gap-1">
-        <div class="w-6 h-6 max-[375px]:w-5 max-[375px]:h-5 flex items-center justify-center shrink-0">
+        <div class="w-8 h-8 max-[375px]:w-5 max-[375px]:h-5 flex items-center justify-center shrink-0">
             <img src="../../img/icone/mascotte-monnaie.svg" class="w-full h-full object-contain" alt="Money">
         </div>
         
