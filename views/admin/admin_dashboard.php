@@ -205,17 +205,11 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
 <body class="bg-gray-50 text-gray-900">
 
 <header class="bg-[#FF4800] h-16 sticky top-0 z-50 shadow-lg">
-  <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-[#FF4800] flex items-center justify-center border-r border-orange-600">
-    <a href="admin_dashboard.php" class="transition-transform hover:scale-105">
-      <div class="w-10 h-10 flex items-center justify-center">
-        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
-          <text x="12" y="15.5" text-anchor="middle" font-size="10" fill="currentColor" style="font-weight:900">S</text>
-        </svg>
-      </div>
+ <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center">
+    <a href="admin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
+        <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
     </a>
-  </div>
-
+</div>
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-8">
     <nav class="hidden md:flex items-center gap-10">
       <a href="admin_shift_manager.php" class="text-white/90 hover:text-white font-semibold transition-colors">Shift manager</a>

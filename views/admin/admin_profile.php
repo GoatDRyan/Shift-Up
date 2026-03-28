@@ -330,14 +330,11 @@ $userEmailValue = (string)($user['email'] ?? '');
 <body class="min-h-screen">
 
 <header class="bg-[#FF4800] h-24 relative shadow-lg">
-  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center border-r border-white/10">
-    <a href="admin_dashboard.php<?= e($linkLang) ?>" aria-label="Accueil" class="w-12 h-12 flex items-center justify-center">
-      <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-        <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke-linejoin="round" stroke-linecap="round"/>
-        <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Arial" fill="currentColor" style="font-weight:900">S</text>
-      </svg>
+  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center">
+    <a href="admin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
+        <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
     </a>
-  </div>
+</div>
   
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-24 md:pl-72 pr-6">
     <nav class="flex items-center gap-8 text-[17px]">
