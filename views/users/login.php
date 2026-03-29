@@ -31,10 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $_SESSION['lang'] = $user['language_pref'] ?? $lang;
 
-            if ($user['role'] === 'admin' || $user['role'] === 'super_admin') {
-                header("Location: admin/admin_dashboard.php"); 
+            // Redirection selon le rôle
+            if ($user['role'] === 'super_admin') {
+                header("Location: ../superadmin/superadmin_dashboard.php"); 
+            } elseif ($user['role'] === 'admin') {
+                header("Location: ../admin/admin_dashboard.php"); 
             } else {
-                header("Location: ../../views/users/index.php"); 
+                header("Location: index.php"); 
             }
             exit();
 
