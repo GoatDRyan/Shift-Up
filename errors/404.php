@@ -1,69 +1,54 @@
 <?php
-session_start();
+require_once '../includes/init.php';
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page non trouvée</title>
-    <link rel="stylesheet" href="/cours/Shift-up/css/style.css">
+    <title><?= $t['404_title'] ?? '404 - Page non trouvée' ?> - Shift'Up</title>
+    
+    <link rel="stylesheet" href="/Shift-Up/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/Shift-Up/js/tailwind-config.js"></script>
+</head>
+<body class="bg-brand-primary text-brand-secondary font-sans min-h-screen flex flex-col items-center justify-center p-6 text-center overflow-hidden">
+
+    <div class="max-w-sm w-full">
+        
+        <div class="absolute top-10 left-0 right-0 flex justify-center -z-10 opacity-5 pointer-events-none">
+            <span class="font-display font-black text-[200px] text-brand-secondary">404</span>
+        </div>
+
+        <div class="relative mb-6 mt-10">
+            <div class="absolute inset-0 bg-brand-secondary/10 rounded-full blur-3xl"></div>
+            <img src="/Shift-Up/img/level/error-404.png" alt="Erreur 404" class="relative w-48 h-auto mx-auto drop-shadow-2xl animate-bounce-slow">
+        </div>
+
+        <h1 class="font-display text-4xl font-black uppercase tracking-tighter mb-4 text-brand-secondary">
+            <?= $t['404_heading'] ?? 'Page Introuvable' ?>
+        </h1>
+        
+        <p class="text-sm font-bold opacity-70 mb-10 leading-relaxed text-brand-secondary">
+            <?= $t['404_desc'] ?? "Désolé, la page que tu cherches n'existe pas, a été supprimée ou tu as cliqué sur un mauvais lien." ?>
+        </p>
+
+        <a href="/Shift-Up/views/users/index.php" class="inline-flex items-center justify-center gap-2 w-full bg-brand-secondary text-brand-primary font-bold py-4 rounded-2xl shadow-lg hover:opacity-90 active:scale-95 transition-all">
+            <i class="fa-solid fa-house"></i>
+            <?= $t['btn_back_home'] ?? "Retour à l'accueil" ?>
+        </a>
+    </div>
+
     <style>
-        .error-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-        
-        .error-code {
-            font-size: 120px;
-            font-weight: bold;
-            margin: 20px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .error-message {
-            font-size: 32px;
-            margin: 20px 0;
-        }
-        
-        .error-description {
-            font-size: 16px;
-            margin-bottom: 40px;
-            opacity: 0.9;
-        }
-        
-        .btn-home {
-            padding: 12px 30px;
-            background-color: white;
-            color: #667eea;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-home:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
         }
     </style>
-</head>
-<body>
-    <div class="error-container">
-        <div class="error-code">404</div>
-        <div class="error-message">Page non trouvée</div>
-        <div class="error-description">
-            Désolé, la page que tu cherches n'existe pas ou a été supprimée.
-        </div>
-        <a href="../views/users/index.php" class="btn-home">Retour à l'accueil</a>
-    </div>
+
 </body>
 </html>

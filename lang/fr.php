@@ -1,5 +1,59 @@
 <?php
 return [
+    // --- PAGE DE CONNEXION ---
+    'err_invalid_credentials' => "Email ou mot de passe incorrect.",
+    'err_empty_fields'        => "Veuillez remplir tous les champs.",
+    'login_page_title'        => "Connexion - Shift'Up",
+    'login_subtitle'          => "Connectez-vous pour réduire votre empreinte.",
+    'email_label'             => "Email Professionnel",
+    'email_placeholder'       => "nom@entreprise.com",
+    'password_label'          => "Mot de passe",
+    'forgot_password'         => "Mot de passe oublié ?",
+    'btn_login'               => "Se connecter",
+    'or'                      => "Ou",
+    'btn_register'            => "Créer un compte",
+
+    // --- PAGE DE RÉINITIALISATION DE MOT DE PASSE ---
+    'reset_page_title'        => "Nouveau mot de passe - Shift'Up",
+    'reset_title'             => "Sécurité",
+    'reset_subtitle'          => "Créez votre nouveau mot de passe.",
+    'err_invalid_token'       => "Ce lien de réinitialisation est invalide ou a expiré.",
+    'err_passwords_match'     => "Les mots de passe ne correspondent pas.",
+    'err_password_length'     => "Le mot de passe doit faire au moins 8 caractères.",
+    'success_password_reset'  => "Votre mot de passe a été réinitialisé avec succès !",
+    'new_password_label'      => "Nouveau mot de passe",
+    'confirm_password_label'  => "Confirmer le mot de passe",
+    'btn_save_password'       => "Enregistrer",
+    'btn_back_login'          => "Retour à la connexion",
+    'btn_try_again'           => "Générer un nouveau lien",
+
+    // --- MOT DE PASSE OUBLIÉ ---
+    'forgot_page_title'       => "Mot de passe oublié - Shift'Up",
+    'forgot_title'            => "Oups...",
+    'forgot_subtitle'         => "Entrez votre email pour réinitialiser votre mot de passe.",
+    'btn_generate_link'       => "Générer le lien",
+    'success_link_sent'       => "Un lien de réinitialisation a été généré.",
+
+    'register'              => "Inscription",
+    'reg_step1_title'       => "Inscription - Étape 1",
+    'reg_step1_desc'        => "Commençons par faire connaissance.",
+    'firstname'             => "Prénom",
+    'lastname'              => "Nom",
+    'company_code'          => "Code entreprise",
+    'department'            => "Département",
+    'btn_next_step'         => "Étape suivante",
+    'already_have_account'  => "J'ai déjà un compte",
+    'err_invalid_company'   => "Le code entreprise est invalide.",
+    'err_invalid_dept'      => "Le département sélectionné est invalide pour cette entreprise.",
+    'reg_step2_title'       => "Inscription - Étape 2",
+    'reg_step2_desc'        => "Sécurisons votre compte.",
+    'accept_cgu'            => "J'accepte les conditions générales d'utilisation",
+    'btn_finish_register'   => "Finaliser l'inscription",
+    'btn_back'              => "Retour à l'étape précédente",
+    'err_invalid_email'     => "Le format de l'adresse email est invalide.",
+    'err_cgu'               => "Vous devez accepter les CGU.",
+    'err_user_exists'       => "Un utilisateur avec ce pseudo ou cet email existe déjà.",
+
     // Header
     'pts' => 'Mes Points',
     'niv' => 'Niv',
@@ -130,4 +184,75 @@ return [
     'cat_Recyclage' => 'Recyclage',
     'cat_Autre' => 'Autre',
     'cat_Général' => 'Général',
+
+    'level_up_title' => "Niveau Supérieur !",
+    'level_up_desc'  => "Félicitations, vous venez d'atteindre le niveau",
+    'btn_amazing'    => "Incroyable !",
+
+    // --- QUIZ BILAN CARBONE ---
+    'quiz_title'    => "Bilan Carbone",
+    'quiz_subtitle' => "Évaluons votre empreinte annuelle.",
+    'quiz_societal' => "(Inclut une part fixe de 1,5t pour les services publics)",
+    'btn_calculate' => "Calculer mon impact",
+    
+    'q1_title' => "1. Trajets quotidiens ?",
+    'q1_a1'    => "Voiture thermique (longs trajets ou seul)",
+    'q1_a2'    => "Voiture électrique ou thermique occasionnel",
+    'q1_a3'    => "Transports en commun / Covoiturage régulier",
+    'q1_a4'    => "Vélo, marche ou 100% télétravail",
+
+    'q2_title' => "2. Voyages en avion ?",
+    'q2_a1'    => "Fréquent ou vols long-courriers (> 5h)",
+    'q2_a2'    => "Occasionnel (quelques vols Europe)",
+    'q2_a3'    => "Rare (1 vol court aller-retour par an)",
+    'q2_a4'    => "Jamais, je reste au sol !",
+
+    'q3_title' => "3. Alimentation ?",
+    'q3_a1'    => "Viande rouge très régulière",
+    'q3_a2'    => "Viande blanche / Poisson régulier",
+    'q3_a3'    => "Végétarien (œufs, produits laitiers)",
+    'q3_a4'    => "Végétalien / Vegan",
+
+    'q4_title' => "4. Type de logement ?",
+    'q4_a1'    => "Maison ancienne / Chauffage fioul ou gaz",
+    'q4_a2'    => "Appartement classique ou Maison standard",
+    'q4_a3'    => "Logement très performant (RE2020, PAC)",
+
+    'q5_title' => "5. Achats & Numérique ?",
+    'q5_a1'    => "Achats fréquents (fast-fashion, tech neuve)",
+    'q5_a2'    => "Consommation moyenne et raisonnée",
+    'q5_a3'    => "Minimaliste, 100% seconde main ou reconditionné",
+
+    // --- PROFIL ---
+    'no_dept'       => "Sans département",
+    'total_actions' => "Défis validés",
+    'top_streak'    => "Top streak",
+    'total_score'   => "Total XP",
+    'ranking'       => "Classement",
+    'badges'        => "Badges",
+    'to_unlock' => "Pour débloquer :",
+    'to_unlock' => "To unlock:",
+    'ends_in' => "Fin dans", 'no_items' => "Aucun objet disponible.",
+    'nav_inventory' => "Inventaire",
+    'empty_inventory' => "Ton inventaire est vide.",
+    'btn_use' => "Utiliser",
+
+    'coming_soon_title' => "Bientôt disponible",
+    'ops' => "Oups...",
+    'feature_not_ready' => "Cette fonctionnalité n'est pas encore disponible.",
+    'feature_work_in_progress' => "Nos équipes (et notre mascotte) travaillent dur pour vous proposer cette nouveauté très bientôt !",
+    'btn_back_home' => "Retour à l'accueil",
+
+    'notifications_title' => "Annonces",
+    'no_notifications' => "Aucune annonce pour le moment.",
+
+    // --- ERREUR 404 ---
+    '404_title' => "404 - Page non trouvée",
+    '404_heading' => "Page Introuvable",
+    '404_desc' => "Désolé, la page que tu cherches n'existe pas, a été supprimée ou tu as cliqué sur un lien cassé.",
+
+    // --- ERREUR 403 ---
+    '403_title' => "403 - Accès interdit",
+    '403_heading' => "Accès Interdit",
+    '403_desc' => "Tu n'as pas la permission d'accéder à cette ressource. Rapproche-toi de ton administrateur si tu penses que c'est une erreur.",
 ];

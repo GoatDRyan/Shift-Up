@@ -14,7 +14,16 @@
             <div class="flex flex-col items-center">
                 <span class="text-[10px] font-semibold text-brand-dark mb-1"><?= $t['mode'] ?? 'Mode' ?></span>
                 <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-full bg-brand-secondary py-2 rounded-full shadow-lg text-sm font-medium text-brand-primary hover:bg-brand-secondary/20 transition-colors">
-                    <?= $t['mode_light'] ?? 'Clair' ?> </button>
+                    
+                    <span class="block dark:hidden">
+                        <?= $t['mode_dark'] ?? 'Sombre' ?>
+                    </span>
+                    
+                    <span class="hidden dark:block">
+                        <?= $t['mode_light'] ?? 'Clair' ?>
+                    </span>
+                    
+                </button>
             </div>
 
             <div class="flex flex-col items-center">
@@ -26,14 +35,14 @@
 
             <div class="flex flex-col items-center">
                 <span class="text-[10px] font-semibold text-brand-dark mb-1"><?= $t['name'] ?? 'Nom' ?></span>
-                <a href="edit/edit_name.php" class="w-full bg-brand-secondary py-2 rounded-full shadow-lg text-sm font-medium text-center text-brand-primary hover:bg-brand-secondary/20 transition-colors block">
+                <a href="../../edit/edit_name.php" class="w-full bg-brand-secondary py-2 rounded-full shadow-lg text-sm font-medium text-center text-brand-primary hover:bg-brand-secondary/20 transition-colors block">
                     <?= $t['btn_change'] ?? 'Changer' ?>
                 </a>
             </div>
 
             <div class="flex flex-col items-center">
                 <span class="text-[10px] font-semibold text-brand-dark mb-1"><?= $t['password'] ?? 'Mot de passe' ?></span>
-                <a href="edit/edit_password.php" class="w-full bg-brand-secondary py-2 rounded-full shadow-lg text-[12px] font-medium text-center text-brand-primary hover:bg-brand-secondary/20 transition-colors block">
+                <a href="../../edit/edit_password.php" class="w-full bg-brand-secondary py-2 rounded-full shadow-lg text-[12px] font-medium text-center text-brand-primary hover:bg-brand-secondary/20 transition-colors block">
                     <?= $t['btn_modify'] ?? 'Modifier' ?>
                 </a>
             </div>
