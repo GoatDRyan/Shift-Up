@@ -135,11 +135,11 @@ $trendValues = array_map(function($v){ return (float)$v['val']; }, $carbonTrend)
 </head>
 <body class="bg-white min-h-screen">
   <header class="header-bg h-16 relative">
-    <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/20 flex items-center justify-center">
-      <a href="superadmin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
-        <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
-      </a>
-    </div>
+    <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center">
+    <a href="superadmin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
+        <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
+    </a>
+</div>
     <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
       <nav class="hidden md:flex items-center gap-8">
         <a href="super_admin_shift_manager.php" class="text-white font-bold hover:text-orange-200 transition">Shift Manager</a>

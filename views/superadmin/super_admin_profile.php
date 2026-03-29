@@ -327,14 +327,11 @@ $placeholderCount = max(0, $showcaseSlots - count($badges));
 </head>
 <body class="min-h-screen">
 <header class="header-bg h-16 relative">
-  <div class="absolute left-0 top-0 bottom-0 w-20 md:w-72 bg-black/20 flex items-center justify-center">
-    <a href="<?= e($homeLink) ?>" aria-label="Accueil" class="w-12 h-12 flex items-center justify-center">
-      <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp" class="w-10 h-10 object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <svg style="display:none" class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-        <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke-linejoin="round" stroke-linecap="round"/>
-      </svg>
+   <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center">
+    <a href="superadmin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
+        <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
     </a>
-  </div>
+</div>
   <div class="h-full flex items-center justify-end gap-8 pr-6 pl-20 md:pl-72">
     <nav class="hidden md:flex items-center gap-8">
       <a href="<?= e($shiftLink) ?>" class="text-white font-bold hover:text-orange-200 transition"><?= e($t['shift_manager']) ?></a>
