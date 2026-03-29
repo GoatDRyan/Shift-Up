@@ -74,10 +74,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="w-full max-w-md">
         
         <div class="text-center mb-10">
-            <div class="w-20 h-20 bg-brand-secondary text-brand-primary rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl transform rotate-3">
-                <i class="fa-solid fa-leaf -rotate-3"></i>
+            <div class="w-32 h-auto flex items-center justify-center mx-auto mb-4">
+                <img src="../../img/logo/logo.png" alt="Shift'Up">
             </div>
-            <h1 class="font-display text-4xl font-black tracking-tight text-brand-secondary mb-2">Shift'Up</h1>
             <p class="text-brand-secondary opacity-80 text-sm font-bold"><?= $t['login_subtitle'] ?? "Connectez-vous pour réduire votre empreinte." ?></p>
         </div>
 

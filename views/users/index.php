@@ -102,8 +102,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
 
             <div class="absolute right-0 top-12 flex gap-2 max-[375px]:gap-1 z-50">
-                <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                    <img class="w-8 h-8" src="../../img/icone/icone-notification-blanc.svg" alt="">
+                <button onclick="openNotifications()" class="w-11 h-11 bg-brand-secondary rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition">
+                    <img class="w-8 h-8" src="../../img/icone/icone-notification-blanc.svg" alt="Notifications">
                 </button>
                 <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
                     <img class="w-8 h-8" src="../../img/icone/icone-parametre-blanc.svg" alt="">
@@ -233,11 +233,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </div>
                     <i class="fa-solid fa-person-biking text-4xl text-brand-secondary"></i>
                 </a>
-                <a href="article.php" class="bg-brand-primary shadow-md rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition">
+                <a href="coming_soon.php" class="bg-brand-primary shadow-md rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition">
                     <i class="fa-solid fa-book-open text-2xl text-brand-secondary"></i>
                     <span class="text-sm font-bold text-brand-dark"><?= $t['btn_article'] ?></span>
                 </a>
-                <a href="quiz_solo.php" class="bg-brand-primary shadow-md rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition">
+                <a href="coming_soon.php" class="bg-brand-primary shadow-md rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition">
                     <i class="fa-solid fa-clipboard-question text-2xl text-brand-secondary"></i>
                     <span class="text-sm font-bold text-brand-dark"><?= $t['btn_question'] ?></span>
                 </a>
@@ -336,6 +336,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </main>
 
     <?php include '../../includes/navbar.php'; ?>
+    <?php include '../../includes/notifications_popup.php'; ?>
     
     <script>
         function switchView(viewName) {

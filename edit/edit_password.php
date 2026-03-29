@@ -50,38 +50,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-brand-card text-brand-dark font-sans h-screen flex flex-col">
     
     <header class="p-4 flex items-center shadow-sm bg-brand-primary relative z-10">
-        <a href="../index.php" class="text-brand-dark text-xl w-10 h-10 flex items-center justify-center rounded-full hover:bg-brand-secondary transition">
+        <a href="../views/users/profil.php" class="text-brand-dark text-xl w-10 h-10 flex items-center justify-center rounded-full hover:bg-brand-secondary hover:text-brand-primary transition active:scale-95">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <h1 class="font-display font-bold text-xl ml-4"><?= $t['password'] ?? 'Mot de passe' ?></h1>
     </header>
 
     <main class="flex-1 p-4 flex flex-col items-center mt-10">
-        <div class="w-full max-w-sm bg-brand-primary rounded-3xl p-6 shadow-sm border border-brand-border">
+        <div class="w-full max-w-sm bg-brand-primary rounded-3xl p-6 shadow-lg border border-brand-border/50">
             
             <?php if($message): ?>
-                <div class="mb-6 p-3 rounded-xl text-sm font-bold text-center <?= $msg_type === 'success' ? 'bg-brand-success/20 text-brand-success' : 'bg-red-100 text-red-600' ?>">
-                    <?= $message ?>
+                <div class="mb-6 p-4 rounded-2xl text-sm font-bold text-center shadow-inner <?= $msg_type === 'success' ? 'bg-brand-success/10 text-brand-success' : 'bg-red-500/10 text-red-500' ?>">
+                    <?php if($msg_type === 'success'): ?>
+                        <i class="fa-solid fa-check-circle mr-1"></i>
+                    <?php else: ?>
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                    <?php endif; ?>
+                    <?= htmlspecialchars($message) ?>
                 </div>
             <?php endif; ?>
 
             <form method="POST" action="" class="flex flex-col gap-4">
                 <div>
-                    <label class="text-[10px] font-bold text-brand-tertiary uppercase tracking-wider mb-2 block"><?= $t['old_password'] ?? 'Ancien mot de passe' ?></label>
-                    <input type="password" name="old_pass" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-brand-dark focus:outline-none focus:border-brand-dark transition" required>
+                    <label class="text-[10px] font-bold text-brand-dark uppercase tracking-wider mb-2 block">
+                        <?= $t['old_password'] ?? 'Ancien mot de passe' ?>
+                    </label>
+                    <input type="password" name="old_pass" class="w-full bg-brand-card border-2 border-brand-border/50 rounded-2xl px-4 py-3 text-brand-dark font-bold focus:outline-none focus:border-brand-secondary transition" required>
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-bold text-brand-tertiary uppercase tracking-wider mb-2 block mt-2"><?= $t['new_password'] ?? 'Nouveau mot de passe' ?></label>
-                    <input type="password" name="new_pass" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-brand-dark focus:outline-none focus:border-brand-dark transition" required>
+                    <label class="text-[10px] font-bold text-brand-dark uppercase tracking-wider mb-2 block mt-2">
+                        <?= $t['new_password'] ?? 'Nouveau mot de passe' ?>
+                    </label>
+                    <input type="password" name="new_pass" class="w-full bg-brand-card border-2 border-brand-border/50 rounded-2xl px-4 py-3 text-brand-dark font-bold focus:outline-none focus:border-brand-secondary transition" required minlength="6">
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-bold text-brand-tertiary uppercase tracking-wider mb-2 block"><?= $t['confirm_password'] ?? 'Confirmer le mot de passe' ?></label>
-                    <input type="password" name="confirm_pass" class="w-full bg-brand-card border border-brand-border rounded-xl px-4 py-3 text-brand-dark focus:outline-none focus:border-brand-dark transition" required>
+                    <label class="text-[10px] font-bold text-brand-dark uppercase tracking-wider mb-2 block">
+                        <?= $t['confirm_password'] ?? 'Confirmer le mot de passe' ?>
+                    </label>
+                    <input type="password" name="confirm_pass" class="w-full bg-brand-card border-2 border-brand-border/50 rounded-2xl px-4 py-3 text-brand-dark font-bold focus:outline-none focus:border-brand-secondary transition" required minlength="6">
                 </div>
                 
-                <button type="submit" class="w-full bg-brand-dark text-brand-primary font-bold py-3 rounded-xl mt-4 hover:bg-black transition shadow-lg">
+                <button type="submit" class="w-full bg-brand-secondary text-brand-primary font-bold py-4 rounded-2xl mt-2 hover:opacity-90 transition active:scale-95 shadow-lg">
                     <?= $t['btn_update'] ?? 'Mettre à jour' ?>
                 </button>
             </form>

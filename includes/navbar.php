@@ -17,7 +17,7 @@
         <img class="h-[26px] hidden group-hover:block <?= $current_page == 'index.php' ? '!block' : '' ?>" src="../../img/icone/icone-home-hover.svg" alt="Accueil">
     </a>
 
-    <a href="#" class="group flex flex-col items-center w-14 transition">
+    <a href="coming_soon.php" class="group flex flex-col items-center w-14 transition">
         <img class="h-[28px] mb-1 group-hover:hidden <?= $current_page == 'reseau.php' ? 'hidden' : 'block' ?>" src="../../img/icone/icone-reseau.svg" alt="Réseau">
         <img class="h-[28px] mb-1 hidden group-hover:block <?= $current_page == 'reseau.php' ? '!block' : '' ?>" src="../../img/icone/icone-reseau-hover.svg" alt="Réseau">
         <span class="text-[10px] font-bold text-brand-secondary group-hover:text-brand-dark transition-colors <?= $current_page == 'reseau.php' ? '!text-brand-dark' : '' ?>"><?= $t['nav_social'] ?></span>

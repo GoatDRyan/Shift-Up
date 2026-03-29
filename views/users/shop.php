@@ -1,30 +1,25 @@
 <?php
 require_once '../../includes/init.php';
 
-$stmt = $pdo->prepare("
-    SELECT u.*, d.nom as department_name 
-    FROM users u 
-    LEFT JOIN departments d ON u.department_id = d.id 
-    WHERE u.id = ?
-");
+$stmt = $pdo->prepare("SELECT u.*, d.nom as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE u.id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
-$deptName = $user['department_name'] ?? "Sans département";
-
-$pseudo = $user['pseudo'] ?? "Shifter";
+$deptName = $user['department_name'] ?? ($t['no_dept'] ?? "Sans département");
 $money = $user['points_wallet'] ?? 0;
-$company_id = $user['company_id'] ?? null;
 
-$rewards = [];
-if ($company_id) {
-    $stmt_shop = $pdo->prepare("SELECT * FROM rewards WHERE company_id = ?");
-    $stmt_shop->execute([$company_id]);
-    $rewards = $stmt_shop->fetchAll();
-}
+// 1. Récupérer les items du shop
+$stmt_shop = $pdo->prepare("SELECT * FROM rewards WHERE company_id = ? OR company_id IS NULL ORDER BY cost ASC");
+$stmt_shop->execute([$user['company_id']]);
+$rewards = $stmt_shop->fetchAll();
+
+// 2. Récupérer l'inventaire du joueur
+$stmt_inv = $pdo->prepare("SELECT ui.*, r.nom, r.image_url, r.type FROM user_inventory ui JOIN rewards r ON ui.reward_id = r.id WHERE ui.user_id = ? AND ui.is_used = 0");
+$stmt_inv->execute([$user_id]);
+$inventory = $stmt_inv->fetchAll();
 ?>
 <!DOCTYPE html>
-<html lang="<?= $lang ?? 'fr' ?>">
+<html lang="<?= $lang ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,29 +29,26 @@ if ($company_id) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="../../js/tailwind-config.js"></script>
 </head>
-<body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24">
-    <header class="bg-brand-primary text-brand-light p-4 shadow-md">
-
-        <!-- Boutons d'action -->
-        <div class="absolute right-5 top-16 flex gap-2 max-[375px]:gap-1 z-50">
-            <button class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+<body class="bg-brand-card text-brand-dark font-sans overflow-x-hidden pb-24 text-white">
+    <header class="bg-brand-primary p-4 shadow-md relative z-40">
+        <div class="absolute right-5 top-16 flex gap-2 z-50">
+            <button onclick="openNotifications()" class="w-11 h-11 bg-brand-secondary rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition">
                 <img class="w-8 h-8" src="../../img/icone/icone-notification-blanc.svg" alt="Notifications">
             </button>
-            <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
+            <button onclick="toggleMenu()" class="w-11 h-11 bg-brand-secondary rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition">
                 <img class="w-8 h-8" src="../../img/icone/icone-parametre-blanc.svg" alt="Paramètres">
             </button>
         </div>
 
-        <!-- En-tête profil -->
         <div class="relative h-[200px] top-[-35px] flex items-center justify-center -mx-4 overflow-hidden mt-2 z-10">
-            <div class="absolute left-[-10%] w-[68%] h-32 max-[375px]:h-28 max-[320px]:h-24 bg-brand-secondary skew-tile cursor-pointer flex items-center justify-end pr-8 max-[375px]:pr-4 transition-colors">
+            <div class="absolute left-[-10%] w-[68%] h-32 bg-brand-secondary skew-tile flex items-center justify-end pr-8">
                 <div class="unskew text-right flex flex-col justify-center">
-                    <h2 class="font-display text-4xl max-[375px]:text-3xl max-[320px]:text-2xl font-bold text-brand-primary leading-none mb-1"><?= htmlspecialchars($pseudo) ?></h2>
-                    <p class="text-xl max-[375px]:text-lg max-[320px]:text-base font-semibold text-brand-primary leading-none"><?= htmlspecialchars($deptName) ?></p>
+                    <h2 class="font-display text-4xl font-bold text-brand-primary leading-none mb-1"><?= htmlspecialchars($user['pseudo']) ?></h2>
+                    <p class="text-xl font-semibold text-brand-primary leading-none"><?= htmlspecialchars($deptName) ?></p>
                 </div>
             </div>
-            <div class="absolute left-0 top-40 w-[68%] bg-brand-tertiary py-2 pl-8 pr-6 flex items-center shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
-                <span class="text-xl text-brand-secondary font-bold flex items-center">
+            <div class="absolute left-0 top-40 w-[68%] bg-brand-dark py-2 pl-8 pr-6 flex items-center shadow-sm" style="clip-path: polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%);">
+                <span class="text-xl text-brand-primary font-bold flex items-center">
                     <img src="../../img/icone/mascotte-monnaie.svg" alt="Monnaie" class="w-6 h-6 mr-2">
                     <?= number_format($money, 0, '.', ' ') ?>
                 </span>
@@ -64,49 +56,76 @@ if ($company_id) {
         </div>
     </header>
 
-    <main class="px-4 max-[375px]:px-2 pt-10">
-        <div class="flex flex-col items-end absolute right-0 w-full">
-            <div class="absolute right-0 h-7 bg-brand-secondary text-brand-primary w-[65%] text-center text-[19px] shadow-sm tracking-wide" style="clip-path: polygon(8% 50%, 0 0, 100% 0, 100% 100%, 0% 100%)">
-                Boutique
-            </div>
-            <div class="absolute top-7 right-3 bg-brand-dark text-brand-primary text-[11px] py-0.5 pl-6 pr-4 w-[50%] text-center mr-6" style="clip-path: polygon(83.5% 50%, 100% 100%, 0% 100%, 14.75% 50%, 0% 0%, 100% 0%); mt-[-1px]">
-                Fin dans : <span class="text-brand-secondary">10j 14h</span>
-            </div>
+    <main class="px-4 pt-10">
+        <div class="flex gap-4 mb-8">
+            <button onclick="switchTab('shop')" id="btn-shop" class="flex-1 py-3 bg-brand-secondary text-brand-primary font-bold rounded-2xl shadow-lg transition active:scale-95">Boutique</button>
+            <button onclick="switchTab('inv')" id="btn-inv" class="flex-1 py-3 bg-brand-dark text-brand-primary font-bold rounded-2xl shadow-lg transition active:scale-95">Inventaire (<?= count($inventory) ?>)</button>
         </div>
 
-        <div class="mt-20">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-                <?php if (empty($rewards)): ?>
-                    <p class="text-center col-span-full opacity-50 mt-10">Aucun objet disponible pour le moment.</p>
-                <?php else: ?>
-                    <?php foreach ($rewards as $item): ?>
-                        <div class="bg-brand-primary rounded-3xl shadow-md p-4 flex flex-col items-center">
-                            
-                            <h3 class="text-sm font-bold text-brand-secondary mb-2 text-left w-full h-10 flex items-center">
-                                <?= htmlspecialchars($item['nom']) ?>
-                            </h3>
-                            
-                            <div class="relative mb-4 bg-brand-dark/10 p-2 rounded-3xl w-full flex justify-center">
-                                <?php if (!empty($item['image_url'])): ?>
-                                    <img src="<?= htmlspecialchars($item['image_url']) ?>" alt="Image objet" class="w-full h-full object-cover rounded-3xl">
-                                <?php else: ?>
-                                    <i class="fa-solid fa-coins text-2xl text-brand-dark relative z-10"></i>
-                                <?php endif; ?>
-                            </div>
+        <div id="section-shop" class="grid grid-cols-2 gap-4">
+            <?php foreach ($rewards as $item): ?>
+                <div class="bg-brand-primary rounded-3xl shadow-lg p-4 flex flex-col items-center">
+                    <h3 class="text-[12px] font-bold text-brand-secondary mb-3 text-center h-8 flex items-center"><?= htmlspecialchars($item['nom']) ?></h3>
+                    <div class="aspect-square w-full mb-4 bg-brand-card rounded-2xl flex items-center justify-center">
+                        <img src="<?= !empty($item['image_url']) ? $item['image_url'] : '../../img/icone/mascotte-monnaie.svg' ?>" class="w-16 h-16 object-contain">
+                    </div>
+                    <form action="buy_item.php" method="POST" class="w-full">
+                        <input type="hidden" name="reward_id" value="<?= $item['id'] ?>">
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-brand-dark text-brand-primary font-bold py-2 rounded-2xl <?= ($money < $item['cost']) ? 'opacity-50 grayscale cursor-not-allowed' : 'active:scale-95' ?>">
+                            <img class="w-4 h-4" src="../../img/icone/mascotte-monnaie.svg">
+                            <?= number_format($item['cost'], 0, '.', ' ') ?>
+                        </button>
+                    </form>
+                </div>
+            <?php endforeach; ?>
+        </div>
 
-                            <button class="w-40 flex items-center justify-center gap-2 bg-brand-dark text-brand-primary font-bold py-2 rounded-3xl hover:bg-brand-secondary hover:text-brand-dark transition-all group shadow-lg active:scale-95">
-                                <img class="w-5 h-5 group-hover:brightness-0 transition" src="../../img/icone/mascotte-monnaie.svg" alt="monnaie">
-                                <?= number_format($item['cost'], 0, '.', ' ') ?>
-                            </button>
-                            
+        <div id="section-inv" class="hidden grid grid-cols-2 gap-4">
+            <?php if (empty($inventory)): ?>
+                <p class="text-center col-span-full opacity-50 py-10 text-brand-dark font-bold">Ton inventaire est vide.</p>
+            <?php else: ?>
+                <?php foreach ($inventory as $own): ?>
+                    <div class="bg-brand-secondary rounded-3xl shadow-lg p-4 flex flex-col items-center">
+                        <h3 class="text-[12px] font-bold text-brand-primary mb-3 text-center h-8 flex items-center">
+                            <?= htmlspecialchars($own['nom']) ?>
+                        </h3>
+                        
+                        <div class="w-16 h-16 mb-4 flex items-center justify-center">
+                            <img src="<?= !empty($own['image_url']) ? $own['image_url'] : '../../img/icone/mascotte-monnaie.svg' ?>" class="max-w-full max-h-full object-contain">
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
+
+                        <form action="use_item.php" method="POST" class="w-full">
+                            <input type="hidden" name="inventory_id" value="<?= $own['id'] ?>">
+                            <button type="submit" class="w-full py-2 bg-brand-primary text-brand-secondary font-bold rounded-xl text-xs active:scale-95 transition-transform">
+                                <?= $t['btn_use'] ?? 'Utiliser' ?>
+                            </button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </main>
 
+    <script>
+        function switchTab(tab) {
+            const sShop = document.getElementById('section-shop');
+            const sInv = document.getElementById('section-inv');
+            const bShop = document.getElementById('btn-shop');
+            const bInv = document.getElementById('btn-inv');
+
+            if (tab === 'shop') {
+                sShop.classList.remove('hidden'); sInv.classList.add('hidden');
+                bShop.classList.replace('bg-brand-dark', 'bg-brand-secondary');
+                bInv.classList.replace('bg-brand-secondary', 'bg-brand-dark');
+            } else {
+                sInv.classList.remove('hidden'); sShop.classList.add('hidden');
+                bInv.classList.replace('bg-brand-dark', 'bg-brand-secondary');
+                bShop.classList.replace('bg-brand-secondary', 'bg-brand-dark');
+            }
+        }
+    </script>
     <?php include '../../includes/navbar.php'; ?>
     <?php include '../../includes/settings_menu.php'; ?>
+    <?php include '../../includes/notifications_popup.php'; ?>
 </body>
 </html>

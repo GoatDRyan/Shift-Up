@@ -22,6 +22,7 @@ function get_level_data($xp) {
         8000 => ['titre' => 'Sage',      'lvl' => 8],
         12000 => ['titre' => 'Mythique', 'lvl' => 9],
         20000 => ['titre' => 'Légende',  'lvl' => 10],
+        25000 => ['titre' => 'Immortal',  'lvl' => 11],
     ];
 
     $current_rank = $paliers[0];
@@ -36,7 +37,7 @@ function get_level_data($xp) {
         }
     }
 
-    if ($xp >= 20000) {
+    if ($xp >= 25000) {
         $percent = 100;
         $next_threshold = $xp;
     } else {

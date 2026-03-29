@@ -117,9 +117,11 @@ try {
 
     $pdo->commit();
 
-    // Redirection finale
+    // --- CORRECTION ICI : Redirection finale avec déclenchement du popup ---
     if ($is_success) {
-        header("Location: defis.php?success=1");
+        // On active la variable de session pour être sûr à 100% que le popup s'affiche
+        $_SESSION['mission_validated'] = true;
+        header("Location: defis.php?validated=1");
     } else {
         header("Location: defis.php");
     }

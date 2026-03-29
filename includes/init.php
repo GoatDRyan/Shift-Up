@@ -52,4 +52,29 @@ $xpPercent       = $levelData['pourcentage'];
 $pseudo = $user['pseudo'] ?? "Joueur";
 $money  = $user['points_wallet'] ?? 0;
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// 7. GESTION DES AUTORISATIONS (ERREUR 403)
+$request_uri = $_SERVER['REQUEST_URI'];
+$user_role = $user['role'] ?? 'shifter';
+
+// Règle A : Protection de l'espace SUPER ADMIN
+if (strpos($request_uri, '/views/superadmin/') !== false && $user_role !== 'super_admin') {
+    http_response_code(403);
+    require_once __DIR__ . '/../errors/403.php';
+    exit();
+}
+
+// Règle B : Protection de l'espace ADMIN
+if (strpos($request_uri, '/views/admin/') !== false && !in_array($user_role, ['admin', 'super_admin'])) {
+    http_response_code(403);
+    require_once __DIR__ . '/../errors/403.php';
+    exit();
+}
+
+// Règle C : Protection contre les utilisateurs bannis ou désactivés
+if (isset($user['est_actif']) && $user['est_actif'] == 0 && strpos($request_uri, 'logout.php') === false) {
+    http_response_code(403);
+    require_once __DIR__ . '/../errors/403.php';
+    exit();
+}
 ?>

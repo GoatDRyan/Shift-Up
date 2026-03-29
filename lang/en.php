@@ -143,4 +143,92 @@ return [
     'forgot_subtitle'         => "Enter your email to reset your password.",
     'btn_generate_link'       => "Generate link",
     'success_link_sent'       => "A reset link has been generated.",
+
+    'register'              => "Sign Up",
+    'reg_step1_title'       => "Sign Up - Step 1",
+    'reg_step1_desc'        => "Let's get to know each other.",
+    'firstname'             => "First Name",
+    'lastname'              => "Last Name",
+    'company_code'          => "Company Code",
+    'department'            => "Department",
+    'btn_next_step'         => "Next step",
+    'already_have_account'  => "I already have an account",
+    'err_invalid_company'   => "Invalid company code.",
+    'err_invalid_dept'      => "The selected department is invalid for this company.",
+    'reg_step2_title'       => "Sign Up - Step 2",
+    'reg_step2_desc'        => "Let's secure your account.",
+    'accept_cgu'            => "I accept the Terms and Conditions",
+    'btn_finish_register'   => "Complete registration",
+    'btn_back'              => "Back to previous step",
+    'err_invalid_email'     => "The email address format is invalid.",
+    'err_cgu'               => "You must accept the Terms and Conditions.",
+    'err_user_exists'       => "A user with this username or email already exists.",
+    'level_up_title' => "Level Up!",
+    'level_up_desc'  => "Congratulations, you just reached level",
+    'btn_amazing'    => "Amazing!",
+
+    // --- CARBON FOOTPRINT QUIZ ---
+    'quiz_title'    => "Carbon Footprint",
+    'quiz_subtitle' => "Let's evaluate your annual footprint.",
+    'quiz_societal' => "(Includes a fixed 1.5t share for public services)",
+    'btn_calculate' => "Calculate my impact",
+    
+    'q1_title' => "1. Daily commute?",
+    'q1_a1'    => "Gas/Diesel car (long trips or alone)",
+    'q1_a2'    => "Electric car or occasional driving",
+    'q1_a3'    => "Public transport / Regular carpooling",
+    'q1_a4'    => "Bike, walk, or 100% remote",
+
+    'q2_title' => "2. Air travel?",
+    'q2_a1'    => "Frequent or long-haul flights (> 5h)",
+    'q2_a2'    => "Occasional (a few flights in Europe/domestic)",
+    'q2_a3'    => "Rare (1 short round-trip flight per year)",
+    'q2_a4'    => "Never, I stay on the ground!",
+
+    'q3_title' => "3. Diet?",
+    'q3_a1'    => "Red meat very regularly",
+    'q3_a2'    => "White meat / Fish regularly",
+    'q3_a3'    => "Vegetarian (eggs, dairy)",
+    'q3_a4'    => "Vegan",
+
+    'q4_title' => "4. Type of housing?",
+    'q4_a1'    => "Old house / Oil or gas heating",
+    'q4_a2'    => "Standard apartment or house",
+    'q4_a3'    => "Highly efficient home (Heat pump, eco-built)",
+
+    'q5_title' => "5. Shopping & Digital?",
+    'q5_a1'    => "Frequent purchases (fast-fashion, new tech)",
+    'q5_a2'    => "Average and reasonable consumption",
+    'q5_a3'    => "Minimalist, 100% second-hand or refurbished",
+
+    // --- PROFILE ---
+    'no_dept'       => "No department",
+    'total_actions' => "Completed challenges",
+    'top_streak'    => "Best streak",
+    'total_score'   => "Total XP",
+    'ranking'       => "Ranking",
+    'badges'        => "Badges",
+    'ends_in' => "Ends in", 'no_items' => "No items available.",
+    'nav_inventory' => "Inventory",
+    'empty_inventory' => "Your inventory is empty.",
+    'btn_use' => "Use",
+
+    'coming_soon_title' => "Coming Soon",
+    'ops' => "Oops...",
+    'feature_not_ready' => "This feature is not available yet.",
+    'feature_work_in_progress' => "Our team (and our mascot) are working hard to bring you this update very soon!",
+    'btn_back_home' => "Back to Home",
+    
+    'notifications_title' => "Announcements",
+    'no_notifications' => "No announcements at the moment.",
+
+    // --- ERROR 404 ---
+    '404_title' => "404 - Page Not Found",
+    '404_heading' => "Page Not Found",
+    '404_desc' => "Sorry, the page you are looking for doesn't exist, has been removed, or you clicked on a broken link.",
+
+    // --- ERROR 403 ---
+    '403_title' => "403 - Access Denied",
+    '403_heading' => "Access Denied",
+    '403_desc' => "You do not have permission to access this resource. Please contact your administrator if you believe this is a mistake.",
 ];
