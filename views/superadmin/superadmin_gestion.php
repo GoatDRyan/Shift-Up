@@ -76,12 +76,11 @@ try {
 <body class="bg-white">
 
 <header class="header-bg h-16 relative">
-  <a href="superadmin_dashboard.php" class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-black/20 flex items-center justify-center">
-    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2L4 5v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V5l-8-3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-      <text x="12" y="15.3" text-anchor="middle" font-size="9" font-family="Segoe UI, Roboto, Arial, sans-serif" fill="white" style="font-weight:700">S</text>
-    </svg>
-  </a>
+   <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center">
+    <a href="superadmin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
+        <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
+    </a>
+</div>
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-8">
       <a href="super_admin_shift_manager.php" class="text-white font-bold hover:text-orange-200 transition">Shift Manager</a>
