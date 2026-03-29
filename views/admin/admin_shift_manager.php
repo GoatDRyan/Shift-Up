@@ -255,7 +255,6 @@ $firstTask = $tasks[0] ?? null;
           <?php endif; ?>
         </div>
 
-        <!-- Top Solo -->
         <div id="tab-solo" class="space-y-3 hidden">
           <?php if (!empty($rankingSolo)):
             $soloColors = ['bg-orange-100 text-[#FF4800]','bg-gray-100 text-gray-600','bg-orange-50 text-orange-400','bg-gray-50 text-gray-500','bg-gray-50 text-gray-500'];

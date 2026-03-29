@@ -122,19 +122,17 @@ try {
 
   <div class="bg-gray-50 border border-gray-100 p-8 card-radius shadow-sm">
 
-    <!-- Search bar -->
     <div class="mb-10">
       <div class="relative max-w-2xl mx-auto">
         <label for="searchInput" class="absolute left-5 top-1/2 -translate-y-1/2 text-[#FF4800]">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
         </label>
-        <input id="searchInput" placeholder="Rechercher par pseudo ou email (dès la 1ère lettre)..." autocomplete="off"
+        <input id="searchInput" placeholder="Rechercher par pseudo ou email " autocomplete="off"
                class="w-full bg-white border-2 border-[#FF4800] rounded-full h-14 pl-14 pr-14 text-gray-800 focus:ring-4 focus:ring-[#FF4800]/10 focus:outline-none transition-all" />
         <div id="searchSpinner" class="spinner absolute right-5 top-1/2 -translate-y-1/2"></div>
       </div>
     </div>
 
-    <!-- Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div class="overflow-x-auto">
         <div class="min-w-[800px]">
