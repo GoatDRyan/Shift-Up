@@ -1,0 +1,14 @@
+ErrorDocument 403 http://localhost/cours/Shift-Up/errors/403.php
+ErrorDocument 404 http://localhost/cours/Shift-Up/errors/404.php
+ErrorDocument 500 http://localhost/cours/Shift-Up/errors/500.php
+
+
+
+
+RewriteEngine on 
+RewriteRule ^index.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?/$1 [L]
+
+

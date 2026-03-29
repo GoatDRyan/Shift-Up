@@ -1,61 +1,78 @@
 /* --- THEME CLAIR --- */
 :root {
-    --brand-primary: #ffffff;
-    --brand-secondary: #FF4800;
-    --brand-dark: #000000;
-    --brand-card: #f9fafb;
-    --brand-border: #009378;
-    
-    --brand-accent: #f97316;
-    --brand-accentdark: #ea580c;
-    --brand-success: #22c55e;
+  --brand-primary: #ffffff;
+  --brand-secondary: #ff4800;
+  --brand-dark: #000000;
+  --brand-card: #f9fafb;
+  --brand-border: #009378;
+
+  --brand-accent: #f97316;
+  --brand-accentdark: #ea580c;
+  --brand-success: #22c55e;
 }
 
 /* --- THEME SOMBRE --- */
 .dark {
-    --brand-primary: #121212;
-    --brand-secondary: #3f3f3f;
-    --brand-tertiary: #a0a0a0;
-    --brand-dark: #ffffff;
-    --brand-card: #1e1e1e;
-    --brand-border: #2e2e2e;
-    
-    --brand-accent: #f97316;
-    --brand-accentdark: #ea580c;
-    --brand-success: #22c55e;
+  --brand-primary: #121212;
+  --brand-secondary: #3f3f3f;
+  --brand-tertiary: #a0a0a0;
+  --brand-dark: #ffffff;
+  --brand-card: #1e1e1e;
+  --brand-border: #2e2e2e;
+
+  --brand-accent: #f97316;
+  --brand-accentdark: #ea580c;
+  --brand-success: #22c55e;
 }
 
-@font-face { 
-    font-family: 'ShiftTitle'; 
-    src: url('../fonts/Stacked-Strong.woff2') format('woff2');
-    font-display: swap; 
+@font-face {
+  font-family: "ShiftTitle";
+  src: url("../fonts/Stacked-Strong.woff2") format("woff2");
+  font-display: swap;
 }
 
-@font-face { 
-    font-family: 'ShiftBody'; 
-    src: url('../fonts/Bahnschrift.woff2') format('woff2');
-    font-display: swap; 
+@font-face {
+  font-family: "ShiftBody";
+  src: url("../fonts/Bahnschrift.woff2") format("woff2");
+  font-display: swap;
 }
 
-.skew-tile { 
-    transform: skewX(-20deg); 
+.skew-tile {
+  transform: skewX(-20deg);
 }
 
-.unskew { 
-    transform: skewX(20deg); 
+.unskew {
+  transform: skewX(20deg);
 }
 
-.fade-in { 
-    animation: fadeIn 0.3s ease-in-out; 
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-@keyframes fadeIn { 
-    from { 
-        opacity: 0; 
-        transform: translateY(10px); 
-    } 
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    } 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badge-slider {
+  scroll-behavior: smooth;
+}
+
+.badge-card {
+  transform: translateY(20px) scale(0.92);
+  opacity: 0.7;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.badge-card.active {
+  transform: translateY(0) scale(1);
+  opacity: 1;
 }
