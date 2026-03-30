@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once '../../config/db_connect.php';
+require_once '../../includes/init.php';
 
 $companyId = (int)($_SESSION['company_id'] ?? 1);
 
@@ -49,35 +48,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
             exit;
         }
 
+        // ========================================================
+        // SÉCURITÉ : VÉRIFICATION D'APPARTENANCE À L'ENTREPRISE
+        // ========================================================
         if ($action === 'toggle') {
-            $stmt = $pdo->prepare('SELECT COALESCE(is_active,1) FROM challenges WHERE id = ? LIMIT 1');
-            $stmt->execute([$id]);
-            $current = (int)($stmt->fetchColumn() ?: 1);
+            $stmt = $pdo->prepare('SELECT COALESCE(is_active,1) FROM challenges WHERE id = ? AND company_id = ? LIMIT 1');
+            $stmt->execute([$id, $companyId]);
+            $current = $stmt->fetchColumn();
+            
+            if ($current === false) {
+                echo json_encode(['success' => false, 'error' => 'Défi introuvable ou non autorisé.']);
+                exit;
+            }
+
             $next = $current ? 0 : 1;
-            $stmt = $pdo->prepare('UPDATE challenges SET is_active = ? WHERE id = ?');
-            $stmt->execute([$next, $id]);
+            $stmtUpdate = $pdo->prepare('UPDATE challenges SET is_active = ? WHERE id = ? AND company_id = ?');
+            $stmtUpdate->execute([$next, $id, $companyId]);
+            
             echo json_encode(['success' => true, 'action' => $next ? 'enabled' : 'disabled']);
             exit;
         }
 
         if ($action === 'delete') {
-            $stmt = $pdo->prepare('DELETE FROM challenges WHERE id = ?');
-            $stmt->execute([$id]);
+            $stmt = $pdo->prepare('DELETE FROM challenges WHERE id = ? AND company_id = ?');
+            $stmt->execute([$id, $companyId]);
+            
+            if ($stmt->rowCount() === 0) {
+                 echo json_encode(['success' => false, 'error' => 'Impossible de supprimer ce défi.']);
+                 exit;
+            }
+
             echo json_encode(['success' => true]);
             exit;
         }
 
         if ($action === 'create') {
-            $titreFr   = trim((string)($_POST['titre_fr'] ?? ''));
-            $titreEn   = trim((string)($_POST['titre_en'] ?? ''));
-            $descrFr   = trim((string)($_POST['descr_fr'] ?? ''));
-            $descrEn   = trim((string)($_POST['descr_en'] ?? ''));
+            $titreFr    = trim((string)($_POST['titre_fr'] ?? ''));
+            $titreEn    = trim((string)($_POST['titre_en'] ?? ''));
+            $descrFr    = trim((string)($_POST['descr_fr'] ?? ''));
+            $descrEn    = trim((string)($_POST['descr_en'] ?? ''));
             $difficulty = trim((string)($_POST['difficulty'] ?? 'facile'));
-            $xp        = (int)($_POST['xp_gain'] ?? 10);
-            $co2       = (float)($_POST['co2_kg'] ?? 0);
-            $domaine   = trim((string)($_POST['domaine'] ?? 'ecologique'));
-            $categorie = trim((string)($_POST['categorie'] ?? 'Général'));
-            $duration  = (int)($_POST['duration_days'] ?? 1);
+            $xp         = (int)($_POST['xp_gain'] ?? 10);
+            $co2        = (float)($_POST['co2_kg'] ?? 0);
+            $domaine    = trim((string)($_POST['domaine'] ?? 'ecologique'));
+            $categorie  = trim((string)($_POST['categorie'] ?? 'Général'));
+            $duration   = (int)($_POST['duration_days'] ?? 1);
             $maxActions = (int)($_POST['max_actions_day'] ?? 1);
 
             if ($titreFr === '') {
@@ -105,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
     exit;
 }
 
+// --- RÉCUPÉRATION DES DONNÉES ---
 $types = []; $categories = []; $difficulties = [];
 $rankingDept = []; $rankingSolo = []; $tasks = [];
 $SHOW_LIMIT = 6; 
@@ -117,6 +133,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
     } catch (Throwable $e) {}
 
     try {
+        // Classement des départements de CETTE entreprise
         $stmt = $pdo->prepare(
             'SELECT d.nom, SUM(COALESCE(u.points_rank, u.points_wallet, 0)) AS total_points
              FROM departments d
@@ -131,15 +148,17 @@ if (isset($pdo) && $pdo instanceof PDO) {
     } catch (Throwable $e) { $rankingDept = []; }
 
     try {
+        // CORRECTION ICI : Classement Solo filtré par l'entreprise (WHERE u.company_id = ?)
         $stmt = $pdo->prepare(
             'SELECT u.id, u.pseudo, COUNT(ua.id) AS actions
              FROM users u
              LEFT JOIN user_actions ua ON ua.user_id = u.id
+             WHERE u.company_id = ?
              GROUP BY u.id
              ORDER BY actions DESC
              LIMIT 5'
         );
-        $stmt->execute();
+        $stmt->execute([$companyId]);
         $rankingSolo = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Throwable $e) { $rankingSolo = []; }
 
@@ -166,6 +185,7 @@ $firstTask = $tasks[0] ?? null;
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Shift Manager</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { background:#f9fafb; color:#111; font-family: 'Inter', system-ui, sans-serif; }
     .card-radius  { border-radius:16px; }
@@ -183,10 +203,10 @@ $firstTask = $tasks[0] ?? null;
 <body class="min-h-screen">
 
 <header class="bg-[#FF4800] h-16 sticky top-0 z-50 shadow-md">
-  <div class="absolute left-0 top-0 bottom-0 w-20 md:w-64 bg-black/10 flex items-center justify-center">
-    <a href="admin_dashboard.php" aria-label="Accueil" class="flex items-center justify-center">
-      <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-9 h-9 object-contain">
-    </a>
+  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-white flex items-center justify-center">
+      <a href="admin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
+          <img src="../../img/logo/logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
+      </a>
   </div>
   <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
     <nav class="hidden md:flex items-center gap-10 text-[15px]">
@@ -369,7 +389,9 @@ $firstTask = $tasks[0] ?? null;
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <input id="modal_title"    class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Titre FR *" />
       <input id="modal_title_en" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Titre EN" />
-      <textarea id="modal_descr_fr" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl md:col-span-2 outline-none focus:border-orange-brand transition" rows="3" placeholder="Description FR"></textarea>
+      
+      <textarea id="modal_descr_fr" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl md:col-span-2 outline-none focus:border-orange-brand transition" rows="2" placeholder="Description FR"></textarea>
+      <textarea id="modal_descr_en" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl md:col-span-2 outline-none focus:border-orange-brand transition" rows="2" placeholder="Description EN"></textarea>
 
       <select id="modal_difficulty" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition">
         <?php if (!empty($difficulties)): foreach ($difficulties as $d): ?>
@@ -382,6 +404,9 @@ $firstTask = $tasks[0] ?? null;
 
       <input id="modal_xp"    type="number" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="XP" />
       <input id="modal_score" type="number" step="0.01" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Score CO₂ (kg)" />
+
+      <input id="modal_duration" type="number" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Durée (jours)" value="1" />
+      <input id="modal_max_actions" type="number" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition" placeholder="Actions Max / jour" value="1" />
 
       <select id="modal_type" class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl outline-none focus:border-orange-brand transition">
         <?php if (!empty($types)): foreach ($types as $t): ?><option><?php echo h($t); ?></option><?php endforeach;
@@ -567,9 +592,12 @@ document.getElementById('createBtn').addEventListener('click', async () => {
   form.append('titre_fr',   titre);
   form.append('titre_en',   document.getElementById('modal_title_en').value.trim());
   form.append('descr_fr',   document.getElementById('modal_descr_fr').value.trim());
+  form.append('descr_en',   document.getElementById('modal_descr_en').value.trim());
   form.append('difficulty', document.getElementById('modal_difficulty').value);
   form.append('xp_gain',    document.getElementById('modal_xp').value);
   form.append('co2_kg',     document.getElementById('modal_score').value);
+  form.append('duration_days', document.getElementById('modal_duration').value);
+  form.append('max_actions_day', document.getElementById('modal_max_actions').value);
   form.append('domaine',    document.getElementById('modal_type').value);
   form.append('categorie',  document.getElementById('modal_category').value);
   const res = await fetch(location.href, { method:'POST', body:form });

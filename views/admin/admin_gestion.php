@@ -1,25 +1,72 @@
 <?php
-session_start();
-require_once '../../config/db_connect.php';
+// 1. SÉCURITÉ & CONNEXION
+require_once '../../includes/init.php';
 
+$companyId = (int)$user['company_id'];
+
+// ==========================================
+// EXPORT CSV SÉCURISÉ
+// ==========================================
 if (isset($_GET['export']) && $_GET['export'] == '1' && !isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     try {
-        $stmt = $pdo->prepare("SELECT u.id, u.pseudo, u.email, u.last_activity, u.points_wallet, u.points_rank, d.nom AS department
+        $stmt = $pdo->prepare("SELECT u.pseudo, u.email, u.last_activity, u.points_wallet, u.points_rank, d.nom AS department
                                FROM users u
                                LEFT JOIN departments d ON u.department_id = d.id
-                               ORDER BY u.id ASC");
-        $stmt->execute();
+                               WHERE u.company_id = ?
+                               ORDER BY u.pseudo ASC");
+        $stmt->execute([$companyId]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=users_export.csv');
+        header('Content-Disposition: attachment; filename=employes_export_'.date('Ymd').'.csv');
         $out = fopen('php://output', 'w');
-        fputcsv($out, ['id','pseudo','email','department','last_activity','points_wallet','points_rank']);
+        
+        fputs($out, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+        fputcsv($out, ['Pseudo', 'Email', 'Département', 'Dernière Connexion', 'Points', 'XP Global']);
+        
         foreach ($rows as $r) {
-            fputcsv($out, [$r['id'],$r['pseudo'],$r['email'],$r['department'],$r['last_activity'],$r['points_wallet'],$r['points_rank']]);
+            fputcsv($out, [$r['pseudo'], $r['email'], $r['department'], $r['last_activity'], $r['points_wallet'], $r['points_rank']]);
         }
         fclose($out);
         exit;
     } catch (Exception $e) {}
+}
+
+if (isset($_POST['ajax_action'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    $action = $_POST['ajax_action'];
+    $targetId = (int)($_POST['user_id'] ?? 0);
+
+    if ($targetId > 0) {
+        $check = $pdo->prepare("SELECT id, est_actif FROM users WHERE id = ? AND company_id = ?");
+        $check->execute([$targetId, $companyId]);
+        $targetUser = $check->fetch();
+
+        if (!$targetUser) {
+            echo json_encode(['success' => false, 'error' => 'Utilisateur non trouvé ou non autorisé.']);
+            exit;
+        }
+
+        if ($targetId === (int)$user['id']) {
+            echo json_encode(['success' => false, 'error' => 'Vous ne pouvez pas agir sur votre propre compte.']);
+            exit;
+        }
+    }
+
+    if ($action === 'toggle_status') {
+        $nextStatus = $targetUser['est_actif'] ? 0 : 1;
+        $stmt = $pdo->prepare("UPDATE users SET est_actif = ? WHERE id = ?");
+        $stmt->execute([$nextStatus, $targetId]);
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    if ($action === 'delete') {
+        $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+        $stmt->execute([$targetId]);
+        echo json_encode(['success' => true]);
+        exit;
+    }
 }
 
 if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
@@ -31,42 +78,47 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
                 "SELECT u.id, u.pseudo, u.email, u.last_activity, u.points_wallet, u.points_rank, u.est_actif, d.nom AS department
                  FROM users u
                  LEFT JOIN departments d ON u.department_id = d.id
-                 WHERE u.pseudo LIKE :q OR u.email LIKE :q
+                 WHERE u.company_id = :cid AND (u.pseudo LIKE :q OR u.email LIKE :q)
                  ORDER BY u.pseudo ASC
                  LIMIT 200"
             );
             $like = (mb_strlen($q) <= 2) ? $q . '%' : '%' . $q . '%';
-            $stmt->execute([':q' => $like]);
+            $stmt->execute([':cid' => $companyId, ':q' => $like]);
         } else {
             $stmt = $pdo->prepare(
                 "SELECT u.id, u.pseudo, u.email, u.last_activity, u.points_wallet, u.points_rank, u.est_actif, d.nom AS department
                  FROM users u
                  LEFT JOIN departments d ON u.department_id = d.id
-                 ORDER BY u.id ASC
+                 WHERE u.company_id = :cid
+                 ORDER BY u.pseudo ASC
                  LIMIT 200"
             );
-            $stmt->execute();
+            $stmt->execute([':cid' => $companyId]);
         }
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode(['success' => true, 'users' => $users]);
+        echo json_encode(['success' => true, 'users' => $users, 'my_id' => $user['id']]);
     } catch (Exception $e) {
         echo json_encode(['success' => false, 'users' => []]);
     }
     exit;
 }
 
+// ==========================================
+// CHARGEMENT INITIAL DE LA PAGE
+// ==========================================
 try {
     $stmt = $pdo->prepare(
         "SELECT u.id, u.pseudo, u.email, u.last_activity, u.points_wallet, u.points_rank, u.est_actif, d.nom AS department
          FROM users u
          LEFT JOIN departments d ON u.department_id = d.id
-         ORDER BY u.id ASC
+         WHERE u.company_id = ?
+         ORDER BY u.pseudo ASC
          LIMIT 200"
     );
-    $stmt->execute();
-    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute([$companyId]);
+    $usersList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    $users = [];
+    $usersList = [];
 }
 ?>
 <!doctype html>
@@ -77,12 +129,11 @@ try {
   <title>Admin - Gestion utilisateurs</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root { --brand-orange: #FF4800; }
+    body { background:#f9fafb; font-family: 'Inter', sans-serif; }
     .card-radius { border-radius: 16px; }
-    .btn-pill { border-radius: 999px; padding: 0.6rem 1.2rem; transition: all 0.3s; }
-    .btn-pill:hover { opacity: 0.9; transform: translateY(-1px); }
-    .action-pill { padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em; }
+    .soft-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #FF4800; border-radius: 10px; }
@@ -91,74 +142,65 @@ try {
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
+<body class="min-h-screen text-gray-900">
 
-<body class="bg-white font-sans antialiased">
-
-<header class="bg-[#FF4800] h-16 relative shadow-md">
-  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-black/10 flex items-center justify-center">
-    <a href="admin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
-        <img src="../../img/icone/shiftup-logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
-    </a>
-</div>
-  <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6">
-    <nav class="hidden md:flex items-center gap-10">
-      <a href="admin_shift_manager.php" class="text-white font-semibold hover:opacity-80 transition-opacity">Shift Manager</a>
-      <a href="admin_gestion.php" class="text-white font-semibold hover:opacity-80 transition-opacity border-b-2 border-white/30">Gestion</a>
-      <a href="admin_profile.php" class="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center hover:bg-white/10 transition-all">
-        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M6 20c0-3 4-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<header class="bg-[#FF4800] h-16 sticky top-0 z-50 shadow-md">
+  <div class="absolute left-0 top-0 bottom-0 w-24 md:w-72 bg-white flex items-center justify-center">
+      <a href="admin_dashboard.php" aria-label="Accueil" class="w-16 h-16 flex items-center justify-center">
+          <img src="../../img/logo/logo.png" alt="ShiftUp Logo" class="w-14 h-14 object-contain">
       </a>
+  </div>
+  <div class="max-w-screen-2xl mx-auto h-full flex items-center justify-end pl-20 md:pl-64 pr-6 text-white font-bold text-sm">
+    <nav class="hidden md:flex items-center gap-10">
+      <a href="admin_dashboard.php" class="opacity-80 hover:opacity-100 transition">Dashboard</a>
+      <a href="admin_shift_manager.php" class="opacity-80 hover:opacity-100 transition">Shift manager</a>
+      <a href="admin_gestion.php" class="border-b-2 border-white pb-1">Gestion</a>
+      <a href="admin_profile.php" class="w-10 h-10 rounded-full border-2 border-white/50 flex items-center justify-center hover:bg-white/10 transition"><i class="fa-solid fa-user"></i></a>
     </nav>
   </div>
 </header>
 
-<main class="max-w-screen-2xl mx-auto pl-20 md:pl-64 pr-6 py-10">
-  <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
-    <h1 class="text-4xl font-bold text-gray-900">Gestion <span class="text-[#FF4800]">Utilisateurs</span></h1>
-    <a id="exportBtn" href="?export=1" class="inline-flex items-center btn-pill bg-[#FF4800] text-white shadow-lg hover:shadow-[#FF4800]/30 font-medium">
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 9l-4-4m0 0L8 9m4-4v12"/></svg>
-      Exporter en CSV
+<main class="max-w-screen-2xl mx-auto px-4 md:px-8 py-8">
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <h1 class="text-4xl font-bold text-gray-800 tracking-tight">Gestion <span class="text-[#FF4800]">Utilisateurs</span></h1>
+    <a id="exportBtn" href="?export=1" class="inline-flex items-center gap-2 bg-[#FF4800] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-orange-200 transition active:scale-95">
+      <i class="fa-solid fa-file-csv"></i> Exporter en CSV
     </a>
   </div>
 
-  <div class="bg-gray-50 border border-gray-100 p-8 card-radius shadow-sm">
-
-    <div class="mb-10">
-      <div class="relative max-w-2xl mx-auto">
-        <label for="searchInput" class="absolute left-5 top-1/2 -translate-y-1/2 text-[#FF4800]">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-        </label>
-        <input id="searchInput" placeholder="Rechercher par pseudo ou email " autocomplete="off"
-               class="w-full bg-white border-2 border-[#FF4800] rounded-full h-14 pl-14 pr-14 text-gray-800 focus:ring-4 focus:ring-[#FF4800]/10 focus:outline-none transition-all" />
-        <div id="searchSpinner" class="spinner absolute right-5 top-1/2 -translate-y-1/2"></div>
-      </div>
+  <div class="bg-white card-radius p-8 soft-shadow border border-gray-100">
+    <div class="mb-10 max-w-2xl mx-auto relative">
+      <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-[#FF4800]"></i>
+      <input id="searchInput" placeholder="Rechercher un employé par pseudo ou email..." autocomplete="off" class="w-full bg-gray-50 border-2 border-[#FF4800]/50 focus:border-[#FF4800] rounded-full px-14 py-4 font-bold text-gray-800 outline-none transition shadow-sm" />
+      <div id="searchSpinner" class="spinner absolute right-5 top-1/2 -translate-y-1/2"></div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div class="overflow-x-auto">
-        <div class="min-w-[800px]">
-          <div class="hidden md:grid grid-cols-7 gap-4 text-xs font-bold uppercase tracking-wider text-gray-400 px-6 py-4 border-b bg-gray-50/50">
-            <div class="col-span-1">ID</div>
-            <div class="col-span-2">Utilisateur</div>
-            <div class="col-span-1">Département</div>
-            <div class="col-span-1 text-center">Connexion</div>
-            <div class="col-span-1">Progression XP</div>
-            <div class="col-span-1 text-center">Actions</div>
-          </div>
-          <div id="usersList">
-            <?php $this_maxxp = 3000; ?>
-            <?php if (count($users) === 0): ?>
-              <div class="px-4 py-16 text-center text-gray-400 font-medium">Aucun utilisateur trouvé dans la base.</div>
-            <?php else: ?>
-              <?php foreach ($users as $u):
-                $last   = $u['last_activity'] ? date('d/m/Y', strtotime($u['last_activity'])) : 'Jamais';
-                $dept   = $u['department'] ?: 'Non assigné';
-                $points = (int)$u['points_wallet'];
-                $pct    = min(100, $this_maxxp ? intval($points / $this_maxxp * 100) : 0);
-              ?>
-              <?php echo buildUserRow($u, $last, $dept, $points, $pct, $this_maxxp); ?>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </div>
+    <div class="overflow-x-auto rounded-2xl border border-gray-100">
+      <div class="min-w-[800px]">
+        <div class="grid grid-cols-7 gap-4 text-xs font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-6 py-4 border-b border-gray-100">
+          <div class="col-span-2">Employé</div>
+          <div class="col-span-1">Département</div>
+          <div class="col-span-1 text-center">Dernière Action</div>
+          <div class="col-span-2">Progression XP</div>
+          <div class="col-span-1 text-center">Actions</div>
+        </div>
+        
+        <div id="usersListContainer" class="divide-y divide-gray-50">
+          <?php $this_maxxp = 3000; ?>
+          <?php if (count($usersList) === 0): ?>
+            <div class="px-4 py-16 text-center text-gray-400 font-medium">Aucun utilisateur trouvé.</div>
+          <?php else: ?>
+            <?php foreach ($usersList as $u): 
+              $last   = $u['last_activity'] ? date('d/m/Y', strtotime($u['last_activity'])) : 'Jamais';
+              $dept   = $u['department'] ?: 'Non assigné';
+              $points = (int)$u['points_wallet'];
+              $pct    = min(100, $this_maxxp ? intval($points / $this_maxxp * 100) : 0);
+              $isActive = (int)$u['est_actif'] === 1;
+              $isMe = ((int)$u['id'] === (int)$user['id']); // Permet de bloquer l'action sur soi-même
+            ?>
+            <?= buildUserRow($u, $last, $dept, $points, $pct, $this_maxxp, $isActive, $isMe); ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -166,37 +208,54 @@ try {
 </main>
 
 <?php
-function buildUserRow(array $u, string $last, string $dept, int $points, int $pct, int $maxxp): string {
+function buildUserRow(array $u, string $last, string $dept, int $points, int $pct, int $maxxp, bool $isActive, bool $isMe): string {
     $id   = (int)$u['id'];
     $ds_pseudo = htmlspecialchars($u['pseudo'] ?: 'Anonyme', ENT_QUOTES);
     $ds_email  = htmlspecialchars($u['email']  ?? '', ENT_QUOTES);
     $ds_dept   = htmlspecialchars($dept, ENT_QUOTES);
+    
+    $banText = $isActive ? 'Désactiver' : 'Réactiver';
+    $banColor = $isActive ? 'text-[#FF4800] bg-orange-50 border-orange-100 hover:bg-[#FF4800] hover:text-white' : 'text-green-600 bg-green-50 border-green-100 hover:bg-green-600 hover:text-white';
+
+    $actionsHtml = '';
+    if (!$isMe) {
+        $actionsHtml = <<<HTML
+        <div class="flex gap-2 w-full">
+            <button onclick="toggleUser({$id})" class="w-full px-2 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-all {$banColor}">
+               {$banText}
+            </button>
+            <button onclick="deleteUser({$id})" class="px-3 py-1.5 rounded-lg border border-red-100 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all text-[10px]" title="Supprimer">
+               <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+HTML;
+    } else {
+        $actionsHtml = '<span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">C\'est vous</span>';
+    }
+
     return <<<HTML
-    <div class="grid grid-cols-1 md:grid-cols-7 items-center py-5 px-6 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-      <div class="col-span-1 text-sm font-mono text-gray-400">#{$id}</div>
+    <div class="grid grid-cols-7 gap-4 items-center py-4 px-6 hover:bg-orange-50/30 transition-colors group">
       <div class="col-span-2">
-        <div class="text-sm font-bold text-gray-900">{$ds_pseudo}</div>
-        <div class="text-xs text-gray-500">{$ds_email}</div>
+        <div class="text-sm font-bold text-gray-900 truncate">
+            {$ds_pseudo} 
+        </div>
+        <div class="text-xs text-gray-400 truncate">{$ds_email}</div>
       </div>
       <div class="col-span-1">
-        <span class="px-2 py-1 text-[10px] font-bold bg-gray-100 text-gray-600 rounded uppercase">{$ds_dept}</span>
+        <span class="px-3 py-1.5 text-[10px] font-bold bg-gray-100 text-gray-600 rounded-lg uppercase tracking-widest truncate max-w-full inline-block">{$ds_dept}</span>
       </div>
-      <div class="col-span-1 text-center text-xs text-gray-600 font-medium">{$last}</div>
-      <div class="col-span-1 pr-4">
+      <div class="col-span-1 text-center text-xs text-gray-500 font-bold">{$last}</div>
+      <div class="col-span-2 pr-6">
         <div class="flex justify-between items-center mb-1.5">
-          <span class="text-[10px] font-bold text-gray-500">{$points} / {$maxxp}</span>
-          <span class="text-[10px] font-bold text-[#FF4800]">{$pct}%</span>
+          <span class="text-[10px] font-bold text-gray-400">{$points} XP</span>
+          <span class="text-[10px] font-black text-[#FF4800]">{$pct}%</span>
         </div>
-        <div class="w-full bg-gray-100 h-1.5 rounded-full">
-          <div class="h-1.5 rounded-full transition-all duration-500" style="width:{$pct}%;background:#FF4800;"></div>
+        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all duration-1000 ease-out" style="width:{$pct}%;background:#FF4800;"></div>
         </div>
       </div>
-      <div class="col-span-1 flex items-center justify-center gap-2">
-        <a href="admin_ban.php?id={$id}" class="action-pill rounded-lg border-2 border-orange-100 bg-orange-50 text-[#FF4800] hover:bg-[#FF4800] hover:text-white transition-all flex-1 text-center py-2">Bannir</a>
-        <form method="post" action="admin_delete.php" onsubmit="return confirm('Supprimer définitivement l\\'utilisateur #{$id} ?');" class="flex-1">
-          <input type="hidden" name="id" value="{$id}">
-          <button type="submit" class="action-pill rounded-lg bg-gray-800 text-white border-2 border-gray-800 hover:bg-black transition-all w-full py-2">Suppr.</button>
-        </form>
+      <div class="col-span-1 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+        {$actionsHtml}
       </div>
     </div>
 HTML;
@@ -204,18 +263,50 @@ HTML;
 ?>
 
 <script>
+const MAXXP = 3000;
+
+// Actions AJAX
+async function toggleUser(id) {
+    const fd = new FormData();
+    fd.append('ajax_action', 'toggle_status');
+    fd.append('user_id', id);
+    const res = await fetch(location.href, { method: 'POST', body: fd });
+    const data = await res.json();
+    if(data.success) {
+        location.reload();
+    } else {
+        Swal.fire('Erreur', data.error, 'error');
+    }
+}
+
+async function deleteUser(id) {
+    if(!confirm("Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ? L'historique de ses actions carbone sera perdu.")) return;
+    
+    const fd = new FormData();
+    fd.append('ajax_action', 'delete');
+    fd.append('user_id', id);
+    const res = await fetch(location.href, { method: 'POST', body: fd });
+    const data = await res.json();
+    if(data.success) {
+        location.reload();
+    } else {
+        Swal.fire('Erreur', data.error, 'error');
+    }
+}
+
+// Recherche AJAX Live
 (function(){
   const searchInput = document.getElementById('searchInput');
-  const usersList   = document.getElementById('usersList');
+  const usersList   = document.getElementById('usersListContainer');
   const spinner     = document.getElementById('searchSpinner');
-  const MAXXP       = 3000;
   let debounce;
 
-  function renderUsers(users) {
+  function renderUsers(users, myId) {
     if (!users || users.length === 0) {
-      usersList.innerHTML = '<div class="px-4 py-16 text-center text-gray-400 font-medium">Aucun utilisateur trouvé.</div>';
+      usersList.innerHTML = '<div class="px-4 py-16 text-center text-gray-400 font-bold uppercase tracking-widest text-sm">Aucun employé trouvé.</div>';
       return;
     }
+    
     usersList.innerHTML = users.map(u => {
       const id      = u.id;
       const pseudo  = escHtml(u.pseudo || 'Anonyme');
@@ -224,33 +315,49 @@ HTML;
       const last    = u.last_activity ? formatDate(u.last_activity) : 'Jamais';
       const points  = parseInt(u.points_wallet) || 0;
       const pct     = Math.min(100, MAXXP ? Math.floor(points / MAXXP * 100) : 0);
+      const isActive = parseInt(u.est_actif) === 1;
+      const isMe    = (id === parseInt(myId));
+      
+      const banText = isActive ? 'Désactiver' : 'Réactiver';
+      const banColor = isActive ? 'text-[#FF4800] bg-orange-50 border-orange-100 hover:bg-[#FF4800] hover:text-white' : 'text-green-600 bg-green-50 border-green-100 hover:bg-green-600 hover:text-white';
+      const statusLabel = !isActive ? '<span class="text-[10px] text-red-500 ml-2 font-black uppercase tracking-widest">(Désactivé)</span>' : '';
+
+      let actionsHtml = '';
+      if(!isMe) {
+          actionsHtml = `
+          <div class="flex gap-2 w-full">
+            <button onclick="toggleUser(${id})" class="w-full px-2 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-all ${banColor}">
+               ${banText}
+            </button>
+            <button onclick="deleteUser(${id})" class="px-3 py-1.5 rounded-lg border border-red-100 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all text-[10px]" title="Supprimer">
+               <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>`;
+      } else {
+          actionsHtml = `<span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">C'est vous</span>`;
+      }
 
       return `
-      <div class="grid grid-cols-1 md:grid-cols-7 items-center py-5 px-6 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-        <div class="col-span-1 text-sm font-mono text-gray-400">#${id}</div>
+      <div class="grid grid-cols-7 gap-4 items-center py-4 px-6 hover:bg-orange-50/30 transition-colors group">
         <div class="col-span-2">
-          <div class="text-sm font-bold text-gray-900">${pseudo}</div>
-          <div class="text-xs text-gray-500">${email}</div>
+          <div class="text-sm font-bold text-gray-900 truncate">${pseudo} ${statusLabel}</div>
+          <div class="text-xs text-gray-400 truncate">${email}</div>
         </div>
         <div class="col-span-1">
-          <span class="px-2 py-1 text-[10px] font-bold bg-gray-100 text-gray-600 rounded uppercase">${dept}</span>
+          <span class="px-3 py-1.5 text-[10px] font-bold bg-gray-100 text-gray-600 rounded-lg uppercase tracking-widest truncate max-w-full inline-block">${dept}</span>
         </div>
-        <div class="col-span-1 text-center text-xs text-gray-600 font-medium">${last}</div>
-        <div class="col-span-1 pr-4">
+        <div class="col-span-1 text-center text-xs text-gray-500 font-bold">${last}</div>
+        <div class="col-span-2 pr-6">
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-[10px] font-bold text-gray-500">${points} / ${MAXXP}</span>
-            <span class="text-[10px] font-bold text-[#FF4800]">${pct}%</span>
+            <span class="text-[10px] font-bold text-gray-400">${points} XP</span>
+            <span class="text-[10px] font-black text-[#FF4800]">${pct}%</span>
           </div>
-          <div class="w-full bg-gray-100 h-1.5 rounded-full">
-            <div class="h-1.5 rounded-full" style="width:${pct}%;background:#FF4800;"></div>
+          <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500" style="width:${pct}%;background:#FF4800;"></div>
           </div>
         </div>
-        <div class="col-span-1 flex items-center justify-center gap-2">
-          <a href="admin_ban.php?id=${id}" class="action-pill rounded-lg border-2 border-orange-100 bg-orange-50 text-[#FF4800] hover:bg-[#FF4800] hover:text-white transition-all flex-1 text-center py-2">Bannir</a>
-          <form method="post" action="admin_delete.php" onsubmit="return confirm('Supprimer définitivement l\\'utilisateur #${id} ?');" class="flex-1">
-            <input type="hidden" name="id" value="${id}">
-            <button type="submit" class="action-pill rounded-lg bg-gray-800 text-white border-2 border-gray-800 hover:bg-black transition-all w-full py-2">Suppr.</button>
-          </form>
+        <div class="col-span-1 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+          ${actionsHtml}
         </div>
       </div>`;
     }).join('');
@@ -269,7 +376,7 @@ HTML;
   searchInput.addEventListener('input', function() {
     clearTimeout(debounce);
     const q = this.value.trim();
-    debounce = setTimeout(() => fetchUsers(q), 200);  
+    debounce = setTimeout(() => fetchUsers(q), 300);  
   });
 
   function fetchUsers(q) {
@@ -279,7 +386,7 @@ HTML;
       .then(r => r.json())
       .then(data => {
         spinner.style.display = 'none';
-        renderUsers(data.users || []);
+        renderUsers(data.users || [], data.my_id);
       })
       .catch(() => { spinner.style.display = 'none'; });
   }
@@ -289,17 +396,17 @@ HTML;
     exportBtn.addEventListener('click', function(e) {
       e.preventDefault();
       const url = this.getAttribute('href');
-      Swal.fire({ title: 'Export en cours', html: 'Veuillez patienter...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+      Swal.fire({ title: 'Export en cours', html: 'Création du fichier CSV...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
       fetch(url, { method: 'GET', credentials: 'same-origin' })
         .then(r => { if (!r.ok) throw new Error(); return r.blob().then(blob => ({ blob })); })
         .then(({ blob }) => {
           const a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
-          a.download = 'users_export.csv';
+          a.download = 'employes_export.csv';
           document.body.appendChild(a); a.click(); a.remove();
-          Swal.fire({ title: 'Export réussi', icon: 'success', confirmButtonColor: '#FF4800' });
+          Swal.fire({ title: 'Export réussi !', icon: 'success', confirmButtonColor: '#FF4800' });
         })
-        .catch(() => Swal.fire({ title: 'Erreur', text: 'Impossible de générer l\'export', icon: 'error' }));
+        .catch(() => Swal.fire({ title: 'Erreur', text: 'Impossible de générer le fichier CSV.', icon: 'error', confirmButtonColor: '#FF4800' }));
     });
   }
 })();
