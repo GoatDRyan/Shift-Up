@@ -1,5 +1,7 @@
 <?php
-require_once '../includes/init.php';
+if (!isset($lang)) {
+    require_once __DIR__ . '/../includes/init.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
