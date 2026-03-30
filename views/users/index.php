@@ -105,8 +105,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <button onclick="openNotifications()" class="w-11 h-11 bg-brand-secondary rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition">
                     <img class="w-8 h-8" src="../../img/icone/icone-notification-blanc.svg" alt="Notifications">
                 </button>
-                <button onclick="toggleMenu()" class="w-11 h-11 max-[375px]:w-9 max-[375px]:h-9 bg-brand-secondary rounded-xl flex items-center justify-center text-brand-dark shadow-sm active:scale-95 transition">
-                    <img class="w-8 h-8" src="../../img/icone/icone-parametre-blanc.svg" alt="">
+                <button onclick="toggleMenu()" class="w-11 h-11 bg-brand-secondary rounded-xl flex items-center justify-center shadow-sm active:scale-95 transition">
+                    <img class="w-8 h-8" src="../../img/icone/icone-parametre-blanc.svg" alt="Paramètres">
                 </button>
             </div>
         </div>
